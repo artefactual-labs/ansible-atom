@@ -1,0 +1,33 @@
+---
+# Reminder: ForwardAgent may fail because ~/.ssh/known_hosts has the wrong host key, remove it!
+
+- include: deps.yml tags=deps
+  sudo: yes
+
+- include: php5-fpm.yml tags=php5-fpm
+  sudo: yes
+
+- include: basic.yml tags=basic
+
+- include: flush.yml tags=flush
+  sudo: yes
+  sudo_user: "{{ atom_user }}"
+  # TODO: This should only happen if:
+  #       - The database is empty
+  #       - The user is asking for it
+  #       - Maybe I should just write a module that can figure this with some
+  #         Python code
+  # when: atom_flush_data is defined and atom_flush_data|bool
+
+#- include: search.yml tags=search
+#  sudo: yes
+#  sudo_user: "{{ atom_user }}"
+  # TODO: Building the search index can be slow, do it only if:
+  #       - The code upgrade requires it (how to do that? at least, notify the
+  #         user?)
+  #       - The user is asking for it (use tags as they probably just want to
+  #         run this)
+  #       - During installation (is it really needed? I don't think so...)
+
+- include: build.yml tags=build
+  when: atom_build_static_assets is defined and atom_build_static_assets|bool

@@ -1,0 +1,112 @@
+# You can find more information about this file on the symfony website:
+# http://www.symfony-project.org/reference/1_4/en/05-Factories
+
+prod:
+  storage:
+{% if atom_app_cache_engine == "sfMemcacheCache" %}
+    class: QubitCacheSessionStorage
+    param:
+      session_name: symfony
+      session_cookie_httponly: true
+      session_cookie_secure: false
+      cache:
+        class: sfMemcacheCache
+        param:
+{% for key, value in atom_app_cache_engine_options.iteritems() %}
+          {{ key }}: {{ value }}
+{% endfor %}
+{% else %}
+    class: QubitSessionStorage
+    param:
+      session_name: symfony
+      session_cookie_httponly: true
+      session_cookie_secure: false
+{% endif %}
+
+test:
+  storage:
+    class: sfSessionTestStorage
+    param:
+      session_path: %SF_TEST_CACHE_DIR%/sessions
+
+  response:
+    class: sfWebResponse
+    param:
+      send_http_headers: false
+
+  mailer:
+    param:
+      delivery_strategy: none
+
+dev:
+  mailer:
+    param:
+      delivery_strategy: none
+
+  storage:
+    class: QubitSessionStorage
+    param:
+      session_name: symfony
+
+  logger:
+    class: sfAggregateLogger
+    param:
+      level: debug
+      loggers:
+        sf_file_debug:
+          class: sfFileLogger
+          param:
+            level: debug
+            file: %SF_LOG_DIR%/%SF_APP%_%SF_ENVIRONMENT%.log
+
+all:
+  i18n:
+    class: sfTranslateI18N
+    param:
+      cache:
+        # class: sfAPCCache
+        class: sfFileCache
+        param:
+          automatic_cleaning_factor: 0
+          cache_dir: %SF_TEMPLATE_CACHE_DIR%
+          lifetime: 86400
+          prefix: %SF_APP_DIR%/template
+
+  routing:
+    class: QubitPatternRouting
+    param:
+      generate_shortest_url:            true
+      extra_parameters_as_query_string: true
+      # class: sfAPCCache
+      cache: ~
+
+  view_cache_manager:
+    class: sfViewCacheManager
+    param:
+      cache_key_use_vary_headers: true
+      cache_key_use_host_name:    true
+
+  view_cache:
+    # class: sfAPCCache
+    class: sfFileCache
+    param:
+      automatic_cleaning_factor: 0
+      cache_dir: %SF_TEMPLATE_CACHE_DIR%
+      lifetime: 86400
+      prefix: %SF_APP_DIR%/template
+
+  user:
+    class: {{ atom_factory_user }}
+    param:
+      timeout: {{ atom_factory_user_timeout }} # Session timeout in seconds
+
+  logger:
+    class: sfAggregateLogger
+    param:
+      level: warning
+      loggers:
+        sf_file_debug:
+          class: sfFileLogger
+          param:
+            level: warning
+            file: %SF_LOG_DIR%/%SF_APP%_%SF_ENVIRONMENT%.log

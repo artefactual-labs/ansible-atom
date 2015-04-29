@@ -1,0 +1,31 @@
+all:
+
+  upload_limit: {{ atom_app_upload_limit }}
+
+  cache_engine:
+    class: {{ atom_app_cache_engine }}
+{% if atom_app_cache_engine_options is defined %}
+    param:
+{% for key, value in atom_app_cache_engine_options.iteritems() %}
+      {{ key }}: {{ value }}
+{% endfor %}
+{% endif %}
+
+  gearman_job_server: {{ atom_app_gearman_job_server }}
+
+  read_only: {{ atom_app_read_only }}
+
+{% if atom_app_google_maps_api_key is defined %}
+  google_maps_api_key: {{ atom_app_google_maps_api_key }}
+{% endif %}
+
+{% if atom_app_google_analytics_api_key is defined %}
+  google_analytics_api_key: {{ atom_app_google_analytics_api_key }}
+{% endif %}
+
+{% if atom_factory_user == "adLdapUser" %}
+  ldap_account_suffix: {{ atom_app_ldap_account_suffix }}
+  ldap_base_dn: {{ atom_app_ldap_base_dn }}
+  ldap_domain_controllers: {{ atom_app_ldap_domain_controllers }}
+  ldap_user_group: {{ atom_app_ldap_user_group }}
+{% endif %}

@@ -1,0 +1,22 @@
+---
+- name: Install npm local dependencies
+  npm: "path={{ atom_drmc_path }} state=latest"
+  when: atom_drmc is defined and atom_drmc|bool
+
+- name: Build DRMC
+  command: "grunt build"
+  args:
+    chdir: "{{ atom_drmc_path }}"
+  when: atom_drmc is defined and atom_drmc|bool
+
+- name: Build docs
+  command: "make html"
+  args:
+    chdir: "{{ atom_drmc_path }}/docs"
+  when: atom_drmc is defined and atom_drmc|bool
+
+- name: Build AtoM themes (make)
+  command: "{{ item.build_cmd }}"
+  args:
+    chdir: "{{ item.path }}"
+  with_items: atom_themes

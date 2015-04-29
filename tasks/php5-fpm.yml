@@ -1,0 +1,49 @@
+---
+- name: Install PHP packages
+  apt: pkg="{{ item }}" state=present update_cache=yes force=yes
+  with_items:
+    - php5-cli
+    - php5-fpm
+    - php5-curl
+    - php5-mysql
+    - php5-xsl
+    - php5-json
+    - php5-memcache
+    - php5-ldap
+
+- name: Remove default www pool
+  file: state=absent path=/etc/php5/fpm/pool.d/www.conf
+  notify:
+    - Restart php5-fpm
+
+#
+# Ubuntu 12.04
+#
+
+- name: Install php-apc
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "precise"
+  apt: pkg="{{ item }}" state=present
+  with_items:
+    - php-apc
+
+- name: Install pool configuration file for Ubuntu 12.04
+  template: src="php5-fpm-pool.conf.precise.j2" dest="{{ atom_pool_path }}"
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "precise"
+
+#
+# Ubuntu 14.04
+#
+
+- name: Install php5-apcu
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "trusty"
+  apt: pkg="{{ item }}" state=present
+  with_items:
+    - php5-apcu
+
+- name: Install pool configuration file for Ubuntu 12.04
+  template: src="php5-fpm-pool.conf.trusty.j2" dest="{{ atom_pool_path }}"
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "trusty"
+
+#- name: Fix php5-fpm upstart
+#  lineinfile: dest=/etc/init/php5-fpm.conf line="reload signal USR2"
+#  sudo: yes
