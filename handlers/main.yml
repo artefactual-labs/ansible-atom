@@ -3,8 +3,10 @@
   service: name=php5-fpm state=restarted
   sudo: yes
 
+# reload php5-fpm seems to be broken (in trusty at least)
+# doing restart instead
 - name: Reload php5-fpm
-  service: name=php5-fpm state=reloaded
+  service: name=php5-fpm state=restarted
   sudo: yes
 
 - name: Clear sf_cache
