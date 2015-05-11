@@ -17,7 +17,7 @@
   #       - The user is asking for it
   #       - Maybe I should just write a module that can figure this with some
   #         Python code
-  # when: atom_flush_data is defined and atom_flush_data|bool
+  when: atom_flush_data is defined and atom_flush_data|bool
 
 #- include: search.yml tags=search
 #  sudo: yes
@@ -31,3 +31,6 @@
 
 - include: build.yml tags=build
   when: atom_build_static_assets is defined and atom_build_static_assets|bool
+
+- include: worker.yml tags=worker
+  when: atom_worker_setup is defined and atom_worker_setup|bool

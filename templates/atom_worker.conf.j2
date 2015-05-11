@@ -1,0 +1,22 @@
+description "AtoM worker upstart service"
+
+start on startup
+stop on shutdown
+
+respawn
+respawn limit 5 10
+
+env LOCATION={{ atom_path }}
+env LOGFILE={{ atom_path }}/log/worker.log
+
+setuid www-data
+setgid www-data
+
+script
+
+  php \
+    -d memory_limit=-1 \
+    -d error_reporting="E_ALL" \
+      ${LOCATION}/symfony jobs:worker >> ${LOGFILE} 2>&1
+
+end script

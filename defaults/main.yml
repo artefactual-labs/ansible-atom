@@ -155,3 +155,11 @@ atom_pool_php_upload_max_filesize: 64M
 atom_pool_php_envs:
   ATOM_DEBUG_IP: "127.0.0.1"
   ATOM_READ_ONLY: "off"
+
+
+#
+# atom worker
+#
+
+atom_upstart_service: "atom-worker"
+atom_path: /usr/share/nginx/atom
