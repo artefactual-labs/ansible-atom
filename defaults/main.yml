@@ -122,8 +122,9 @@ atom_config_db_name: atom
 # search.yml
 #
 
-atom_es_host: 127.0.0.1 
+atom_es_host: 127.0.0.1
 atom_es_port: 9200
+atom_es_index: atom
 
 #
 # php5-fpm pool
