@@ -1,0 +1,7 @@
+---
+
+- name: "Enable AtoM plug-ins"
+  command: "php symfony tools:atom-plugins add {{ item }}"
+  args:
+    chdir: "{{ atom_path }}"
+  with_items: "atom_plugins"

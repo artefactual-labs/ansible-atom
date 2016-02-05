@@ -4,64 +4,55 @@
 # Main parameters
 #
 
-atom_user: www-data
-atom_group: www-data
-atom_path: /usr/share/nginx/atom
-atom_repository:
-  url: https://github.com/artefactual/atom.git
-  version: qa/2.1.x
+atom_environment_type: "production"
+atom_user: "www-data"
+atom_group: "www-data"
+atom_path: "/usr/share/nginx/atom"
+atom_repository_url: "https://github.com/artefactual/atom.git"
+atom_repository_version: "qa/2.3.x"
 
 #
-# Filesystem permissions
+# Worker
 #
 
-atom_filesystem_permissions:
-  - path: "{{ atom_path }}/cache"
-    owner: "{{ atom_user }}"
-    group: "{{ atom_group }}"
-  - path: "{{ atom_path }}/log"
-    owner: "{{ atom_user }}"
-    group: "{{ atom_group }}"
-  - path: "{{ atom_path }}/config"
-    owner: "{{ atom_user }}"
-    group: "{{ atom_group }}"
-  - path: "{{ atom_path }}/data"
-    owner: "{{ atom_user }}"
-    group: "{{ atom_group }}"
-  # TODO: required?
-  # - apps/qubit/config/*
-  # - uploads/   <-- what if it's a mount point or symlink?
-  # - downloads/
-
-#
-# DRMC
-#
-
-atom_drmc: no
-atom_drmc_path: "{{ atom_path }}/plugins/arDrmcPlugin/frontend"
+atom_worker_setup: "yes"
+atom_worker_upstart_service_name: "atom-worker"
 
 #
 # Misc
 #
 
 # Populate search index
-atom_populate_index: yes
+atom_populate_index: "yes"
 
 # Flush database
-atom_flush_data: no
+atom_flush_data: "no"
 
 # Build static assets
-atom_build_static_assets: yes
+atom_build_static_assets: "yes"
 
 # Themes (to build)
 atom_themes:
   - path: "{{ atom_path }}/plugins/arDominionPlugin"
     build_cmd: "make"
+  - path: "{{ atom_path }}/plugins/arArchivesCanadaPlugin"
+    build_cmd: "make"
+
+# Plug-ins
+atom_plugins:
+  - "qtSwordPlugin"
+
+# Default user for tools:purge
+atom_user_email: "demo@example.com"
+atom_user_username: "demo"
+atom_user_password: "demo"
+atom_title: "AtoM"
+atom_description: "Access to Memory"
 
 # Create extra superusers
-# atom_extra_superusers:
+# atom_extra_superusers:
 #  - username: foobar
-#    password: foobar
+#    password: foobar
 #    email: foo@bar.com
 
 # Update database settings
@@ -69,40 +60,33 @@ atom_themes:
 #  - k: hits_per_page
 #    v: 10
 
-# Default user for tools:purge
-atom_user_email: demo@example.com
-atom_user_username: demo
-atom_user_password: demo
-atom_title: AtoM
-atom_description: Access to Memory
-
 #
 # factories.yml
 #
 
-atom_factory_user: myUser # e.g. adLdapUser
-atom_factory_user_timeout: 1800
+atom_factory_user: "myUser" # e.g. adLdapUser
+atom_factory_user_timeout: "1800"
 
 #
 # settings.yml
 #
 
-atom_default_culture: en
-atom_default_timezone: America/Vancouver
+atom_default_culture: "en"
+atom_default_timezone: "America/Vancouver"
 
 #
 # app.yml
 #
 
-atom_app_upload_limit: -1
-atom_app_gearman_job_server: 127.0.0.1:4730
-atom_app_cache_engine: sfMemcacheCache
+atom_app_upload_limit: "-1"
+atom_app_gearman_job_server: "127.0.0.1:4730"
+atom_app_cache_engine: "sfMemcacheCache"
 atom_app_cache_engine_options:
-  storeCacheInfo: yes
-  prefix: atom
-  host: 127.0.0.1
-  port: 11211
-  persistent: yes
+  storeCacheInfo: "yes"
+  prefix: "atom"
+  host: "127.0.0.1"
+  port: "11211"
+  persistent: "yes"
 
 atom_app_read_only: false
 # atom_app_google_maps_api_key:
@@ -112,55 +96,49 @@ atom_app_read_only: false
 # config.php
 #
 
-atom_config_db_username: root
-atom_config_db_password: root
-atom_config_db_hostname: localhost
-atom_config_db_port: 3306
-atom_config_db_name: atom
+atom_config_db_username: "root"
+atom_config_db_password: "root"
+atom_config_db_hostname: "localhost"
+atom_config_db_port: "3306"
+atom_config_db_name: "atom"
 
 #
 # search.yml
 #
 
-atom_es_host: 127.0.0.1
-atom_es_port: 9200
-atom_es_index: atom
+atom_es_host: "127.0.0.1"
+atom_es_port: "9200"
+atom_es_index: "atom"
 
 #
 # php5-fpm pool
 #
 
-atom_pool_path: /etc/php5/fpm/pool.d/atom.conf
+atom_pool_path: "/etc/php5/fpm/pool.d/atom.conf"
 atom_pool_user: "{{ atom_user }}"
 atom_pool_group: "{{ atom_group }}"
-atom_pool_listen: /var/run/php5-fpm.atom.sock
+atom_pool_listen: "/var/run/php5-fpm.atom.sock"
 atom_pool_listen_allowed_clients: ""
 atom_pool_listen_owner: www-data  # Nginx will use this if it's installed in the same machine
 atom_pool_listen_group: www-data  # Nginx will use this if it's installed in the same machine
 atom_pool_listen_mode: "0600"
-atom_pool_pm: dynamic
-atom_pool_pm_max_children: 30
-atom_pool_pm_start_servers: 10
-atom_pool_pm_min_spare_servers: 10
-atom_pool_pm_max_spare_servers: 10
-atom_pool_pm_max_requests: 200
-atom_pool_php_memory_limit: 512M
-atom_pool_php_max_execution_time: 120
-atom_pool_php_post_max_size: 72M
-atom_pool_php_upload_max_filesize: 64M
-
-#
-# php5-fpm pool: environment variables
-#
-
+atom_pool_pm: "dynamic"
+atom_pool_pm_max_children: "30"
+atom_pool_pm_start_servers: "10"
+atom_pool_pm_min_spare_servers: "10"
+atom_pool_pm_max_spare_servers: "10"
+atom_pool_pm_max_requests: "200"
+atom_pool_php_memory_limit: "512M"
+atom_pool_php_max_execution_time: "120"
+atom_pool_php_post_max_size: "72M"
+atom_pool_php_upload_max_filesize: "64M"
 atom_pool_php_envs:
   ATOM_DEBUG_IP: "127.0.0.1"
   ATOM_READ_ONLY: "off"
 
-
 #
-# atom worker
+# DRMC
 #
 
-atom_upstart_service: "atom-worker"
-atom_path: /usr/share/nginx/atom
+atom_drmc: "no"
+atom_drmc_path: "{{ atom_path }}/plugins/arDrmcPlugin/frontend"

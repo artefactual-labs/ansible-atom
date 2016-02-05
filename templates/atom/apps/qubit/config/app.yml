@@ -1,4 +1,5 @@
 # {{ ansible_managed }}
+
 all:
 
   upload_limit: {{ atom_app_upload_limit }}
@@ -11,8 +12,6 @@ all:
       {{ key }}: {{ value }}
 {% endfor %}
 {% endif %}
-
-  gearman_job_server: {{ atom_app_gearman_job_server }}
 
   read_only: {{ atom_app_read_only }}
 

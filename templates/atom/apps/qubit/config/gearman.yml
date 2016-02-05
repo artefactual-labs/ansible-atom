@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+
+all:
+  servers:
+    default: {{ atom_app_gearman_job_server }}

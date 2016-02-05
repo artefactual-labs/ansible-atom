@@ -1,5 +1,7 @@
 <?php
-/* {{ ansible_managed }} */
+
+# {{ ansible_managed }}
+
 return array (
   'all' =>
   array (

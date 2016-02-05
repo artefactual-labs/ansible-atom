@@ -1,40 +1,47 @@
 ---
-- name: Add repo ppa:archivematica/externals-dev and update cache
-  apt_repository: "repo=ppa:archivematica/externals-dev update_cache=yes"
+
+- name: "Add external repository keys"
+  apt_key:
+    url: "{{ item }}"
+    state: "present"
+  with_items:
+    - "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+
+- name: "Add external repositories"
+  apt_repository:
+    repo: "{{ item }}"
+    update_cache: "yes"
+  with_items:
+    - "ppa:archivematica/externals-dev"
+    - "deb https://deb.nodesource.com/node_5.x trusty main"
+    - "ppa:git-core/ppa"
 
 - name: Install AtoM dependencies
-  apt: "pkg={{ item }} state=present"
+  apt:
+    pkg: "{{ item }}"
+    state: "latest"
   with_items:
-    - imagemagick
-    - ghostscript
-    - poppler-utils
-    - ffmpeg
+    - "imagemagick"    # ↓ AtoM dependencies
+    - "ghostscript"    #
+    - "poppler-utils"  #
+    - "ffmpeg"         #
+    - "git"            # ↓ Build dependencies
+    - "nodejs"         #
+    - "make"           #
+    - "python-pip"     #
 
-#
-# Packages required for the build
-#
-
-- name: Add nodejs PPA from Chris Lea
-  apt_repository: repo="{{ item }}" state=present
+- name: "Install Sphinx"
+  pip:
+    name: "{{ item }}"
+    state: "latest"
   with_items:
-    - "ppa:chris-lea/node.js"
+    - "sphinx"
+    - "sphinxcontrib-httpdomain"
 
-- name: Install packages required for the build process
-  apt: pkg="{{ item }}" state=present
+- name: "Install npm global dependencies (also required during the build)"
+  npm:
+    name: "{{ item }}"
+    global: "yes"
   with_items:
-    - git
-    - nodejs
-    - python-pip
-    - make
-
-- name: Install sphinx globally using pip
-  pip: name={{ item }}
-  with_items:
-    - sphinx
-    - sphinxcontrib-httpdomain
-
-- name: Install npm global dependencies (also required during the build)
-  npm: name={{ item }} global=yes
-  with_items:
-    - grunt-cli
-    - less@1.3.3
+    - "grunt-cli"
+    - "less@<2.0.0"

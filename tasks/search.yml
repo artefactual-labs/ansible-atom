@@ -1,7 +1,7 @@
 ---
-- name: Repopulate index
+
+# stdout is ignored, not very useful and too verbose (--quiet opt would be nice)
+- name: "Populate search index"
   shell: "php symfony search:populate 1>/dev/null"
   args:
     chdir: "{{ atom_path }}"
-  when: atom_populate_index is defined and atom_populate_index|bool
-  # stdout is ignored, not very useful and too verbose (--quiet opt would be nice)

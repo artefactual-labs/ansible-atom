@@ -1,55 +1,92 @@
 ---
-- name: Ensure that the necessary directories exist
-  file: path={{ atom_path }} state=directory owner={{ atom_user }} group={{ atom_group }}
-  sudo: yes
+
+- name: "Ensure that the necessary directories exist"
+  file:
+    path: "{{ atom_path }}"
+    state: "directory"
+    owner: "{{ atom_user }}"
+    group: "{{ atom_group }}"
+  become: "yes"
   with_items:
     - "{{ atom_path }}"
     - "{{ atom_path }}/log"
 
-- name: Cleanup cache/ directory
-  command: rm -rf {{ atom_path }}/cache/*
-  sudo: yes # Just in case...
+- name: "Cleanup cache/ directory"
+  command: "rm -rf {{ atom_path }}/cache/*"
+  become: "yes"
 
-- name: Relax permissions # ... so we can stop using sudo
-  command: "chown -R {{ ansible_user_id }} {{ atom_path }}"
-  tags: assets
-  sudo: yes
-
-- name: Pull new code
-  git: update=yes
-       force=yes
-       repo={{ atom_repository.url }}
-       version={{ atom_repository.version }}
-       dest={{ atom_path }}
-       accept_hostkey=yes
+- name: "Pull new code (depth=1 for production)"
+  git:
+    update: "yes"
+    repo: "{{ atom_repository_url }}"
+    version: "{{ atom_repository_version }}"
+    dest: "{{ atom_path }}"
+    accept_hostkey: "yes"
+    depth: "1"
+  when: "atom_environment_type == 'production'"
   notify:
-    - Clear sf_cache
-    - Reload php5-fpm
+    - "Clear sf_cache"
+    - "Reload php5-fpm"
+  become: "yes"
+  become_user: "{{ atom_user }}"
 
-- name: Install configuration files
-  template: src="{{ item.src }}" dest="{{ item.dest }}"
+- name: "Pull new code"
+  git:
+    update: "yes"
+    repo: "{{ atom_repository_url }}"
+    version: "{{ atom_repository_version }}"
+    dest: "{{ atom_path }}"
+    accept_hostkey: "yes"
+    depth: "1"
+  when: "atom_environment_type == 'development'"
+  notify:
+    - "Clear sf_cache"
+    - "Reload php5-fpm"
+  become: "yes"
+  become_user: "{{ atom_user }}"
+
+- name: "Install configuration files"
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ atom_user }}"
+    group: "{{ atom_group }}"
+  become: "yes"
   with_items:
-    - { src: "config.php.j2", dest: "{{ atom_path }}/config/config.php" }
-    - { src: "app.yml.j2", dest: "{{ atom_path }}/apps/qubit/config/app.yml" }
-    - { src: "factories.yml.j2", dest: "{{ atom_path }}/apps/qubit/config/factories.yml" }
-    - { src: "settings.yml.j2", dest: "{{ atom_path }}/apps/qubit/config/settings.yml" }
-    - { src: "propel.ini.j2", dest: "{{ atom_path }}/config/propel.ini" }
-    - { src: "search.yml.j2", dest: "{{ atom_path }}/config/search.yml" }
+    - src: "atom/config/config.php"
+      dest: "{{ atom_path }}/config/config.php"
+    - src: "atom/config/propel.ini"
+      dest: "{{ atom_path }}/config/propel.ini"
+    - src: "atom/apps/qubit/config/app.yml"
+      dest: "{{ atom_path }}/apps/qubit/config/app.yml"
+    - src: "atom/apps/qubit/config/factories.yml"
+      dest: "{{ atom_path }}/apps/qubit/config/factories.yml"
+    - src: "atom/apps/qubit/config/settings.yml"
+      dest: "{{ atom_path }}/apps/qubit/config/settings.yml"
+    - src: "atom/apps/qubit/config/search.yml"
+      dest: "{{ atom_path }}/apps/qubit/config/search.yml"
+    - src: "atom/apps/qubit/config/gearman.yml"
+      dest: "{{ atom_path }}/apps/qubit/config/gearman.yml"
   notify:
-    - Clear sf_cache
-    - Reload php5-fpm
+    - "Clear sf_cache"
+    - "Reload php5-fpm"
 
-- name: Uploads symlink
-  file: state=link src={{ atom_uploads_symlink }} path="{{ atom_path }}/uploads" force=yes
-  sudo: yes
-  when: atom_uploads_symlink is defined
-- name: Uploads directory
-  file: state=directory path="{{ atom_path }}/uploads" owner={{ atom_user }} group={{ atom_group }}
-  sudo: yes
-  when: atom_uploads_symlink is undefined
+- name: "Uploads symlink"
+  file:
+    state: "link"
+    src: "{{ atom_uploads_symlink }}"
+    path: "{{ atom_path }}/uploads"
+    force: "yes"
+    owner: "{{ atom_user }}"
+    group: "{{ atom_group }}"
+  become: "yes"
+  when: "atom_uploads_symlink is defined"
 
-- name: Fix permissions
-  shell: "chown -R {{ item.owner }}:{{ item.group }} {{ item.path }}"
-  sudo: yes
-  with_items: atom_filesystem_permissions
-  ignore_errors: yes
+- name: "Uploads directory"
+  file:
+    state: "directory"
+    path: "{{ atom_path }}/uploads"
+    owner: "{{ atom_user }}"
+    group: "{{ atom_group }}"
+  become: "yes"
+  when: "atom_uploads_symlink is undefined"

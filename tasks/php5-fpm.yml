@@ -1,49 +1,48 @@
 ---
-- name: Install PHP packages
-  apt: pkg="{{ item }}" state=present update_cache=yes force=yes
-  with_items:
-    - php5-cli
-    - php5-fpm
-    - php5-curl
-    - php5-mysql
-    - php5-xsl
-    - php5-json
-    - php5-memcache
-    - php5-ldap
 
-- name: Remove default www pool
-  file: state=absent path=/etc/php5/fpm/pool.d/www.conf
+- name: "Install PHP packages"
+  apt:
+    pkg: "{{ item }}"
+    state: "latest"
+    update_cache: "yes"
+    cache_valid_time: "3600"
+    force: "yes"
+  with_items:
+    - "php5-cli"
+    - "php5-fpm"
+    - "php5-curl"
+    - "php5-mysql"
+    - "php5-xsl"
+    - "php5-json"
+    - "php5-ldap"
+    - "php5-memcache"
+
+- name: "Install php-apc(u) package"
+  apt:
+    pkg: "{{ item.pkg }}"
+    state: "latest"
+  when: "ansible_distribution == 'Ubuntu' and ansible_distribution_release == '{{ item.release }}'"
+  with_items:
+    - pkg: "php-apc"
+      release: "precise"
+    - pkg: "php5-apcu"
+      release: "trusty"
+
+- name: "Remove default www pool"
+  file:
+    state: "absent"
+    path: "/etc/php5/fpm/pool.d/www.conf"
   notify:
-    - Restart php5-fpm
+    - "Restart php5-fpm"
 
-#
-# Ubuntu 12.04
-#
+- name: "Install pool configuration file"
+  template:
+    src: "etc/php5/fpm/pool.d/atom.conf"
+    dest: "{{ atom_pool_path }}"
 
-- name: Install php-apc
-  when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "precise"
-  apt: pkg="{{ item }}" state=present
-  with_items:
-    - php-apc
-
-- name: Install pool configuration file for Ubuntu 12.04
-  template: src="php5-fpm-pool.conf.precise.j2" dest="{{ atom_pool_path }}"
-  when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "precise"
-
-#
-# Ubuntu 14.04
-#
-
-- name: Install php5-apcu
-  when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "trusty"
-  apt: pkg="{{ item }}" state=present
-  with_items:
-    - php5-apcu
-
-- name: Install pool configuration file for Ubuntu 12.04
-  template: src="php5-fpm-pool.conf.trusty.j2" dest="{{ atom_pool_path }}"
-  when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "trusty"
-
-#- name: Fix php5-fpm upstart
-#  lineinfile: dest=/etc/init/php5-fpm.conf line="reload signal USR2"
-#  sudo: yes
+# See https://bugs.launchpad.net/ubuntu/+source/php5/+bug/1272788
+- name: "Fix php5-fpm upstart"
+  lineinfile:
+    dest: "/etc/init/php5-fpm.conf"
+    line: "reload signal USR2"
+  when: "ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'trusty'"

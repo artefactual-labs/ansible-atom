@@ -1,22 +1,18 @@
 ---
 
-- name: "Enable qtSword plugin"
-  command: "php symfony tools:atom-plugins add qtSwordPlugin"
-  args:
-    chdir: "{{ atom_path }}"
-  when: atom_qtsword_enabled is defined and atom_qtsword_enabled|bool
-  sudo: "yes"
-  sudo_user: www-data
-
 - name: "Stop worker"
-  service: "name={{ atom_upstart_service }} state=stopped"
-  sudo: "yes"
-  ignore_errors: yes # It could be not created yet
+  service:
+    name: "{{ atom_worker_upstart_service_name }}"
+    state: "stopped"
+  ignore_errors: "yes" # It could be not created yet
 
 - name: "Create upstart service"
-  template: "src=atom_worker.conf.j2 dest=/etc/init/{{ atom_upstart_service }}.conf"
-  sudo: "yes"
+  template:
+    src: "etc/init/atom-worker.conf"
+    dest: "/etc/init/{{ atom_worker_upstart_service_name }}.conf"
 
 - name: "Start and enable worker"
-  service: "name={{ atom_upstart_service }} state=restarted enabled=yes"
-  sudo: "yes"
+  service:
+    name: "{{ atom_worker_upstart_service_name }}"
+    state: "restarted"
+    enabled: "yes"

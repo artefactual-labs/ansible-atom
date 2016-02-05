@@ -1,25 +1,26 @@
 ---
-- name: Purge database
+
+- name: "Purge database"
   command: "php symfony tools:purge --no-confirmation --email='{{ atom_user_email }}' --username='{{ atom_user_username }}' --password='{{ atom_user_password }}' --title='{{ atom_title }}' --description='{{ atom_description }}' --url='\"http://undefined\"'"
   args:
     chdir: "{{ atom_path }}"
 
-- name: Add initial DRMC data
+- name: "Add initial DRMC data"
   command: "php symfony drmc:bootstrap --init"
   args:
     chdir: "{{ atom_path }}"
-  when: atom_drmc is defined and atom_drmc|bool
+  when: "atom_drmc is defined and atom_drmc|bool"
 
-- name: Set database settings
+- name: "Set database settings (only available in DRMC)"
   command: "php symfony tools:set-db-setting {{ item.k }} {{ item.v }}"
   args:
     chdir: "{{ atom_path }}"
-  when: atom_db_settings is defined
-  with_items: atom_db_settings
+  when: "atom_drmc is defined and atom_drmc|bool and atom_db_settings is defined"
+  with_items: "atom_db_settings"
 
-- name: Add extra super users
+- name: "Add extra super users"
   command: "php symfony tools:add-superuser --email='{{ item.email }}' --password='{{ item.password }}' {{ item.username }}"
   args:
     chdir: "{{ atom_path }}"
-  when: atom_extra_superusers is defined
-  with_items: atom_extra_superusers
+  when: "atom_extra_superusers is defined"
+  with_items: "atom_extra_superusers"
