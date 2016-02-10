@@ -6,14 +6,12 @@
     state: "directory"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
-  become: "yes"
   with_items:
     - "{{ atom_path }}"
     - "{{ atom_path }}/log"
 
 - name: "Cleanup cache/ directory"
   command: "rm -rf {{ atom_path }}/cache/*"
-  become: "yes"
 
 - name: "Pull new code (depth=1 for production)"
   git:
@@ -27,7 +25,6 @@
   notify:
     - "Clear sf_cache"
     - "Reload php5-fpm"
-  become: "yes"
   become_user: "{{ atom_user }}"
 
 - name: "Pull new code"
@@ -42,7 +39,6 @@
   notify:
     - "Clear sf_cache"
     - "Reload php5-fpm"
-  become: "yes"
   become_user: "{{ atom_user }}"
 
 - name: "Install configuration files"
@@ -51,7 +47,6 @@
     dest: "{{ item.dest }}"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
-  become: "yes"
   with_items:
     - src: "atom/config/config.php"
       dest: "{{ atom_path }}/config/config.php"
@@ -79,7 +74,6 @@
     force: "yes"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
-  become: "yes"
   when: "atom_uploads_symlink is defined"
 
 - name: "Uploads directory"
@@ -88,5 +82,12 @@
     path: "{{ atom_path }}/uploads"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
-  become: "yes"
   when: "atom_uploads_symlink is undefined"
+
+- name: "sf symlink"
+  file:
+    state: "link"
+    src: "{{ atom_path }}/vendor/symfony/data/web/sf"
+    path: "{{ atom_path }}/sf"
+    owner: "{{ atom_user }}"
+    group: "{{ atom_group }}"

@@ -1,7 +1,7 @@
 ---
 
 - name: "Purge database"
-  command: "php symfony tools:purge --no-confirmation --email='{{ atom_user_email }}' --username='{{ atom_user_username }}' --password='{{ atom_user_password }}' --title='{{ atom_title }}' --description='{{ atom_description }}' --url='\"http://undefined\"'"
+  command: "php symfony tools:purge --no-confirmation --email='{{ atom_user_email }}' --username='{{ atom_user_username }}' --password='{{ atom_user_password }}' --title='{{ atom_title }}' --description='{{ atom_description }}' --url='http://undefined'"
   args:
     chdir: "{{ atom_path }}"
 
