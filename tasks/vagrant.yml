@@ -1,1 +1,83 @@
 ---
+
+- name: "Install packages useful for development"
+  apt:
+    name: "{{ item }}"
+    update_cache: "yes"
+  with_items:
+    - "tig"
+    - "htop"
+
+- name: "Install /etc/motd"
+  template:
+    src: "etc/motd"
+    dest: "/etc/motd"
+
+#
+# Sharing files with Samba
+#
+
+- name: "Install samba"
+  apt:
+    pkg: "samba"
+    state: "present"
+
+- name: "Create samba users with smbpasswd"
+  raw: "(echo {{ item.smbpasswd }}; echo {{ item.smbpasswd }}) | smbpasswd -s -a {{ item.name }}"
+  with_items:
+    - name: "{{ ansible_user_id }}"
+      smbpasswd: "{{ ansible_user_id }}"
+
+- name: "Samba configuration"
+  template:
+    src: "etc/samba/smb.conf"
+    dest: "/etc/samba/smb.conf"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  notify:
+    - "Restart smbd"
+    - "Restart nmbd"
+
+#
+# Local configuration files
+#
+
+- name: "Upload configuration files"
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - src:  "home/vagrant/.gitconfig"
+      dest: "{{ ansible_env.HOME }}/.gitconfig"
+    - src: "home/vagrant/.gitignore_global"
+      dest: "{{ ansible_env.HOME }}/.gitignore_global"
+    - src: "home/vagrant/.bashrc_local"
+      dest: "{{ ansible_env.HOME }}/.bashrc_local"
+  become_user: "vagrant"
+
+- name: "Load .bashrc_local"
+  lineinfile:
+    dest: "{{ ansible_env.HOME }}/.bashrc"
+    line: "[[ -s $HOME/.bashrc_local ]] && source $HOME/.bashrc_local"
+  become_user: "vagrant"
+
+#
+# Link to sources and docs
+#
+
+- name: "Clone atom-docs repository"
+  git:
+    update: "yes"
+    repo: "https://github.com/artefactual/atom-docs.git"
+    version: "2.3"
+    dest: "{{ ansible_env.HOME }}/atom-docs"
+    accept_hostkey: "yes"
+  become_user: "vagrant"
+
+- name: "Create symlink to AtoM sources"
+  file:
+    src: "/usr/share/nginx/atom"
+    dest: "{{ ansible_env.HOME }}/atom"
+    state: "link"
+  become_user: "vagrant"

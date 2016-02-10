@@ -1,0 +1,22 @@
+[core]
+        autocrlf = input
+        editor = vim
+        excludesfile = ~/.gitignore_global
+        filemode = false
+[color]
+        ui = true
+[alias]
+        ci = commit
+        co = checkout
+        st = status -s
+        cdiff = diff --cached
+        lol = log --graph --decorate --pretty=oneline --abbrev-commit
+        lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
+        lolo = log --cherry-pick --right-only -p --graph --decorate --pretty=oneline --abbrev-commit
+        top = !git shortlog -s | sort -rn | head -n 100 # Show top ten committers! :-)
+        glog = log --all --pretty='format:%d %Cgreen%h%Creset %an - %s' --graph
+        who = rev-parse --abbrev-ref --symbolic-full-name @{u}
+[log]
+        date = local
+[push]
+        default = matching

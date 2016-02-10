@@ -4,17 +4,24 @@
   service:
     name: "php5-fpm"
     state: "restarted"
-  become: "yes"
 
 - name: "Reload php5-fpm"
   service:
     name: "php5-fpm"
     state: "reloaded"
-  become: "yes"
 
 - name: "Clear sf_cache"
   shell: "php symfony cc"
   args:
     chdir: "{{ atom_path }}"
-  become: "yes"
   become_user: "{{ atom_user }}"
+
+- name: "Restart smbd"
+  service:
+    name: "smbd"
+    state: "restarted"
+
+- name: "Restart nmbd"
+  service:
+    name: "nmbd"
+    state: "restarted"

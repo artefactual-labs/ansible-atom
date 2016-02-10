@@ -1,12 +1,10 @@
 ---
 
 - include: "deps.yml"
-  become: "yes"
   tags:
     - "deps"
 
 - include: "php5-fpm.yml"
-  become: "yes"
   tags:
     - "php5-fpm"
 
@@ -19,14 +17,12 @@
 # - The user is asking for it.
 #   ... write a module that can figure this out for us?
 - include: "flush.yml"
-  become: "yes"
   become_user: "{{ atom_user }}"
   when: "atom_flush_data is defined and atom_flush_data|bool"
   tags:
     - "flush"
 
 - include: "plugins.yml"
-  become: "yes"
   become_user: "{{ atom_user }}"
   tags:
     - "plugins"
@@ -35,14 +31,12 @@
 # - The code upgrade requires it (how to do that? notify the user?).
 # - The user is asking for it (use tags as they probably just want to run this).
 - include: "search.yml"
-  become: "yes"
   become_user: "{{ atom_user }}"
   tags:
     - "search"
   when: "atom_populate_index is defined and atom_populate_index|bool"
 
 - include: "build.yml"
-  become: "yes"
   become_user: "{{ atom_user }}"
   tags:
     - "build"
@@ -51,8 +45,9 @@
 - include: "worker.yml"
   tags:
     - "worker"
-  become: "yes"
   when: "atom_worker_setup is defined and atom_worker_setup|bool"
 
 - include: "vagrant.yml"
-  when: "atom_environment_type == 'development'"
+  when: "atom_environment_type == 'development' and ansible_env.USER == 'vagrant'"
+  tags:
+    - "vagrant"
