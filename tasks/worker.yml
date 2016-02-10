@@ -16,3 +16,55 @@
     name: "{{ atom_worker_upstart_service_name }}"
     state: "restarted"
     enabled: "yes"
+
+#
+# Apache FOP (including Java)
+#
+
+- name: "Install Apache FOP: Java 8: add repository"
+  apt_repository:
+    repo: "ppa:webupd8team/java"
+    state: "present"
+    update_cache: "yes"
+  tags:
+    - "fop"
+
+- name: "Install Apache FOP: Java 8: accept Oracle license"
+  shell: "echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections; echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections"
+  args:
+    creates: "/usr/lib/jvm/java-8-oracle"
+  tags:
+    - "fop"
+
+- name: "Install Apache FOP: Java 8: pkg oracle-java8-installer"
+  apt:
+    pkg: "oracle-java8-installer"
+    state: "latest"
+  tags:
+    - "fop"
+
+- name: "Install Apache FOP: unarchive"
+  unarchive:
+    src: "https://archive.apache.org/dist/xmlgraphics/fop/binaries/fop-1.0-bin.tar.gz"
+    dest: "/usr/share"
+    creates: "/usr/share/fop-1.0"
+    copy: "no"
+    owner: "root"
+    group: "root"
+  tags:
+    - "fop"
+
+- name: "Install Apache FOP: set up FOP_HOME"
+  lineinfile:
+    dest: "/etc/environment"
+    line: "FOP_HOME=/usr/share/fop-1.0"
+  tags:
+    - "fop"
+
+- name: "Install Apache FOP: symlink"
+  file:
+    src: "/usr/share/fop-1.0/fop"
+    dest: "/usr/local/bin/fop"
+    state: "link"
+  tags:
+    - "fop"
