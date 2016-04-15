@@ -12,23 +12,28 @@
     repo: "{{ item }}"
     update_cache: "yes"
   with_items:
-    - "ppa:archivematica/externals-dev"
-    - "deb https://deb.nodesource.com/node_5.x trusty main"
-    - "ppa:git-core/ppa"
+    - "deb https://deb.nodesource.com/node_5.x {{ ansible_distribution_release }} main"
 
-- name: Install AtoM dependencies
+- name: "Add archivematica/externals-dev PPA (ffmpeg in Ubuntu <= 14.04)"
+  apt_repository:
+    repo: "ppa:archivematica/externals-dev"
+    update_cache: "yes"
+  when: "ansible_distribution_version | version_compare('14.04', '<=')"
+
+- name: "Install AtoM dependencies"
   apt:
     pkg: "{{ item }}"
     state: "latest"
   with_items:
-    - "imagemagick"    # ↓ AtoM dependencies
-    - "ghostscript"    #
-    - "poppler-utils"  #
-    - "ffmpeg"         #
-    - "git"            # ↓ Build dependencies
-    - "nodejs"         #
-    - "make"           #
-    - "python-pip"     #
+    - "imagemagick"       # ↓ AtoM dependencies
+    - "ghostscript"       #
+    - "poppler-utils"     #
+    - "ffmpeg"            #
+    - "git"               # ↓ Build dependencies
+    - "nodejs"            #
+    - "make"              #
+    - "python-pip"        #
+    - "python-setuptools" #
 
 - name: "Install Sphinx"
   pip:

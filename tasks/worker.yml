@@ -2,52 +2,65 @@
 
 - name: "Stop worker"
   service:
-    name: "{{ atom_worker_upstart_service_name }}"
+    name: "{{ atom_worker_service_name }}"
     state: "stopped"
   ignore_errors: "yes" # It could be not created yet
 
-- name: "Create upstart service"
+- name: "Install atom-worker service (upstart)"
   template:
     src: "etc/init/atom-worker.conf"
-    dest: "/etc/init/{{ atom_worker_upstart_service_name }}.conf"
+    dest: "/etc/init/{{ atom_worker_service_name }}.conf"
 
-- name: "Start and enable worker"
+- name: "Install atom-worker service (systemd)"
+  template:
+    src: "lib/systemd/system/atom-worker.service"
+    dest: "/lib/systemd/system/atom-worker.service"
+
+- name: "Start and enable atom-worker service"
   service:
-    name: "{{ atom_worker_upstart_service_name }}"
+    name: "{{ atom_worker_service_name }}"
     state: "restarted"
     enabled: "yes"
 
 #
-# Apache FOP (including Java)
+# Apache FOP (including installation of Java)
 #
 
-- name: "Install Apache FOP: Java 8: add repository"
-  apt_repository:
-    repo: "ppa:webupd8team/java"
-    state: "present"
-    update_cache: "yes"
-  tags:
-    - "fop"
-
-- name: "Install Apache FOP: Java 8: accept Oracle license"
-  shell: "echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections; echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections"
-  args:
-    creates: "/usr/lib/jvm/java-8-oracle"
-  tags:
-    - "fop"
-
-- name: "Install Apache FOP: Java 8: pkg oracle-java8-installer"
+- name: "Install OpenJDK 7"
   apt:
-    pkg: "oracle-java8-installer"
+    pkg: "openjdk-7-jre-headless"
     state: "latest"
+  when: "ansible_distribution_version | version_compare('14.04', '<=')"
+  tags:
+    - "fop"
+
+- name: "Install OpenJDK 8"
+  apt:
+    pkg: "openjdk-8-jre-headless"
+    state: "latest"
+  when: "ansible_distribution_version | version_compare('14.04', '>')"
+  tags:
+    - "fop"
+
+- name: "Use FOP 2.1 in AtoM 2.3 or newer (Ubuntu 16.04)" 
+  set_fact:
+    fop_version: "2.1"
+  when: "ansible_distribution_version | version_compare('16.04', '==')"
+  tags:
+    - "fop"
+
+- name: "Use FOP 1.0 in AtoM 2.2 (Ubuntu 14.04)" 
+  set_fact:
+    fop_version: "1.0"
+  when: "ansible_distribution_version | version_compare('14.04', '==')"
   tags:
     - "fop"
 
 - name: "Install Apache FOP: unarchive"
   unarchive:
-    src: "https://archive.apache.org/dist/xmlgraphics/fop/binaries/fop-1.0-bin.tar.gz"
+    src: "https://archive.apache.org/dist/xmlgraphics/fop/binaries/fop-{{ fop_version }}-bin.tar.gz"
     dest: "/usr/share"
-    creates: "/usr/share/fop-1.0"
+    creates: "/usr/share/fop-{{ fop_version }}"
     copy: "no"
     owner: "root"
     group: "root"
@@ -57,13 +70,13 @@
 - name: "Install Apache FOP: set up FOP_HOME"
   lineinfile:
     dest: "/etc/environment"
-    line: "FOP_HOME=/usr/share/fop-1.0"
+    line: "FOP_HOME=/usr/share/fop-{{ fop_version }}"
   tags:
     - "fop"
 
 - name: "Install Apache FOP: symlink"
   file:
-    src: "/usr/share/fop-1.0/fop"
+    src: "/usr/share/fop-{{ fop_version }}/fop"
     dest: "/usr/local/bin/fop"
     state: "link"
   tags:

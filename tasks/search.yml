@@ -5,3 +5,4 @@
   shell: "php symfony search:populate 1>/dev/null"
   args:
     chdir: "{{ atom_path }}"
+  ignore_errors: "yes" # segfault in php7, not sure yet why!

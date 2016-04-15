@@ -1,0 +1,81 @@
+---
+
+- name: "Install PHP packages in Ubuntu 14.04"
+  apt:
+    pkg: "{{ item }}"
+    state: "latest"
+    update_cache: "yes"
+    cache_valid_time: "3600"
+    force: "yes"
+  when: "ansible_distribution_version | version_compare('14.04', '==')"
+  with_items:
+    - "php5-cli"
+    - "php5-fpm"
+    - "php5-curl"
+    - "php5-mysql"
+    - "php5-xsl"
+    - "php5-json"
+    - "php5-ldap"
+    - "php5-memcache"
+    - "php5-apcu"
+
+- name: "Install PHP packages in Ubuntu 16.04"
+  apt:
+    pkg: "{{ item }}"
+    state: "latest"
+    update_cache: "yes"
+    cache_valid_time: "3600"
+    force: "yes"
+  when: "ansible_distribution_version | version_compare('16.04', '>=')"
+  with_items:
+    - "php7.0-cli"
+    - "php7.0-curl"
+    - "php7.0-json"
+    - "php7.0-ldap"
+    - "php7.0-mysql"
+    - "php7.0-opcache"
+    - "php7.0-readline"
+    - "php7.0-xml"
+    - "php7.0-fpm"
+    - "php7.0-mbstring"
+    - "php7.0-mcrypt"
+    - "php7.0-xsl"
+    - "php7.0-zip"
+    - "php-memcache"
+    - "php-apcu"
+    # - "php7.0-apcu-ng" # Not available yet?
+
+- name: "Remove default www pool"
+  file:
+    state: "absent"
+    path: "/etc/php5/fpm/pool.d/www.conf"
+  when: "ansible_distribution_version | version_compare('14.04', '==')"
+  notify:
+    - "Restart php-fpm"
+
+- name: "Remove default www pool"
+  file:
+    state: "absent"
+    path: "/etc/php/7.0/fpm/pool.d/www.conf"
+  when: "ansible_distribution_version | version_compare('16.04', '==')"
+  notify:
+    - "Restart php-fpm"
+
+- name: "Install pool configuration file"
+  template:
+    src: "etc/php/5/fpm/pool.d/atom.conf"
+    dest: "/etc/php5/fpm/pool.d/atom.conf"
+  when: "ansible_distribution_version | version_compare('14.04', '==')"
+
+- name: "Install pool configuration file"
+  template:
+    src: "etc/php/7.0/fpm/pool.d/atom.conf"
+    dest: "/etc/php/7.0/fpm/pool.d/atom.conf"
+  when: "ansible_distribution_version | version_compare('16.04', '==')"
+
+# See https://bugs.launchpad.net/ubuntu/+source/php5/+bug/1272788
+- name: "Fix php5-fpm upstart"
+  lineinfile:
+    dest: "/etc/init/php5-fpm.conf"
+    line: "reload signal USR2"
+  when: "ansible_distribution_version | version_compare('14.04', '==')"
