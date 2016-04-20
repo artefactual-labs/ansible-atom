@@ -11,12 +11,16 @@ atom_path: "/usr/share/nginx/atom"
 atom_repository_url: "https://github.com/artefactual/atom.git"
 atom_repository_version: "qa/2.3.x"
 
+# Install some extra packages specific to our official Vagrant-based
+# development box. See `tasks/devbox.yml` for more details.
+atom_devbox: "no"
+
 #
 # Worker
 #
 
 atom_worker_setup: "yes"
-atom_worker_upstart_service_name: "atom-worker"
+atom_worker_service_name: "atom-worker"
 
 #
 # Misc
@@ -114,10 +118,9 @@ atom_es_index: "atom"
 # php5-fpm pool
 #
 
-atom_pool_path: "/etc/php5/fpm/pool.d/atom.conf"
 atom_pool_user: "{{ atom_user }}"
 atom_pool_group: "{{ atom_group }}"
-atom_pool_listen: "/var/run/php5-fpm.atom.sock"
+atom_pool_listen: "/var/run/php-fpm.atom.sock"
 atom_pool_listen_allowed_clients: ""
 atom_pool_listen_owner: www-data  # Nginx will use this if it's installed in the same machine
 atom_pool_listen_group: www-data  # Nginx will use this if it's installed in the same machine

@@ -1,6 +1,9 @@
 # ansible-atom
 
-An ansible role for deploying AtoM. **Not suitable for production yet!**
+This role helps to install Access to Memory (AtoM) in Ubuntu Linux (trusty and xenial).
 
-Please visit our [deploy-pub](https://github.com/artefactual/deploy-pub/tree/master/playbooks/atom)
-repository for a real usage example.
+Please feel free to add support for other platforms, pull requests accepted!
+
+**Not suitable for production yet!**
+
+Please visit our [deploy-pub](https://github.com/artefactual/deploy-pub/tree/master/playbooks/atom) repository for a real usage example.

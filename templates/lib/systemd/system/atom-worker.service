@@ -1,0 +1,18 @@
+[Unit]
+Description=AtoM worker
+After=network.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+User={{ atom_user }}
+Group={{ atom_group }}
+WorkingDirectory={{ atom_path }}
+ExecStart=/usr/bin/php7.0 -d memory_limit=-1 -d error_reporting="E_ALL" symfony jobs:worker
+ExecStop=/bin/kill -s TERM $MAINPID
+Restart=no
+
+#Environment=ATOM_FOO_1=BAR
+#Environment=ATOM_FOO_2=BAR
