@@ -1,13 +1,23 @@
 ---
 
+- name: "Add repositories"
+  apt_repository:
+    repo: "ppa:git-core/ppa"
+    state: "present"
+    update_cache: "yes"
+
 - name: "Install packages useful for development"
   apt:
     name: "{{ item }}"
     update_cache: "yes"
+    state: "latest"
   with_items:
     - "tig"
     - "htop"
     - "vim"
+    - "tmux"
+    - "byobu"
+    - "git"
 
 - name: "Install /etc/motd"
   template:
@@ -71,7 +81,7 @@
   git:
     update: "yes"
     repo: "https://github.com/artefactual/atom-docs.git"
-    version: "2.3"
+    version: "2.4"
     dest: "{{ ansible_env.HOME }}/atom-docs"
     accept_hostkey: "yes"
   become_user: "vagrant"

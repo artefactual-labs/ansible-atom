@@ -12,7 +12,10 @@
         cdiff = diff --cached
         top = !git shortlog -s | sort -rn | head -n 100 # Show top ten committers! :-)
         who = rev-parse --abbrev-ref --symbolic-full-name @{u}
+        fixup = "!f() { TARGET=$(git rev-parse "$1"); git commit --fixup=$TARGET ${@:2} && EDITOR=true git rebase -i --autostash --autosquash $TARGET^; }; f"
 [log]
         date = local
 [push]
-        default = simple
+        default = matching
+[commit]
+        verbose = true
