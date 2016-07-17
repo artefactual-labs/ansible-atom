@@ -16,6 +16,6 @@
 [log]
         date = local
 [push]
-        default = matching
+        default = simple
 [commit]
         verbose = true
