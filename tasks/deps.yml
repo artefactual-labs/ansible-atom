@@ -42,6 +42,7 @@
   with_items:
     - "sphinx"
     - "sphinxcontrib-httpdomain"
+    - "sphinx_rtd_theme"
 
 - name: "Install npm global dependencies (also required during the build)"
   npm:
