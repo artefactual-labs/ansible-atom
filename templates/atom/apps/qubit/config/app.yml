@@ -1,4 +1,4 @@
-# {{ ansible_managed }}
+# Ansible managed file, do not edit directly
 
 all:
 
@@ -27,4 +27,9 @@ all:
   ldap_base_dn: {{ atom_app_ldap_base_dn }}
   ldap_domain_controllers: {{ atom_app_ldap_domain_controllers }}
   ldap_user_group: {{ atom_app_ldap_user_group }}
+{% endif %}
+
+{% if atom_worker_old_config|bool %}
+  # Gearman job server 
+  gearman_job_server: {{ atom_app_gearman_job_server }}
 {% endif %}
