@@ -5,6 +5,7 @@
   args:
     chdir: "{{ atom_path }}"
   with_items: "{{ atom_plugins }}"
+  environment: "{{ atom_pool_php_envs }}"
 
 # TODO: arElasticSearchPlugin scripts:
 #       copy files from  plugins/arElasticSearchPlugin/scripts/

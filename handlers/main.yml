@@ -29,6 +29,7 @@
   args:
     chdir: "{{ atom_path }}"
   become_user: "{{ atom_user }}"
+  environment: "{{ atom_pool_php_envs }}"
 
 - name: "Restart smbd"
   service:

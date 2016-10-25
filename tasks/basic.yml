@@ -103,3 +103,14 @@
     path: "{{ atom_path }}/sf"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
+
+# Export php pool env vars to the login shell, for CLI tools
+#   (such as ARCHIVEMATICA_SS_USER, required in Binder)
+#   To preserve env vars when doing sudo use -E flag
+#   Example: Instead of: sudo -u www-data php symfony cc   
+#                    do: sudo -E -u www-data php symfony cc  
+- name: "Add config to /etc/profile.d"
+  template:
+    src: "etc/profile.d/atom.sh.j2"
+    dest: "/etc/profile.d/atom.sh"
+
