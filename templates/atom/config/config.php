@@ -1,6 +1,6 @@
 <?php
 
-# {{ ansible_managed }}
+# Ansible managed file, do not edit directly
 
 return array (
   'all' =>

@@ -1,31 +1,28 @@
 ---
 
-- name: "Ensure that the necessary directories exist"
+# Some issues with git:
+# - git with become_user set to atom_user fails (keys, permissions)
+#   workaround: use the ansible user (become: no) (temporarily change ownership of the dir. to allow this)
+# - Using depth=1 produces errors when the repo was already cloned on the site directory
+#   workarounds: either rename existing atom_path or do not use depth=1
+
+- name: "Create site directory if it doesn't exist'"
   file:
     path: "{{ atom_path }}"
     state: "directory"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
-  with_items:
-    - "{{ atom_path }}"
-    - "{{ atom_path }}/log"
+    mode: "u=rwx,g=rwx,o=rx"
 
 - name: "Cleanup cache/ directory"
   command: "rm -rf {{ atom_path }}/cache/*"
 
-- name: "Pull new code (depth=1 for production)"
-  git:
-    update: "yes"
-    repo: "{{ atom_repository_url }}"
-    version: "{{ atom_repository_version }}"
-    dest: "{{ atom_path }}"
-    accept_hostkey: "yes"
-    depth: "1"
-  when: "atom_environment_type == 'production'"
-  notify:
-    - "Clear sf_cache"
-    - "Reload php-fpm"
-  become_user: "{{ atom_user }}"
+- name: "Temporarily change ownership of site directory to be able to clone repo"
+  file:
+    path: "{{ atom_path }}"
+    state: "directory"
+    owner: "{{ ansible_ssh_user }}"
+    recurse: yes
 
 - name: "Pull new code"
   git:
@@ -34,11 +31,26 @@
     version: "{{ atom_repository_version }}"
     dest: "{{ atom_path }}"
     accept_hostkey: "yes"
-  when: "atom_environment_type == 'development'"
   notify:
     - "Clear sf_cache"
     - "Reload php-fpm"
-  become_user: "{{ atom_user }}"
+  become: "no"
+
+- name: "Restore ownership of site directory"
+  file:
+    path: "{{ atom_path }}"
+    state: "directory"
+    owner: "{{ atom_user }}"
+    group: "{{ atom_group }}"
+    recurse: yes
+
+- name: "Create log directory"
+  file:
+    path: "{{ atom_path }}/log"
+    state: "directory"
+    owner: "{{ atom_user }}"
+    group: "{{ atom_group }}"
+    mode: "u=rwx,g=rwx,o=rx"
 
 - name: "Install configuration files"
   template:
@@ -46,6 +58,7 @@
     dest: "{{ item.dest }}"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
+    backup: "yes"
   with_items:
     - src: "atom/config/config.php"
       dest: "{{ atom_path }}/config/config.php"
@@ -90,3 +103,14 @@
     path: "{{ atom_path }}/sf"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
+
+# Export php pool env vars to the login shell, for CLI tools
+#   (such as ARCHIVEMATICA_SS_USER, required in Binder)
+#   To preserve env vars when doing sudo use -E flag
+#   Example: Instead of: sudo -u www-data php symfony cc   
+#                    do: sudo -E -u www-data php symfony cc  
+- name: "Add config to /etc/profile.d"
+  template:
+    src: "etc/profile.d/atom.sh.j2"
+    dest: "/etc/profile.d/atom.sh"
+

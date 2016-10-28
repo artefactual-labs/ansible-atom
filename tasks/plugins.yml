@@ -4,4 +4,9 @@
   command: "php symfony tools:atom-plugins add {{ item }}"
   args:
     chdir: "{{ atom_path }}"
-  with_items: "atom_plugins"
+  with_items: "{{ atom_plugins }}"
+  environment: "{{ atom_pool_php_envs }}"
+
+# TODO: arElasticSearchPlugin scripts:
+#       copy files from  plugins/arElasticSearchPlugin/scripts/
+#                  to /etc/elasticsearch/scripts/ of the elasticsearch server

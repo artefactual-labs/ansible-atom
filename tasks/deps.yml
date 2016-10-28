@@ -1,11 +1,13 @@
 ---
 
-- name: "Add external repository keys"
+# apt-key with https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+# produces "Failed to validate the SSL certificate" error"
+# https://github.com/nodesource/ansible-nodejs-role/issues/33
+- name: "Add Nodesource apt key"
   apt_key:
-    url: "{{ item }}"
-    state: "present"
-  with_items:
-    - "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+    url: https://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0x1655A0AB68576280
+    id: "68576280"
+    state: present
 
 - name: "Add external repositories"
   apt_repository:

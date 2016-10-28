@@ -16,3 +16,9 @@ Restart=no
 
 #Environment=ATOM_FOO_1=BAR
 #Environment=ATOM_FOO_2=BAR
+# AtoM PHP pool vars 
+{% for key, value in atom_pool_php_envs.iteritems() %}
+{% if value != "" -%}
+    Environment={{ key }}="{{ value }}"
+{% endif %}
+{% endfor %}

@@ -21,6 +21,8 @@ atom_devbox: "no"
 
 atom_worker_setup: "yes"
 atom_worker_service_name: "atom-worker"
+# use old config (atom 2.0.x?) for atom worker (atom-worker.conf, app.yml)
+atom_worker_old_config: "no"
 
 #
 # Misc
