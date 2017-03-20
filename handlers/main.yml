@@ -1,24 +1,40 @@
 ---
 
 - name: "Restart php-fpm"
+  debug:
+    msg: "Restart php-fpm conditionally"
+  changed_when: True
+  notify:
+    - "Restart php5-fpm"
+    - "Restart php7.0-fpm"
+
+- name: "Restart php5-fpm"
   service:
     name: "php5-fpm"
     state: "restarted"
   when: "ansible_distribution_version | version_compare('14.04', '==')"
 
-- name: "Restart php-fpm"
+- name: "Restart php7.0-fpm"
   service:
     name: "php7.0-fpm"
     state: "restarted"
   when: "ansible_distribution_version | version_compare('16.04', '==')"
 
 - name: "Reload php-fpm"
+  debug:
+    msg: "Reload php-fpm conditionally"
+  changed_when: True
+  notify:
+    - "Reload php5-fpm"
+    - "Reload php7.0-fpm"
+
+- name: "Reload php5-fpm"
   service:
     name: "php5-fpm"
     state: "reloaded"
   when: "ansible_distribution_version | version_compare('14.04', '==')"
 
-- name: "Reload php-fpm"
+- name: "Reload php7.0-fpm"
   service:
     name: "php7.0-fpm"
     state: "reloaded"
