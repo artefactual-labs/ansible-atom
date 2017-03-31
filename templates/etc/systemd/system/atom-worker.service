@@ -1,0 +1,28 @@
+[Unit]
+Description=AtoM worker
+After=network.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+User={{ atom_user }}
+Group={{ atom_group }}
+WorkingDirectory={{ atom_path }}
+{% if atom_worker_old_config|bool %}
+ExecStart=/bin/php -d memory_limit=-1 -d error_reporting="E_ALL" symfony tools:gearman-worker
+{% else %}
+ExecStart=/bin/php -d memory_limit=-1 -d error_reporting="E_ALL" symfony jobs:worker
+{% endif %}
+ExecStop=/bin/kill -s TERM $MAINPID
+Restart=no
+
+#Environment=ATOM_FOO_1=BAR
+#Environment=ATOM_FOO_2=BAR
+# AtoM PHP pool vars 
+{% for key, value in atom_pool_php_envs.iteritems() %}
+{% if value != "" -%}
+    Environment={{ key }}="{{ value }}"
+{% endif %}
+{% endfor %}

@@ -1,0 +1,37 @@
+---
+
+- name: "Install PHP packages in RH/Centos"
+  yum:
+    pkg: "{{ item }}"
+    state: "latest"
+  with_items:
+    - "php-cli"
+    - "php-fpm"
+    - "php-mysql"
+    - "php-ldap"
+    - "php-pecl-apcu"
+    - "php-pecl-memcache"
+    - "php-pecl-json-post"
+
+# note: the following not available in Centos
+#   - php-curl
+#   - php-xslt
+#   - php-json    (== php-pecl-json-post ??)
+#   - php-memcache  (== php-pecl-memcache ??)
+#   - php-apcu    (== php-pecl-apcu ??)
+
+- name: "Remove default www pool"
+  file:
+    state: "absent"
+    path: "/etc/php-fpm.d/www.conf"
+  notify:
+    - "Restart php-fpm"
+
+
+- name: "Install pool configuration file"
+  template:
+    src: "etc/php-fpm.d/atom.conf"
+    dest: "/etc/php-fpm.d/atom.conf"
+  notify:
+    - "Restart php-fpm"
+

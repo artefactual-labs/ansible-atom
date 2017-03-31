@@ -1,0 +1,26 @@
+---
+
+- name: "Stop worker"
+  service:
+    name: "{{ atom_worker_service_name }}"
+    state: "stopped"
+  ignore_errors: "yes" # It could be not created yet
+
+# putting service config file on /etc/systemd/system
+# (the ubuntu tasks in worker.yml do in /lib/systemd/system, 
+#  tbd: uniformize?)
+- name: "Install atom-worker service (systemd)"
+  template:
+    src: "etc/systemd/system/atom-worker.service"
+    dest: "/etc/systemd/system/atom-worker.service"
+
+- name: "Start and enable atom-worker service"
+  service:
+    name: "{{ atom_worker_service_name }}"
+    state: "restarted"
+    enabled: "yes"
+
+#
+# Apache FOP (including installation of Java)
+#
+# TBD

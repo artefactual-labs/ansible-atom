@@ -7,18 +7,31 @@
   notify:
     - "Restart php5-fpm"
     - "Restart php7.0-fpm"
+    - "Restart php-fpm(RH)"
 
 - name: "Restart php5-fpm"
   service:
     name: "php5-fpm"
     state: "restarted"
-  when: "ansible_distribution_version | version_compare('14.04', '==')"
+  when: 
+    - ansible_distribution == "Ubuntu"
+    - "ansible_distribution_version | version_compare('14.04', '==')"
 
 - name: "Restart php7.0-fpm"
   service:
     name: "php7.0-fpm"
     state: "restarted"
-  when: "ansible_distribution_version | version_compare('16.04', '==')"
+  when: 
+    - ansible_distribution == "Ubuntu"
+    - "ansible_distribution_version | version_compare('16.04', '==')"
+
+- name: "Restart php-fpm(RH)"
+  service:
+    name: "php-fpm"
+    state: "restarted"
+  when: 
+    - ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
+
 
 - name: "Reload php-fpm"
   debug:
@@ -27,18 +40,30 @@
   notify:
     - "Reload php5-fpm"
     - "Reload php7.0-fpm"
+    - "Reload php-fpm(RH)"
 
 - name: "Reload php5-fpm"
   service:
     name: "php5-fpm"
     state: "reloaded"
-  when: "ansible_distribution_version | version_compare('14.04', '==')"
+  when:
+    - ansible_distribution == "Ubuntu"
+    - "ansible_distribution_version | version_compare('14.04', '==')"
 
 - name: "Reload php7.0-fpm"
   service:
     name: "php7.0-fpm"
     state: "reloaded"
-  when: "ansible_distribution_version | version_compare('16.04', '==')"
+  when:
+    - ansible_distribution == "Ubuntu"
+    - "ansible_distribution_version | version_compare('16.04', '==')"
+
+- name: "Reload php-fpm(RH)"
+  service:
+    name: "php-fpm"
+    state: "reloaded"
+  when: 
+    - ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
 
 - name: "Clear sf_cache"
   shell: "php symfony cc"
