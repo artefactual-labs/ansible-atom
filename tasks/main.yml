@@ -1,12 +1,34 @@
 ---
 
 - include: "deps.yml"
+  static: no
   tags:
     - "atom-deps"
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- include: "deps-rh.yml"
+  static: no
+  tags:
+    - "atom-deps"
+  when:
+    - ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
+    
 
 - include: "php.yml"
+  static: no
   tags:
     - "atom-php"
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- include: "php-rh.yml"
+  static: no
+  tags:
+    - "atom-php"
+  when:
+    - ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
+
 
 - include: "basic.yml"
   tags:
@@ -36,9 +58,20 @@
     - "atom-build"
 
 - include: "worker.yml"
-  when: "atom_worker_setup is defined and atom_worker_setup|bool"
+  static: no
   tags:
     - "atom-worker"
+  when: 
+    - atom_worker_setup is defined and atom_worker_setup|bool
+    - ansible_distribution == "Ubuntu"
+
+- include: "worker-rh.yml"
+  static: no
+  tags:
+    - "atom-worker"
+  when: 
+    - atom_worker_setup is defined and atom_worker_setup|bool
+    - ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
 
 - include: "devbox.yml"
   when: "atom_devbox|bool"

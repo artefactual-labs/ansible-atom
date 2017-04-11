@@ -18,11 +18,11 @@
 # can't compile Drmc plugin as user www-data
 # http://stackoverflow.com/questions/22152162/npm-cannot-install-dependencies-attempt-to-unlock-something-which-hasnt-been
 
-- name: "Temporarily change ownership of DRMC plugin directory"
+- name: "Temporarily change permissions of atom directory to all writable to be able to compile"
   file:
-    path: "{{ atom_drmc_path }}"
+    path: "{{ atom_path }}"
     state: "directory"
-    owner: "{{ ansible_ssh_user }}"
+    mode: "o+w"
     recurse: yes
 
 - name: "Install npm local dependencies"
@@ -41,17 +41,20 @@
   when: "atom_drmc is defined and atom_drmc|bool"
   become: "no"
 
+# this seems not to be possible in all installs, ignoring errors
 - name: "Build docs"
   command: "make html"
   args:
     chdir: "{{ atom_drmc_path }}/docs"
   when: "atom_drmc is defined and atom_drmc|bool"
   become: "no"
+  ignore_errors: yes
 
-- name: "Restore ownership of site directory"
+- name: "Restore permissions and fix ownership of AtoM directory"
   file:
-    path: "{{ atom_drmc_path }}"
+    path: "{{ atom_path }}"
     state: "directory"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
+    mode: "o-w"
     recurse: yes

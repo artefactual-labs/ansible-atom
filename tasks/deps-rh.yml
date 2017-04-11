@@ -1,0 +1,48 @@
+---
+
+# nodejs,Imagemagick, poppler, ghostscript is in epel repo (install epel-release)
+# ffmpeg in mux-dextop (install nux-dextop-release)
+
+- name: "Install epel-release metapackages"
+  yum:
+    name: "epel-release"
+    state: "latest"
+
+- name: "Install nux-dextop-release metapackage"
+  yum:
+    name: "https://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm"
+    state: "present"
+
+
+- name: "Install AtoM dependencies"
+  yum:
+    name: "{{ item }}"
+    state: "latest"
+  with_items:
+    - "ImageMagick"       # ↓ AtoM dependencies
+    - "ghostscript"       #
+    - "poppler-utils"     #
+    - "ffmpeg"            #
+    - "git"               # ↓ Build dependencies
+    - "nodejs"            #
+    - "make"              #
+    - "python-pip"        #
+    - "python-setuptools" #
+    - "gcc-c++"           #   Build dep for Binder
+    
+- name: "Install Sphinx"
+  pip:
+    name: "{{ item }}"
+    state: "latest"
+  with_items:
+    - "sphinx"
+    - "sphinxcontrib-httpdomain"
+    - "sphinx_rtd_theme"
+
+- name: "Install npm global dependencies (also required during the build)"
+  npm:
+    name: "{{ item }}"
+    global: "yes"
+  with_items:
+    - "grunt-cli"
+    - "less@<2.0.0"

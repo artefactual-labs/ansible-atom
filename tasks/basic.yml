@@ -2,7 +2,9 @@
 
 # Some issues with git:
 # - git with become_user set to atom_user fails (keys, permissions)
-#   workaround: use the ansible user (become: no) (temporarily change ownership of the dir. to allow this)
+#   workaround: use the ansible user (become: no) (temporarily change permissions of the dir. to allow this)
+#     Note: a previous version of the role changed dir owner to ansible_ssh_user instead of changing perms, 
+#           but broke with ansible 2  (ref  https://github.com/ansible/ansible/issues/13982)
 # - Using depth=1 produces errors when the repo was already cloned on the site directory
 #   workarounds: either rename existing atom_path or do not use depth=1
 
@@ -17,11 +19,11 @@
 - name: "Cleanup cache/ directory"
   command: "rm -rf {{ atom_path }}/cache/*"
 
-- name: "Temporarily change ownership of site directory to be able to clone repo"
+- name: "Temporarily make site directory permission writable by all to be able to clone repo"
   file:
     path: "{{ atom_path }}"
     state: "directory"
-    owner: "{{ ansible_ssh_user }}"
+    mode: "o+w"
     recurse: yes
 
 - name: "Pull new code"
@@ -36,12 +38,13 @@
     - "Reload php-fpm"
   become: "no"
 
-- name: "Restore ownership of site directory"
+- name: "Restore permissions and fix ownership of site directory"
   file:
     path: "{{ atom_path }}"
     state: "directory"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
+    mode: "o-w"
     recurse: yes
 
 - name: "Create log directory"
