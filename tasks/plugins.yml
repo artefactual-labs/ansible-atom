@@ -5,8 +5,11 @@
   args:
     chdir: "{{ atom_path }}"
   with_items: "{{ atom_plugins }}"
-  environment: "{{ atom_pool_php_envs }}"
+  environment:
+     - "{{ atom_pool_php_envs }}"
+     - PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php70/root/bin/"
+
 
 # TODO: arElasticSearchPlugin scripts:
 #       copy files from  plugins/arElasticSearchPlugin/scripts/
-#                  to /etc/elasticsearch/scripts/ of the elasticsearch server
+#       to /etc/elasticsearch/scripts/ of the elasticsearch server

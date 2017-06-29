@@ -45,7 +45,9 @@
   args:
     chdir: "{{ atom_path }}"
   become_user: "{{ atom_user }}"
-  environment: "{{ atom_pool_php_envs }}"
+  environment:
+    - "{{ atom_pool_php_envs }}"
+    - PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php70/root/bin/"
 
 - name: "Restart smbd"
   service:
