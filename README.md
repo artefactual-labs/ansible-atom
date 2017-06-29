@@ -1,6 +1,6 @@
 # ansible-atom
 
-This role helps to install Access to Memory (AtoM) in Ubuntu Linux (trusty and xenial).
+This role helps to install Access to Memory (AtoM) in Linux (trusty, xenial and Centos / RedHat 7).
 
 Please feel free to add support for other platforms, pull requests accepted!
 
