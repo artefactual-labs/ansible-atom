@@ -1,0 +1,77 @@
+---
+
+- name: "Install PHP packages in RH/Centos"
+  yum:
+    name: "{{ item }}"
+    state: "latest"
+  with_items:
+    - "rh-php70-php-cli"        
+    - "rh-php70-php-ldap"
+    - "rh-php70-php-fpm"
+    - "rh-php70-php-mysqlnd"
+    - "rh-php70-php-xml"
+    - "rh-php70-php-opcache"
+    - "rh-php70-php-devel"
+    - "rh-php70-php-pear"
+    - "rh-php70-php-mbstring"
+    - "zlib-devel" # needed for memcached
+    - "unzip"
+  
+- name: "Remove default www pool"
+  file:
+    state: "absent"
+    path: "/etc/opt/rh/rh-php70/php-fpm.d/www.conf"
+  notify:
+    - "Restart php-fpm"
+
+- name: "Install pool configuration file"
+  template:
+    src: "etc/php/7.0/fpm/pool.d/atom.conf"
+    dest: "/etc/opt/rh/rh-php70/php-fpm.d/atom.conf"
+
+- name: "Build apcu extension"
+  command: "/opt/rh/rh-php70/root/bin/pecl install apcu_bc-beta"
+  args:
+    creates: "/opt/rh/rh-php70/root/usr/lib64/php/modules/apcu.so"
+
+- name: "Configure apcu"
+  shell: printf "extension=apcu.so\nextension=apc.so\n" > /etc/opt/rh/rh-php70/php.d/20-apcu_bc.ini
+  args:
+    creates: /etc/opt/rh/rh-php70/php.d/20-apcu_bc.ini
+
+- name: "Download memcached module source"
+  unarchive: 
+    src: "https://github.com/websupport-sk/pecl-memcache/archive/NON_BLOCKING_IO_php7.zip"
+    dest: "/opt/rh/rh-php70/"
+    creates: "/opt/rh/rh-php70/pecl-memcache-NON_BLOCKING_IO_php7"
+    copy: "no"
+    owner: "root"
+    group: "root"  
+
+- name: "Build memcached extension"
+  shell: "phpize && \
+         ./configure --enable-memcache && \
+         make && \
+         cp modules/memcache.so /opt/rh/rh-php70/root/usr/lib64/php/modules/memcache.so"
+  args:
+    chdir: "/opt/rh/rh-php70/pecl-memcache-NON_BLOCKING_IO_php7" 
+    creates: "/opt/rh/rh-php70/root/usr/lib64/php/modules/memcache.so"
+  environment:
+    - PATH: "/opt/rh/rh-php70/root/bin:{{ ansible_env.PATH}}"
+
+- name: "Configure memcache php extension"
+  shell: printf "extension=memcache.so\n" >> /etc/opt/rh/rh-php70/php.d/20-memcache.ini
+  args:
+    creates: /etc/opt/rh/rh-php70/php.d/20-memcache.ini
+
+- name: "Set php.ini memory to 512"
+  lineinfile: 
+    path: /etc/opt/rh/rh-php70/php.ini
+    regexp: '^memory_limit'
+    line: 'memory_limit = 512M'
+
+- name: "Enable rh-php70-php-fpm service"
+  systemd:
+     name: "rh-php70-php-fpm"
+     state: "restarted"
+     enabled: "yes"

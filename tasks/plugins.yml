@@ -5,7 +5,10 @@
   args:
     chdir: "{{ atom_path }}"
   with_items: "{{ atom_plugins }}"
-  environment: "{{ atom_pool_php_envs }}"
+  environment:
+     - "{{ atom_pool_php_envs }}"
+     - PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php70/root/bin/"
+
 
 # copy ES plugins to /etc/elasticsearch (assumes ES running on same server) 
 # (copy manually if ES is on a separate backend server)

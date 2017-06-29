@@ -16,6 +16,8 @@
   command: "php symfony binder:bootstrap"
   args:
     chdir: "{{ atom_path }}"
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php70/root/bin/"
   when: "atom_drmc is defined and atom_drmc|bool"
 
 - name: "Set database settings (only available in DRMC)"
@@ -24,6 +26,8 @@
     chdir: "{{ atom_path }}"
   when: "atom_drmc is defined and atom_drmc|bool and atom_db_settings is defined"
   with_items: "atom_db_settings"
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php70/root/bin/"
 
 - name: "Add extra super users"
   command: "php symfony tools:add-superuser --email='{{ item.email }}' --password='{{ item.password }}' {{ item.username }}"
@@ -31,3 +35,7 @@
     chdir: "{{ atom_path }}"
   when: "atom_extra_superusers is defined"
   with_items: "atom_extra_superusers"
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php70/root/bin/"
+
+

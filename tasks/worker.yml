@@ -10,11 +10,16 @@
   template:
     src: "etc/init/atom-worker.conf"
     dest: "/etc/init/{{ atom_worker_service_name }}.conf"
+  when:
+    - ansible_service_mgr != "systemd"
 
 - name: "Install atom-worker service (systemd)"
   template:
     src: "lib/systemd/system/atom-worker.service"
     dest: "/lib/systemd/system/atom-worker.service"
+  when:
+    - ansible_service_mgr == "systemd"
+
 
 - name: "Start and enable atom-worker service"
   service:
@@ -26,26 +31,40 @@
 # Apache FOP (including installation of Java)
 #
 
-- name: "Install OpenJDK 7"
+- name: "Install OpenJDK 7 (Ubuntu 14.04)"
   apt:
     pkg: "openjdk-7-jre-headless"
     state: "latest"
-  when: "ansible_distribution_version | version_compare('14.04', '<=')"
+  when:
+    - ansible_distribution == "Ubuntu"
+    - ansible_distribution_version | version_compare('14.04', '<=')
   tags:
     - "fop"
 
-- name: "Install OpenJDK 8"
+- name: "Install OpenJDK 8 (Ubuntu 16.04)"
   apt:
     pkg: "openjdk-8-jre-headless"
     state: "latest"
-  when: "ansible_distribution_version | version_compare('14.04', '>')"
+  when:
+    - ansible_distribution == "Ubuntu"
+    - ansible_distribution_version | version_compare('14.04', '>')
+  tags:
+    - "fop"
+ 
+- name: "Install OpenJDK 8 (RedHat/Centos)"
+  yum:
+    name: "java-1.8.0-openjdk-headless"
+    state: "latest"
+  when:
+    - ansible_os_family == "RedHat"
   tags:
     - "fop"
 
 - name: "Use FOP 2.1 in AtoM 2.3 or newer (Ubuntu 16.04)" 
   set_fact:
     fop_version: "2.1"
-  when: "ansible_distribution_version | version_compare('16.04', '==')"
+  when: ( ansible_distribution_version | version_compare('16.04', '==') ) or
+        ( ansible_os_family == "RedHat" )
   tags:
     - "fop"
 

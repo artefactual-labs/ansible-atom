@@ -1,0 +1,84 @@
+---
+
+- name: "Install epel repo"
+  yum: 
+    name: "epel-release"
+    state: "installed"
+  
+# Todo: Add task for rh  
+- name: "Install scl repo"
+  yum: 
+    name: "centos-release-scl"
+    state: "installed"
+  when:
+    - ansible_distribution == "CentOS"
+
+- name: "Install scl repo"
+  command: "yum-config-manager --enable rhel-server-rhscl-7-rpm" 
+  when:
+    - ansible_distribution == "RedHat"
+
+- name: "Add elasticsearch repo"
+  yum_repository:
+    name: "elasticsearch-1.7"
+    description: "Elasticsearch repository for 1.7.x packages"
+    file: elasticsearch_repo
+    gpgkey: "http://packages.elastic.co/GPG-KEY-elasticsearch"
+    gpgcheck: yes
+    baseurl: "http://packages.elastic.co/elasticsearch/1.7/centos"
+    
+- name: "Install serviecs "
+  yum:
+    name: "{{ item }}"
+    state: "installed"
+  with_items:
+    - java-1.8.0-openjdk
+    - gearmand
+    - elasticsearch
+    - memcached
+
+- name: "Install AtoM dependencies"
+  yum:
+    name: "{{ item }}"
+    state: "latest"
+  with_items:
+    - "ImageMagick"       # ↓ AtoM dependencies
+    - "ghostscript"       #
+    - "poppler-utils"     #
+    #- "ffmpeg"            #
+    - "git"               # ↓ Build dependencies
+    - "nodejs"            #
+    - "make"              #
+    - "gcc"              #
+    - "http-parser"              #
+    - "python-pip"        #
+    - "python-setuptools" #
+
+- name: "Install Sphinx"
+  pip:
+    name: "{{ item }}"
+    state: "latest"
+  with_items:
+    - "sphinx"
+    - "sphinxcontrib-httpdomain"
+    - "sphinx_rtd_theme"
+
+- name: "Install npm global dependencies (also required during the build)"
+  npm:
+    name: "{{ item }}"
+    global: "yes"
+  with_items:
+    - "grunt-cli"
+    - "less@<2.0.0"
+   
+- name: "Install and enable services"
+  systemd:
+     name: "{{ item }}"
+     state: "restarted"
+     enabled: "yes"
+  with_items:
+    - "mariadb"
+    - "elasticsearch"
+    - "gearmand"
+    - "nginx"
+    - "memcached"
