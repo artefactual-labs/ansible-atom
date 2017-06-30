@@ -5,15 +5,14 @@
     name: "epel-release"
     state: "installed"
   
-# Todo: Add task for rh  
-- name: "Install scl repo"
+- name: "Install scl repo (CentOS)"
   yum: 
     name: "centos-release-scl"
     state: "installed"
   when:
     - ansible_distribution == "CentOS"
 
-- name: "Install scl repo"
+- name: "Install scl repo (RedHat)"
   command: "yum-config-manager --enable rhel-server-rhscl-7-rpm" 
   when:
     - ansible_distribution == "RedHat"
@@ -26,8 +25,13 @@
     gpgkey: "http://packages.elastic.co/GPG-KEY-elasticsearch"
     gpgcheck: yes
     baseurl: "http://packages.elastic.co/elasticsearch/1.7/centos"
-    
-- name: "Install serviecs "
+
+- name: "Add rpmfusion repo (ffmpeg)"
+  command: 'yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm'
+  args:
+    creates: "/etc/yum.repos.d/rpmfusion-free-updates.repo"
+
+- name: "Install services "
   yum:
     name: "{{ item }}"
     state: "installed"
@@ -45,12 +49,12 @@
     - "ImageMagick"       # ↓ AtoM dependencies
     - "ghostscript"       #
     - "poppler-utils"     #
-    #- "ffmpeg"            #
+    - "ffmpeg"            #
     - "git"               # ↓ Build dependencies
     - "nodejs"            #
     - "make"              #
-    - "gcc"              #
-    - "http-parser"              #
+    - "gcc"               #
+    - "http-parser"       #
     - "python-pip"        #
     - "python-setuptools" #
 
