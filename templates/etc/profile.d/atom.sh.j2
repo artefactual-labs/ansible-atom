@@ -6,3 +6,7 @@
     export {{ key }}="{{ value }}"
 {% endif %}
 {% endfor %}
+
+{% if ansible_os_family == "RedHat" -%}
+     export PATH=/opt/rh/rh-php70/root/bin/:$PATH
+{% endif %}
