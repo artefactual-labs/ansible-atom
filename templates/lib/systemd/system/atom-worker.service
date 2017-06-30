@@ -10,7 +10,11 @@ Type=simple
 User={{ atom_user }}
 Group={{ atom_group }}
 WorkingDirectory={{ atom_path }}
+{% if ansible_os_family == "RedHat" %}
+ExecStart=/opt/rh/rh-php70/root/bin/php -d memory_limit=-1 -d error_reporting="E_ALL" symfony jobs:worker
+{% else %}
 ExecStart=/usr/bin/php7.0 -d memory_limit=-1 -d error_reporting="E_ALL" symfony jobs:worker
+{% endif %}
 ExecStop=/bin/kill -s TERM $MAINPID
 Restart=no
 
