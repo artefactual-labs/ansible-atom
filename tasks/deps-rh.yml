@@ -4,7 +4,14 @@
   yum: 
     name: "epel-release"
     state: "installed"
-  
+
+- name: "Enable epel repo"
+  ini_file:
+    path: /etc/yum.repos.d/epel.repo
+    section: epel
+    option: enabled
+    value: 1
+
 - name: "Install scl repo (CentOS)"
   yum: 
     name: "centos-release-scl"
@@ -17,29 +24,20 @@
   when:
     - ansible_distribution == "RedHat"
 
-- name: "Add elasticsearch repo"
-  yum_repository:
-    name: "elasticsearch-1.7"
-    description: "Elasticsearch repository for 1.7.x packages"
-    file: elasticsearch_repo
-    gpgkey: "http://packages.elastic.co/GPG-KEY-elasticsearch"
-    gpgcheck: yes
-    baseurl: "http://packages.elastic.co/elasticsearch/1.7/centos"
+- name: "Enable epel repo"
+  ini_file:
+    path: /etc/yum.repos.d/redhat.repo
+    section: rhel-server-rhscl-7-rpms
+    option: enabled
+    value: 1
+  when:
+    - ansible_distribution == "RedHat"
+
 
 - name: "Add rpmfusion repo (ffmpeg)"
   command: 'yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm'
   args:
     creates: "/etc/yum.repos.d/rpmfusion-free-updates.repo"
-
-- name: "Install services "
-  yum:
-    name: "{{ item }}"
-    state: "installed"
-  with_items:
-    - java-1.8.0-openjdk
-    - gearmand
-    - elasticsearch
-    - memcached
 
 - name: "Install AtoM dependencies"
   yum:
@@ -74,15 +72,3 @@
   with_items:
     - "grunt-cli"
     - "less@<2.0.0"
-   
-- name: "Install and enable services"
-  systemd:
-     name: "{{ item }}"
-     state: "restarted"
-     enabled: "yes"
-  with_items:
-    - "mariadb"
-    - "elasticsearch"
-    - "gearmand"
-    - "nginx"
-    - "memcached"
