@@ -26,3 +26,8 @@ Restart=no
     Environment={{ key }}="{{ value }}"
 {% endif %}
 {% endfor %}
+
+{% if ansible_os_family == "RedHat" %}
+env[PATH] = /opt/rh/rh-php70/root/bin/:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
+{% endif %}
+
