@@ -114,3 +114,32 @@
     src: "etc/profile.d/atom.sh.j2"
     dest: "/etc/profile.d/atom.sh"
 
+- name: "Selinux: allow httpd to write on atom folder"
+  shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_path }}\(/.*\)? && restorecon -R -v {{ atom_path }}'
+  become: true
+  tags:
+    - selinux
+  when:
+    - ansible_os_family == "RedHat"
+
+
+- name: "Selinux: allow httpd to write on uploads folders"
+  shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_uploads_symlink }}\(/.*\)? && restorecon -R -v {{ atom_uploads_symlink }}'
+  become: true
+  tags:
+    - selinux
+  become: true
+  when:
+    - ansible_os_family == "RedHat"
+    - "atom_uploads_symlink is defined"
+  tags:
+    - selinux
+
+- name: "Selinux: enable httpd_can_network_connect"
+  seboolean:
+    name: httpd_can_network_connect
+    state: yes
+    persistent: yes
+  become: true
+  when:
+    - ansible_os_family == "RedHat"
