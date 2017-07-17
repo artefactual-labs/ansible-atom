@@ -6,3 +6,4 @@
   args:
     chdir: "{{ atom_path }}"
   ignore_errors: "yes" # segfault in php7, not sure yet why!
+  environment: "{{ atom_pool_php_envs }}"

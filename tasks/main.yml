@@ -14,6 +14,7 @@
 
 - include: "flush.yml"
   become_user: "{{ atom_user }}"
+  environment: "{{ atom_pool_php_envs }}"
   when: "atom_flush_data is defined and atom_flush_data|bool"
   tags:
     - "atom-flush"

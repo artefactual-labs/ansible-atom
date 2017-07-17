@@ -20,7 +20,7 @@
 
 - name: "Temporarily change ownership of DRMC plugin directory"
   file:
-    path: "{{ atom_drmc_path }}"
+    path: "{{ atom_path }}"
     state: "directory"
     owner: "{{ ansible_ssh_user }}"
     recurse: yes
@@ -41,16 +41,9 @@
   when: "atom_drmc is defined and atom_drmc|bool"
   become: "no"
 
-- name: "Build docs"
-  command: "make html"
-  args:
-    chdir: "{{ atom_drmc_path }}/docs"
-  when: "atom_drmc is defined and atom_drmc|bool"
-  become: "no"
-
 - name: "Restore ownership of site directory"
   file:
-    path: "{{ atom_drmc_path }}"
+    path: "{{ atom_path }}"
     state: "directory"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
