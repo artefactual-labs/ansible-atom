@@ -1,0 +1,43 @@
+- name: "Install mongodb"
+  apt:
+   pkg: "mongodb"
+   state: "latest"
+  become: "yes"
+
+- name: "Install mock api"
+  shell: "HOME={{ atom_path }} npm install"
+  args:
+    chdir: "{{ atom_path }}/plugins/arDrmcPlugin/frontend/mock_api/"
+  become: yes
+  become_user: www-data
+
+- name: "Stop mock worker"
+  service:
+    name: "drmc-mock"
+    state: "stopped"
+  ignore_errors: "yes" # It could be not created yet
+
+- name: "Install drmc-mock service (upstart)"
+  template:
+    src: "etc/init/drmc-mock.conf"
+    dest: "/etc/init/drmc-mock.conf"
+
+#- name: "Install atom-worker service (systemd)"
+#  template:
+#    src: "lib/systemd/system/atom-worker.service"
+#    dest: "/lib/systemd/system/atom-worker.service"
+
+- name: "Start and enable drmc-mock service"
+  service:
+    name: "drmc-mock"
+    state: "restarted"
+    enabled: "yes"
+  notify: "Restart Elasticsearch"
+
+- name: "Populate data"
+  command: "./populate_sample_data"
+  args:
+    chdir: "/usr/share/nginx/atom/plugins/arDrmcPlugin/frontend/mock_api"
+  become: yes
+
+
