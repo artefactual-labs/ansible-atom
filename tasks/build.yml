@@ -24,13 +24,28 @@
 # can't compile Drmc plugin as user www-data
 # http://stackoverflow.com/questions/22152162/npm-cannot-install-dependencies-attempt-to-unlock-something-which-hasnt-been
 
+- name: "Temporarily change ownership of DRMC plugin directory"
+  file:
+    path: "{{ atom_drmc_path }}"
+    state: "directory"
+    owner: "{{ ansible_ssh_user }}"
+    recurse: yes
+  when:
+    "atom_drmc is defined and atom_drmc|bool"
+
+- name: "Update npm"
+  shell: "source scl_source enable rh-nodejs6 ; npm update"
+  args:
+    chdir: "{{ atom_drmc_path }}"
+  when:
+    "atom_drmc is defined and atom_drmc|bool"
+
 - name: "Install npm local dependencies"
   npm:
     path: "{{ atom_drmc_path }}"
     state: "latest"
   when:
     "atom_drmc is defined and atom_drmc|bool"
-  become: "no"
 
 # using --force option to ignore Error compiling ../../arDominionPlugin/css/main.less
 - name: "Build DRMC"
@@ -38,7 +53,6 @@
   args:
     chdir: "{{ atom_drmc_path }}"
   when: "atom_drmc is defined and atom_drmc|bool"
-  become: "no"
 
 - name: "Restore ownership of site directory"
   file:

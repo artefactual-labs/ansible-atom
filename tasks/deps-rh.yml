@@ -49,10 +49,9 @@
     - "poppler-utils"     #
     - "ffmpeg"            #
     - "git"               # ↓ Build dependencies
-    - "nodejs"            #
+    - "rh-nodejs6"            #
     - "make"              #
     - "gcc"               #
-    - "http-parser"       #
     - "python-pip"        #
     - "python-setuptools" #
 

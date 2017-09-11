@@ -11,11 +11,19 @@ User={{ atom_user }}
 Group={{ atom_group }}
 WorkingDirectory={{ atom_path }}
 {% if ansible_os_family == "RedHat" %}
+{% if atom_environment_type == "binder" %}
+ExecStart=/opt/rh/rh-php70/root/bin/php -d memory_limit=-1 -d error_reporting="E_ALL" symfony tools:gearman-worker
+{% else %}
 ExecStart=/opt/rh/rh-php70/root/bin/php -d memory_limit=-1 -d error_reporting="E_ALL" symfony jobs:worker
+{% endif %}
+{% else %}
+{% if atom_environment_type == "binder" %}
+ExecStart=/usr/bin/php7.0 -d memory_limit=-1 -d error_reporting="E_ALL" symfony tools:gearman-worker
 {% else %}
 ExecStart=/usr/bin/php7.0 -d memory_limit=-1 -d error_reporting="E_ALL" symfony jobs:worker
 {% endif %}
-ExecStop=/bin/kill -s TERM $MAINPID
+{% endif %}
+KillSignal=SIGTERM
 Restart=no
 
 #Environment=ATOM_FOO_1=BAR

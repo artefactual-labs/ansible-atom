@@ -9,4 +9,6 @@
 
 {% if ansible_os_family == "RedHat" -%}
      export PATH=/opt/rh/rh-php70/root/bin/:$PATH
+     source scl_source enable rh-nodejs6
+
 {% endif %}
