@@ -4,7 +4,7 @@ all:
 
   # See http://www.elasticsearch.org/guide/reference/api/bulk.html
   batch_mode: true
-  batch_size: 500
+  batch_size: {{ atom_es_batch_size }}
 
   # Elastica API options
   # Full list of available options:
