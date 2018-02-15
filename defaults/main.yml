@@ -115,7 +115,7 @@ atom_config_db_name: "atom"
 atom_es_host: "127.0.0.1"
 atom_es_port: "9200"
 atom_es_index: "atom"
-
+atom_es_batch_size: "500"
 #
 # php5-fpm pool
 #
@@ -140,6 +140,19 @@ atom_pool_php_upload_max_filesize: "64M"
 atom_pool_php_envs:
   ATOM_DEBUG_IP: "127.0.0.1"
   ATOM_READ_ONLY: "off"
+## For Binder(DRMC), there are some other env vars that should be defined 
+## in atom_pool_php_envs. Example definition in host_vars:
+## atom_pool_php_envs:
+##   ATOM_DEBUG_IP: "127.0.0.1"
+##   ATOM_READ_ONLY: "off"
+##   ARCHIVEMATICA_SS_HOST: "192.168.1.2"
+##   ARCHIVEMATICA_SS_PORT: "8000"
+##   ARCHIVEMATICA_SS_PIPELINE_UUID: "862048df-2923-4256-9f3b-5a757e66a6ca"
+##   ARCHIVEMATICA_SS_USER: "ssuser"
+##   ARCHIVEMATICA_SS_API_KEY: "{{ vault_archivematica_ss_api_key }}"
+##   ATOM_DRMC_LDAP_ADMIN_USERNAME: "foo"
+##   ATOM_DRMC_LDAP_ADMIN_PASSWORD: "{{ vault_atom_drmc_ldap_admin_password }}"
+##   ATOM_DRMC_TMS_URL: "http://yourserver.org/TMSAPI/TmsObjectSvc/TmsObjects.svc" 
 
 #
 # DRMC

@@ -1,4 +1,10 @@
 ---
+- name: "Temporarily change ownership of site directory (to be able to build)"
+  file:
+    path: "{{ atom_path }}"
+    state: "directory"
+    owner: "{{ ansible_ssh_user }}"
+    recurse: yes
 
 #
 # AtoM
@@ -9,7 +15,7 @@
   args:
     chdir: "{{ item.path }}"
   with_items: "{{ atom_themes }}"
-  become_user: "{{ atom_user }}"
+  become: "no"
 
 #
 # DRMC/Binder
@@ -17,13 +23,6 @@
 
 # can't compile Drmc plugin as user www-data
 # http://stackoverflow.com/questions/22152162/npm-cannot-install-dependencies-attempt-to-unlock-something-which-hasnt-been
-
-- name: "Temporarily change ownership of DRMC plugin directory"
-  file:
-    path: "{{ atom_drmc_path }}"
-    state: "directory"
-    owner: "{{ ansible_ssh_user }}"
-    recurse: yes
 
 - name: "Install npm local dependencies"
   npm:
@@ -41,16 +40,9 @@
   when: "atom_drmc is defined and atom_drmc|bool"
   become: "no"
 
-- name: "Build docs"
-  command: "make html"
-  args:
-    chdir: "{{ atom_drmc_path }}/docs"
-  when: "atom_drmc is defined and atom_drmc|bool"
-  become: "no"
-
 - name: "Restore ownership of site directory"
   file:
-    path: "{{ atom_drmc_path }}"
+    path: "{{ atom_path }}"
     state: "directory"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
