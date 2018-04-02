@@ -161,3 +161,4 @@ atom_pool_php_envs:
 atom_drmc: "no"
 atom_drmc_path: "{{ atom_path }}/plugins/arDrmcPlugin/frontend"
 atom_drmc_mock: "no"
+atom_drmc_es_scripts: "no"

@@ -7,12 +7,9 @@
   with_items: "{{ atom_plugins }}"
   environment: "{{ atom_pool_php_envs }}"
 
-# TODO: arElasticSearchPlugin scripts:
-#       copy files from  plugins/arElasticSearchPlugin/scripts/
-#                  to /etc/elasticsearch/scripts/ of the elasticsearch server
 - name: "Copy elasticsearch plugins"
   command: "cp -rf {{ atom_path }}/plugins/arElasticSearchPlugin/scripts /etc/elasticsearch/"
   become: "yes"
   become_user: "root"
-  when: "atom_drmc is defined and atom_drmc|bool"
+  when: "atom_drmc_es_scripts is defined and atom_drmc_es_scripts|bool"
   notify: "Restart Elasticsearch"
