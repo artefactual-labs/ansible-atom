@@ -116,6 +116,7 @@ atom_es_host: "127.0.0.1"
 atom_es_port: "9200"
 atom_es_index: "atom"
 atom_es_batch_size: "500"
+atom_es_fields_limit: "2000"
 atom_es_config_version: "2.4" # Based on the AtoM version (2.1, 2.4 or 2.5)
 
 #
