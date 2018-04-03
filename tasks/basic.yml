@@ -70,7 +70,7 @@
       dest: "{{ atom_path }}/apps/qubit/config/factories.yml"
     - src: "atom/apps/qubit/config/settings.yml"
       dest: "{{ atom_path }}/apps/qubit/config/settings.yml"
-    - src: "atom/apps/qubit/config/search.yml"
+    - src: "atom/apps/qubit/config/{{ atom_es_config_version }}-search.yml"
       dest: "{{ atom_path }}/apps/qubit/config/search.yml"
     - src: "atom/apps/qubit/config/gearman.yml"
       dest: "{{ atom_path }}/apps/qubit/config/gearman.yml"
