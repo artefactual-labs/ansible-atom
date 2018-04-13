@@ -7,6 +7,8 @@
   with_items: "{{ atom_plugins }}"
   environment: "{{ atom_pool_php_envs }}"
 
+# copy ES plugins to /etc/elasticsearch (assumes ES running on same server) 
+# (copy manually if ES is on a separate backend server)
 - name: "Copy elasticsearch plugins"
   command: "cp -rf {{ atom_path }}/plugins/arElasticSearchPlugin/scripts /etc/elasticsearch/"
   become: "yes"

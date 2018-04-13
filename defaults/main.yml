@@ -115,9 +115,19 @@ atom_config_db_name: "atom"
 atom_es_host: "127.0.0.1"
 atom_es_port: "9200"
 atom_es_index: "atom"
+# Search batch size, recommended values:
+#   AtoM: "500"
+#   Binder: "100"
 atom_es_batch_size: "500"
+# Fields limit (new in AtoM 2.5, Binder 0.9), recommended values:
+#   AtoM: "2000"
+#   Binder: "6000"
 atom_es_fields_limit: "2000"
-atom_es_config_version: "2.4" # Based on the AtoM version (2.1, 2.4 or 2.5)
+# Search config file version:
+#   Atom 2.1, Binder 0.8: "2.1"
+#   Atom 2.4: "2.4"
+#   Atom 2.5, Binder 0.9: "2.5"
+atom_es_config_version: "2.4"
 
 #
 # php5-fpm pool
@@ -143,8 +153,8 @@ atom_pool_php_upload_max_filesize: "64M"
 atom_pool_php_envs:
   ATOM_DEBUG_IP: "127.0.0.1"
   ATOM_READ_ONLY: "off"
-## For Binder(DRMC), there are some other env vars that should be defined 
-## in atom_pool_php_envs. Example definition in host_vars:
+## For Binder(DRMC), there are some other env vars required. Example:
+## (re-define atom_pool_php_envs in the playbook or in host_vars)
 ## atom_pool_php_envs:
 ##   ATOM_DEBUG_IP: "127.0.0.1"
 ##   ATOM_READ_ONLY: "off"
@@ -163,5 +173,9 @@ atom_pool_php_envs:
 
 atom_drmc: "no"
 atom_drmc_path: "{{ atom_path }}/plugins/arDrmcPlugin/frontend"
+# Install Mock API
 atom_drmc_mock: "no"
+# Copy ES plugins to /etc/elasticsearch
+#   Binder 0.8: "yes" (assumes ES running on same server)
+#   Binder 0.9: "no"
 atom_drmc_es_scripts: "no"
