@@ -13,13 +13,17 @@
   service:
     name: "php5-fpm"
     state: "restarted"
-  when: "ansible_distribution_version | version_compare('14.04', '==')"
+  when: 
+    - ansible_distribution == "Ubuntu"
+    - "ansible_distribution_version | version_compare('14.04', '==')"
 
 - name: "Restart php7.0-fpm"
   service:
     name: "php7.0-fpm"
     state: "restarted"
-  when: "ansible_distribution_version | version_compare('16.04', '==')"
+  when:
+    - ansible_distribution == "Ubuntu"
+    - "ansible_distribution_version | version_compare('16.04', '==')"
 
 - name: "Restart rh-php70-php-fpm"
   service:
@@ -40,13 +44,17 @@
   service:
     name: "php5-fpm"
     state: "reloaded"
-  when: "ansible_distribution_version | version_compare('14.04', '==')"
+  when: 
+    - ansible_distribution == "Ubuntu"
+    - "ansible_distribution_version | version_compare('14.04', '==')"
 
 - name: "Reload php7.0-fpm"
   service:
     name: "php7.0-fpm"
     state: "reloaded"
-  when: "ansible_distribution_version | version_compare('16.04', '==')"
+  when: 
+    - ansible_distribution == "Ubuntu"
+    - "ansible_distribution_version | version_compare('16.04', '==')"
 
 - name: "Reload rh-php70-php-fpm"
   service:
@@ -72,3 +80,6 @@
   service:
     name: "nmbd"
     state: "restarted"
+
+- name: "Reload systemd daemon"
+  command: "systemctl daemon-reload"

@@ -1,9 +1,15 @@
 ---
+# can't compile Drmc plugin as user www-data
+# http://stackoverflow.com/questions/22152162/npm-cannot-install-dependencies-attempt-to-unlock-something-which-hasnt-been
+#   workaround: use the ansible user (become: no) (temporarily change permissions of the dir. to allow this)
+#     Note: a previous version of the role changed dir owner to ansible_ssh_user instead of changing perms, 
+#           but broke with ansible 2  (ref  https://github.com/ansible/ansible/issues/13982)
+
 - name: "Temporarily change ownership of site directory (to be able to build)"
   file:
     path: "{{ atom_path }}"
     state: "directory"
-    owner: "{{ ansible_ssh_user }}"
+    mode: "o+w"
     recurse: yes
 
 #
@@ -21,43 +27,44 @@
 # DRMC/Binder
 #
 
-# can't compile Drmc plugin as user www-data
-# http://stackoverflow.com/questions/22152162/npm-cannot-install-dependencies-attempt-to-unlock-something-which-hasnt-been
 
-- name: "Temporarily change ownership of DRMC plugin directory"
-  file:
-    path: "{{ atom_drmc_path }}"
-    state: "directory"
-    owner: "{{ ansible_ssh_user }}"
-    recurse: yes
-  when:
-    "atom_drmc is defined and atom_drmc|bool"
+- name: "Binder npm build tasks (CentOS/RedHat)"
+  block:
+    - name: "Install npm local dependencies (SCL)"
+      command: "scl enable rh-nodejs6 'npm update'"
+      args:
+        chdir: "{{ atom_drmc_path }}"
+    # using --force option to ignore Error compiling ../../arDominionPlugin/css/main.less
+    - name: "Build DRMC (SCL)"
+      command: "scl enable rh-nodejs6 'grunt build --force'"
+      args:
+        chdir: "{{ atom_drmc_path }}"
+  when: 
+    - "atom_drmc is defined and atom_drmc|bool"
+    - ansible_os_family == "RedHat"
+  become: "no"
 
-- name: "Update npm"
-  shell: "source scl_source enable rh-nodejs6 ; npm update"
-  args:
-    chdir: "{{ atom_drmc_path }}"
-  when:
-    "atom_drmc is defined and atom_drmc|bool"
+- name: "Binder npm build tasks (Ubuntu)"
+  block:
+    - name: "Install npm local dependencies"
+      npm:
+        path: "{{ atom_drmc_path }}"
+        state: "latest"
+    # using --force option to ignore Error compiling ../../arDominionPlugin/css/main.less
+    - name: "Build DRMC"
+      command: "grunt build --force"
+      args:
+        chdir: "{{ atom_drmc_path }}"
+  when: 
+    - "atom_drmc is defined and atom_drmc|bool"
+    - ansible_distribution == "Ubuntu"
+  become: "no"
 
-- name: "Install npm local dependencies"
-  npm:
-    path: "{{ atom_drmc_path }}"
-    state: "latest"
-  when:
-    "atom_drmc is defined and atom_drmc|bool"
-
-# using --force option to ignore Error compiling ../../arDominionPlugin/css/main.less
-- name: "Build DRMC"
-  command: "grunt build --force"
-  args:
-    chdir: "{{ atom_drmc_path }}"
-  when: "atom_drmc is defined and atom_drmc|bool"
-
-- name: "Restore ownership of site directory"
+- name: "Restore permissions and fix ownership of site directory"
   file:
     path: "{{ atom_path }}"
     state: "directory"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
+    mode: "o-w"
     recurse: yes

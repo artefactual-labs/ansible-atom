@@ -11,13 +11,13 @@ User={{ atom_user }}
 Group={{ atom_group }}
 WorkingDirectory={{ atom_path }}
 {% if ansible_os_family == "RedHat" %}
-{% if atom_environment_type == "binder" %}
+{% if atom_worker_old_config|bool %}
 ExecStart=/opt/rh/rh-php70/root/bin/php -d memory_limit=-1 -d error_reporting="E_ALL" symfony tools:gearman-worker
 {% else %}
 ExecStart=/opt/rh/rh-php70/root/bin/php -d memory_limit=-1 -d error_reporting="E_ALL" symfony jobs:worker
 {% endif %}
 {% else %}
-{% if atom_environment_type == "binder" %}
+{% if atom_worker_old_config|bool %}
 ExecStart=/usr/bin/php7.0 -d memory_limit=-1 -d error_reporting="E_ALL" symfony tools:gearman-worker
 {% else %}
 ExecStart=/usr/bin/php7.0 -d memory_limit=-1 -d error_reporting="E_ALL" symfony jobs:worker
@@ -34,8 +34,4 @@ Restart=no
     Environment={{ key }}="{{ value }}"
 {% endif %}
 {% endfor %}
-
-{% if ansible_os_family == "RedHat" %}
-env[PATH] = /opt/rh/rh-php70/root/bin/:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-{% endif %}
 

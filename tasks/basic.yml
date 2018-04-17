@@ -2,7 +2,9 @@
 
 # Some issues with git:
 # - git with become_user set to atom_user fails (keys, permissions)
-#   workaround: use the ansible user (become: no) (temporarily change ownership of the dir. to allow this)
+#   workaround: use the ansible user (become: no) (temporarily change permissions of the dir. to allow this)
+#     Note: a previous version of the role changed dir owner to ansible_ssh_user instead of changing perms, 
+#           but broke with ansible 2  (ref  https://github.com/ansible/ansible/issues/13982)
 # - Using depth=1 produces errors when the repo was already cloned on the site directory
 #   workarounds: either rename existing atom_path or do not use depth=1
 
@@ -17,11 +19,11 @@
 - name: "Cleanup cache/ directory"
   command: "rm -rf {{ atom_path }}/cache/*"
 
-- name: "Temporarily change ownership of site directory to be able to clone repo"
+- name: "Temporarily change permissions of site directory to be able to clone repo"
   file:
     path: "{{ atom_path }}"
     state: "directory"
-    owner: "{{ ansible_ssh_user }}"
+    mode: "o+w"
     recurse: yes
 
 - name: "Pull new code"
@@ -36,12 +38,13 @@
     - "Reload php-fpm"
   become: "no"
 
-- name: "Restore ownership of site directory"
+- name: "Restore permissions and fix ownership of site directory"
   file:
     path: "{{ atom_path }}"
     state: "directory"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
+    mode: "o-w"
     recurse: yes
 
 - name: "Create log directory"
@@ -114,32 +117,21 @@
     src: "etc/profile.d/atom.sh.j2"
     dest: "/etc/profile.d/atom.sh"
 
-- name: "Selinux: allow httpd to write on atom folder"
-  shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_path }}\(/.*\)? && restorecon -R -v {{ atom_path }}'
-  become: true
-  tags:
-    - selinux
+- name: "SELinux tasks"
+  block: 
+    - name: "Selinux: allow httpd to write on atom folder"
+      shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_path }}\(/.*\)? && restorecon -R -v {{ atom_path }}'
+    - name: "Selinux: allow httpd to write on uploads folders"
+      shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_uploads_symlink }}\(/.*\)? && restorecon -R -v {{ atom_uploads_symlink }}'
+      when:
+        - "atom_uploads_symlink is defined"
+    - name: "Selinux: enable httpd_can_network_connect"
+      seboolean:
+        name: httpd_can_network_connect
+        state: yes
+        persistent: yes
   when:
     - ansible_os_family == "RedHat"
-
-
-- name: "Selinux: allow httpd to write on uploads folders"
-  shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_uploads_symlink }}\(/.*\)? && restorecon -R -v {{ atom_uploads_symlink }}'
-  become: true
+    - ansible_selinux is defined and ansible_selinux != False and ansible_selinux.status == 'enabled'
   tags:
     - selinux
-  become: true
-  when:
-    - ansible_os_family == "RedHat"
-    - "atom_uploads_symlink is defined"
-  tags:
-    - selinux
-
-- name: "Selinux: enable httpd_can_network_connect"
-  seboolean:
-    name: httpd_can_network_connect
-    state: yes
-    persistent: yes
-  become: true
-  when:
-    - ansible_os_family == "RedHat"

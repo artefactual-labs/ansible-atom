@@ -3,12 +3,11 @@
 # AtoM environment variables (required by CLI tools)
 {% for key, value in atom_pool_php_envs.iteritems() %}
 {% if value != "" -%}
-    export {{ key }}="{{ value }}"
+export {{ key }}="{{ value }}"
 {% endif %}
 {% endfor %}
 
 {% if ansible_os_family == "RedHat" -%}
-     export PATH=/opt/rh/rh-php70/root/bin/:$PATH
-     source scl_source enable rh-nodejs6
-
+# enable SCLs for node and php
+source scl_source enable rh-nodejs6 rh-php70
 {% endif %}

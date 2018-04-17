@@ -36,6 +36,7 @@
 
 - include: "plugins.yml"
   become_user: "{{ atom_user }}"
+  environment: "{{ atom_pool_php_envs }}"
   tags:
     - "atom-plugins"
 

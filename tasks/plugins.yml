@@ -1,14 +1,19 @@
 ---
 
+# Note that this file is included with the following in main.yml 
+#  so no need to put in each task: 
+#    become_user: "{{ atom_user }}"
+#    environment: "{{ atom_pool_php_envs }}"
+
+# string to activate scl rh-php70 if required
+- set_fact:
+    php_prep: "{{ 'source scl_source enable rh-php70;' if ansible_os_family == 'RedHat' else '' }}"
+
 - name: "Enable AtoM plug-ins"
-  command: "php symfony tools:atom-plugins add {{ item }}"
+  shell: "{{ php_prep }} php symfony tools:atom-plugins add {{ item }}"
   args:
     chdir: "{{ atom_path }}"
   with_items: "{{ atom_plugins }}"
-  environment:
-     - "{{ atom_pool_php_envs }}"
-     - PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php70/root/bin/"
-
 
 # copy ES plugins to /etc/elasticsearch (assumes ES running on same server) 
 # (copy manually if ES is on a separate backend server)

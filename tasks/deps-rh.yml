@@ -24,7 +24,7 @@
   when:
     - ansible_distribution == "RedHat"
 
-- name: "Enable epel repo"
+- name: "Enable scl repo (RedHat)"
   ini_file:
     path: /etc/yum.repos.d/redhat.repo
     section: rhel-server-rhscl-7-rpms
@@ -33,9 +33,8 @@
   when:
     - ansible_distribution == "RedHat"
 
-
-- name: "Add rpmfusion repo (ffmpeg)"
-  command: 'yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm'
+- name: "Add rpmfusion free repo (for ffmpeg)"
+  command: 'yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm'
   args:
     creates: "/etc/yum.repos.d/rpmfusion-free-updates.repo"
 
@@ -49,7 +48,7 @@
     - "poppler-utils"     #
     - "ffmpeg"            #
     - "git"               # ↓ Build dependencies
-    - "rh-nodejs6"            #
+    - "rh-nodejs6"        #
     - "make"              #
     - "gcc"               #
     - "python-pip"        #
@@ -64,10 +63,6 @@
     - "sphinxcontrib-httpdomain"
     - "sphinx_rtd_theme"
 
-- name: "Install npm global dependencies (also required during the build)"
-  npm:
-    name: "{{ item }}"
-    global: "yes"
-  with_items:
-    - "grunt-cli"
-    - "less@<2.0.0"
+# don't quote the shell command, or it won't work (also need to escape the <)
+- name: "Install npm (SCL) global dependencies (also required during the build)"
+  shell: scl enable rh-nodejs6 'npm install -g grunt-cli less@\<2.0.0'
