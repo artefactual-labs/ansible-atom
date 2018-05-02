@@ -30,7 +30,7 @@
   apt:
     pkg: "openjdk-7-jre-headless"
     state: "latest"
-  when: "ansible_distribution_version | version_compare('14.04', '<=')"
+  when: "ansible_distribution_version is version_compare('14.04', '<=')"
   tags:
     - "fop"
 
@@ -38,21 +38,21 @@
   apt:
     pkg: "openjdk-8-jre-headless"
     state: "latest"
-  when: "ansible_distribution_version | version_compare('14.04', '>')"
+  when: "ansible_distribution_version is version_compare('14.04', '>')"
   tags:
     - "fop"
 
 - name: "Use FOP 2.1 in AtoM 2.3 or newer (Ubuntu 16.04)" 
   set_fact:
     fop_version: "2.1"
-  when: "ansible_distribution_version | version_compare('16.04', '==')"
+  when: "ansible_distribution_version is version_compare('16.04', '==')"
   tags:
     - "fop"
 
 - name: "Use FOP 1.0 in AtoM 2.2 (Ubuntu 14.04)" 
   set_fact:
     fop_version: "1.0"
-  when: "ansible_distribution_version | version_compare('14.04', '==')"
+  when: "ansible_distribution_version is version_compare('14.04', '==')"
   tags:
     - "fop"
 

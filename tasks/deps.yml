@@ -20,7 +20,7 @@
   apt_repository:
     repo: "ppa:archivematica/externals-dev"
     update_cache: "yes"
-  when: "ansible_distribution_version | version_compare('14.04', '<=')"
+  when: "ansible_distribution_version is version_compare('14.04', '<=')"
 
 - name: "Install AtoM dependencies"
   apt:
