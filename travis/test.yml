@@ -1,0 +1,91 @@
+---
+- hosts: all
+
+  pre_tasks:
+    - name: Include vars
+      include_vars: "test_role_vars.yml"
+
+    - name: Ensure dependencies are installed (Debian)
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - "apt-transport-https"
+        - "python-mysqldb"
+        - "gearman-job-server"
+        - "memcached"
+        - "curl"        # for post deploy test
+      when: ansible_os_family == 'Debian'
+
+    - name: "Add trusty repository (to install MYSQL 5.6)"
+      apt_repository:
+        repo: "deb http://archive.ubuntu.com/ubuntu trusty universe"
+        update_cache: yes
+
+    - name: "Install MYSQL 5.6"
+      apt:
+        name: "mysql-server-5.6"
+  
+    - name: "Enable and start mysql,gearman,memcached"   
+      service:
+        name: "{{ item }}"
+        state: "started"
+        enabled: "yes"
+      with_items:
+        - "mysql"
+        - "gearman-job-server"
+        - "memcached"
+      when: ansible_os_family == 'Debian'
+
+    - name: "Ensure anonymous users are not in the database"
+      mysql_user: "name='' host={{ item }} state=absent"
+      with_items:
+        - "{{ ansible_hostname }}"
+        - "localhost"
+      become: yes
+
+    - name: "Create mysql database for AtoM"
+      mysql_db:
+        name: "{{ atom_config_db_name }}"
+        collation: "utf8_unicode_ci"
+        encoding: "utf8"
+        state: "present"
+
+    - name: "Configure mysql database user for AtoM"
+      mysql_user:
+        name: "{{ atom_mysql_user_name }}"
+        password: "{{ atom_mysql_user_pass }}"
+        priv: "{{ atom_mysql_user_priv }}"
+        state: "present"
+        host: "{{ atom_mysql_user_host }}"
+
+    # ES install pre-tasks
+    - name: "ES install tasks"
+      block:
+        - name: "Install java"
+          apt:
+            name: "openjdk-8-jre"
+        - name: "Install ES"
+          apt:
+            deb: "https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.6.deb"
+        - name: "Start and enable ES"
+          service:
+            name: "elasticsearch"
+            state: "started"
+            enabled: "yes"
+
+    # nginx install pre-tasks
+    - name: "Install nginx"
+      apt:
+        name: "nginx"
+    - name: "Copy nginx configuration"
+      copy:
+        src: "nginx-atom.conf"
+        dest: "/etc/nginx/sites-enabled/default"
+    - name: "Reload nginx"
+      service:
+        name: "nginx"
+        state: "restarted"
+
+  roles:
+    - role_under_test
