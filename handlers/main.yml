@@ -56,3 +56,8 @@
   service:
     name: "nmbd"
     state: "restarted"
+
+- name: "Restart atom-worker"
+  service:
+    name: "atom-worker"
+    state: restarted
