@@ -7,7 +7,7 @@ sudo: required
 env:
   - distribution: ubuntu
     version: xenial
-    ansible_extra_vars: "'atom_flush_data=yes atom_populate_index=no'"
+    ansible_extra_vars: "'atom_flush_data=yes atom_populate_index=no test_vars_file=test_vars_ubuntu.yml'"
 #  - distribution: ubuntu
 #    version: trusty
 #  - distribution: centos
@@ -38,8 +38,5 @@ script:
     sudo docker exec "$(cat ${container_id})" curl "http://localhost"
     && (echo 'OK: curl to localhost returned 0' && exit 0)
     || (echo 'Error: curl to localhost returned error' && exit 1)
-
-  # check if the worker is up
-
 
   - 'sudo docker rm -f "$(cat ${container_id})"'
