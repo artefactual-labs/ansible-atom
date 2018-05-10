@@ -10,10 +10,11 @@
     - "memcached"
     - "curl"        # for post deploy test
 
-- name: "Add trusty repository (to install MYSQL 5.6)"
+- name: "Add trusty repository to xenial (to install MYSQL 5.6)"
   apt_repository:
     repo: "deb http://archive.ubuntu.com/ubuntu trusty universe"
     update_cache: yes
+  when: ansible_distribution_release == "xenial"
 
 - name: "Install MYSQL 5.6"
   apt:

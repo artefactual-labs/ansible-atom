@@ -8,8 +8,9 @@ env:
   - distribution: ubuntu
     version: xenial
     ansible_extra_vars: "'atom_flush_data=yes atom_populate_index=no test_vars_file=test_vars_ubuntu.yml'"
-#  - distribution: ubuntu
-#    version: trusty
+  - distribution: ubuntu
+    version: trusty
+    ansible_extra_vars: "'atom_flush_data=yes atom_populate_index=no test_vars_file=test_vars_ubuntu.yml'"
 #  - distribution: centos
 #    version: 7
 
