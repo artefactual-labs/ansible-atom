@@ -120,9 +120,9 @@ atom_es_index: "atom"
 #   Binder: "100"
 atom_es_batch_size: "500"
 # Fields limit (new in AtoM 2.5, Binder 0.9), recommended values:
-#   AtoM: "2000"
+#   AtoM: "3000"
 #   Binder: "6000"
-atom_es_fields_limit: "2000"
+atom_es_fields_limit: "3000"
 # Search config file version:
 #   Atom 2.1, Binder 0.8: "2.1"
 #   Atom 2.4: "2.4"
@@ -165,7 +165,7 @@ atom_pool_php_envs:
 ##   ARCHIVEMATICA_SS_API_KEY: "{{ vault_archivematica_ss_api_key }}"
 ##   ATOM_DRMC_LDAP_ADMIN_USERNAME: "foo"
 ##   ATOM_DRMC_LDAP_ADMIN_PASSWORD: "{{ vault_atom_drmc_ldap_admin_password }}"
-##   ATOM_DRMC_TMS_URL: "http://yourserver.org/TMSAPI/TmsObjectSvc/TmsObjects.svc" 
+##   ATOM_DRMC_TMS_URL: "http://yourserver.org/TMSAPI/TmsObjectSvc/TmsObjects.svc"
 
 #
 # DRMC
