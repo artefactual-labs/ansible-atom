@@ -29,7 +29,7 @@ atom_worker_old_config: "no"
 #
 
 # Populate search index
-atom_populate_index: "yes"
+atom_populate_index: "no"
 
 # Flush database
 atom_flush_data: "no"
