@@ -104,3 +104,17 @@
     state: "link"
   tags:
     - "fop"
+
+- name: "Allow pdfs to be converted by ImageMagick (Ubuntu 14.04)"
+  lineinfile:
+    path: "/etc/ImageMagick/policy.xml"
+    state: "absent"
+    regexp: 'PDF" />$'
+  when: "ansible_distribution_version | version_compare('14.04', '==')"
+
+- name: "Allow pdfs to be converted by ImageMagick (Ubuntu 16.04)"
+  lineinfile:
+    path: "/etc/ImageMagick-6/policy.xml"
+    state: "absent"
+    regexp: 'PDF" />$'
+  when: "ansible_distribution_version | version_compare('16.04', '>=')"
