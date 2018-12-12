@@ -12,6 +12,15 @@
     chdir: "{{ atom_path }}"
   with_items: "{{ atom_plugins }}"
 
+
+- name: "Enable AtoM GDPR privacy page"
+  command: "php symfony tools:run lib/task/tools/addGdprSettings.php"
+  args:
+    chdir: "{{ atom_path }}"
+  environment: "{{ atom_pool_php_envs }}"
+  when: "atom_gdpr_enabled is defined and atom_gdpr_enabled|bool"
+
+
 # copy ES plugins to /etc/elasticsearch (assumes ES running on same server) 
 # (copy manually if ES is on a separate backend server)
 - name: "Copy elasticsearch plugins"
