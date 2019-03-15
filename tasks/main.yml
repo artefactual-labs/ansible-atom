@@ -8,45 +8,45 @@
   tags:
     - "atom-php"
 
-- include: "basic.yml"
-  tags:
-    - "atom-basic"
+#- include: "basic.yml"
+#  tags:
+#    - "atom-basic"
 
-- include: "flush.yml"
-  become_user: "{{ atom_user }}"
-  environment: "{{ atom_pool_php_envs }}"
-  when: "atom_flush_data is defined and atom_flush_data|bool"
-  tags:
-    - "atom-flush"
+#- include: "flush.yml"
+#  become_user: "{{ atom_user }}"
+#  environment: "{{ atom_pool_php_envs }}"
+#  when: "atom_flush_data is defined and atom_flush_data|bool"
+#  tags:
+#    - "atom-flush"
 
-- include: "plugins.yml"
-  become_user: "{{ atom_user }}"
-  tags:
-    - "atom-plugins"
+#- include: "plugins.yml"
+#  become_user: "{{ atom_user }}"
+#  tags:
+#    - "atom-plugins"
 
-- include: "search.yml"
-  become_user: "{{ atom_user }}"
-  when: "atom_populate_index is defined and atom_populate_index|bool"
-  tags:
-    - "atom-search"
+#- include: "search.yml"
+#  become_user: "{{ atom_user }}"
+#  when: "atom_populate_index is defined and atom_populate_index|bool"
+#  tags:
+#    - "atom-search"
 
 # do not build as user www-data due to errors with npm
-- include: "build.yml"
-  when: "atom_build_static_assets is defined and atom_build_static_assets|bool"
-  tags:
-    - "atom-build"
+#- include: "build.yml"
+#  when: "atom_build_static_assets is defined and atom_build_static_assets|bool"
+#  tags:
+#    - "atom-build"
 
-- include: "worker.yml"
-  when: "atom_worker_setup is defined and atom_worker_setup|bool"
-  tags:
-    - "atom-worker"
+#- include: "worker.yml"
+#  when: "atom_worker_setup is defined and atom_worker_setup|bool"
+#  tags:
+#    - "atom-worker"
 
-- include: "drmc-mock.yml"
-  when: "atom_drmc_mock is defined and atom_drmc_mock|bool"
-  tags:
-    - "drmc-mock"
+#- include: "drmc-mock.yml"
+#  when: "atom_drmc_mock is defined and atom_drmc_mock|bool"
+#  tags:
+#    - "drmc-mock"
  
-- include: "devbox.yml"
-  when: "atom_devbox|bool"
-  tags:
-    - "atom-devbox"
+#- include: "devbox.yml"
+#  when: "atom_devbox|bool"
+#  tags:
+#    - "atom-devbox"
