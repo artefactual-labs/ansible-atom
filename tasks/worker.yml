@@ -45,7 +45,7 @@
 - name: "Use FOP 2.1 in AtoM 2.3 or newer (Ubuntu 16.04)" 
   set_fact:
     fop_version: "2.1"
-  when: "ansible_distribution_version | version_compare('16.04', '==')"
+  when: "ansible_distribution_version | version_compare('16.04', '>=')"
   tags:
     - "fop"
 
