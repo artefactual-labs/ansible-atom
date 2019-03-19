@@ -33,7 +33,7 @@
     accept_hostkey: "yes"
   notify:
     - "Clear sf_cache"
-    - "Reload php-fpm"
+    - "Reload PHP service"
   become: "no"
 
 - name: "Restore ownership of site directory"
@@ -76,7 +76,7 @@
       dest: "{{ atom_path }}/apps/qubit/config/gearman.yml"
   notify:
     - "Clear sf_cache"
-    - "Reload php-fpm"
+    - "Reload PHP service"
 
 - name: "Uploads symlink"
   file:
