@@ -1,62 +1,26 @@
 ---
 
-- name: "Restart php-fpm"
-  debug:
-    msg: "Restart php-fpm conditionally"
-  changed_when: True
-  notify:
-    - "Restart php5-fpm"
-    - "Restart php7.0-fpm"
-    - "Restart rh-php70-php-fpm"
-
-- name: "Restart php5-fpm"
+- name: "Restart PHP service"
   service:
-    name: "php5-fpm"
-    state: "restarted"
-  when: 
-    - ansible_distribution == "Ubuntu"
-    - "ansible_distribution_version | version_compare('14.04', '==')"
-
-- name: "Restart php7.0-fpm"
-  service:
-    name: "php7.0-fpm"
+    name: "php{{ php_version }}-fpm"
     state: "restarted"
   when:
     - ansible_distribution == "Ubuntu"
-    - "ansible_distribution_version | version_compare('16.04', '==')"
 
-- name: "Restart rh-php70-php-fpm"
+- name: "Restart PHP service"
   service:
     name: "rh-php70-php-fpm"
     state: "restarted"
   when: ansible_os_family == "RedHat"
 
-- name: "Reload php-fpm"
-  debug:
-    msg: "Reload php-fpm conditionally"
-  changed_when: True
-  notify:
-    - "Reload php5-fpm"
-    - "Reload php7.0-fpm"
-    - "Reload rh-php70-php-fpm"
-
-- name: "Reload php5-fpm"
+- name: "Reload PHP service"
   service:
-    name: "php5-fpm"
+    name: "php{{ php_version }}-fpm"
     state: "reloaded"
   when: 
     - ansible_distribution == "Ubuntu"
-    - "ansible_distribution_version | version_compare('14.04', '==')"
 
-- name: "Reload php7.0-fpm"
-  service:
-    name: "php7.0-fpm"
-    state: "reloaded"
-  when: 
-    - ansible_distribution == "Ubuntu"
-    - "ansible_distribution_version | version_compare('16.04', '==')"
-
-- name: "Reload rh-php70-php-fpm"
+- name: "Reload PHP service"
   service:
     name: "rh-php70-php-fpm"
     state: "reloaded"
