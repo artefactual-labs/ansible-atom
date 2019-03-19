@@ -15,6 +15,7 @@
     update_cache: "yes"
   with_items:
     - "deb https://deb.nodesource.com/node_5.x {{ ansible_distribution_release }} main"
+  when: "ansible_distribution_version | version_compare('16.04', '<=')"
 
 - name: "Add archivematica/externals-dev PPA (ffmpeg in Ubuntu <= 14.04)"
   apt_repository:
