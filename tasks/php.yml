@@ -17,17 +17,33 @@
     force: "yes"
   with_items: "{{ php_packages }}"
 
-- name: "Remove default www pool"
+- name: "Remove default www pool (Ubuntu 14.04)"
   file:
     state: "absent"
-    path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
+    path: "/etc/php{{ php_version }}/fpm/pool.d/www.conf"
+  when: "ansible_distribution_version | version_compare('14.04', '==')"
   notify:
     - "Restart PHP service"
 
-- name: "Install pool configuration file"
+- name: "Remove default www pool (Ubuntu >= 16.04)"
+  file:
+    state: "absent"
+    path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
+  when: "ansible_distribution_version | version_compare('16.04', '>=')"
+  notify:
+    - "Restart PHP service"
+
+- name: "Install pool configuration file (Ubuntu 14.04)"
+  template:
+    src: "etc/php{{ php_version }}/fpm/pool.d/atom.conf"
+    dest: "/etc/php/{{ php_version }}/fpm/pool.d/atom.conf"
+  when: "ansible_distribution_version | version_compare('14.04', '==')"
+
+- name: "Install pool configuration file ( Ubuntu >= 16.04 )"
   template:
     src: "etc/php/{{ php_version }}/fpm/pool.d/atom.conf"
     dest: "/etc/php/{{ php_version }}/fpm/pool.d/atom.conf"
+  when: "ansible_distribution_version | version_compare('16.04', '>=')"
 
 # See https://bugs.launchpad.net/ubuntu/+source/php5/+bug/1272788
 - name: "Fix php5-fpm upstart"
