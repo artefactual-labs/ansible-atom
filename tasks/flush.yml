@@ -7,7 +7,7 @@
 
 # string to activate scl rh-php70 if required
 - set_fact:
-    php_prep: "{{ 'source scl_source enable rh-php70;' if ansible_os_family == 'RedHat' else '' }}"
+    php_prep: "{{ 'source scl_source enable rh-php72;' if ansible_os_family == 'RedHat' else '' }}"
 
 - name: "Purge database"
   shell: "{{ php_prep }} php symfony tools:purge --no-confirmation --email='{{ atom_user_email }}' --username='{{ atom_user_username }}' --password='{{ atom_user_password }}' --title='{{ atom_title }}' --description='{{ atom_description }}' --url='http://undefined'"

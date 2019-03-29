@@ -7,7 +7,7 @@
 
 # string to activate scl rh-php70 if required
 - set_fact:
-    php_prep: "{{ 'source scl_source enable rh-php70;' if ansible_os_family == 'RedHat' else '' }}"
+    php_prep: "{{ 'source scl_source enable rh-php72;' if ansible_os_family == 'RedHat' else '' }}"
 
 - name: "Enable AtoM plug-ins"
   shell: "{{ php_prep }} php symfony tools:atom-plugins add {{ item }}"
