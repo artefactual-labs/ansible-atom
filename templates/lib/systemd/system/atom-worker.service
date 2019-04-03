@@ -12,15 +12,15 @@ Group={{ atom_group }}
 WorkingDirectory={{ atom_path }}
 {% if ansible_os_family == "RedHat" %}
 {% if atom_worker_old_config|bool %}
-ExecStart=/opt/rh/rh-php70/root/bin/php -d memory_limit=-1 -d error_reporting="E_ALL" symfony tools:gearman-worker
+ExecStart=/opt/rh/rh-php{{ php_version }}/root/bin/php -d memory_limit=-1 -d error_reporting="E_ALL" symfony tools:gearman-worker
 {% else %}
-ExecStart=/opt/rh/rh-php70/root/bin/php -d memory_limit=-1 -d error_reporting="E_ALL" symfony jobs:worker
+ExecStart=/opt/rh/rh-php{{ php_version }}/root/bin/php -d memory_limit=-1 -d error_reporting="E_ALL" symfony jobs:worker
 {% endif %}
 {% else %}
 {% if atom_worker_old_config|bool %}
-ExecStart=/usr/bin/php7.0 -d memory_limit=-1 -d error_reporting="E_ALL" symfony tools:gearman-worker
+ExecStart=/usr/bin/php{{ php_version }} -d memory_limit=-1 -d error_reporting="E_ALL" symfony tools:gearman-worker
 {% else %}
-ExecStart=/usr/bin/php7.0 -d memory_limit=-1 -d error_reporting="E_ALL" symfony jobs:worker
+ExecStart=/usr/bin/php{{ php_version }} -d memory_limit=-1 -d error_reporting="E_ALL" symfony jobs:worker
 {% endif %}
 {% endif %}
 KillSignal=SIGTERM
