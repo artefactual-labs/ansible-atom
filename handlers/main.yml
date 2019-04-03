@@ -33,7 +33,7 @@
   become_user: "{{ atom_user }}"
   environment:
     - "{{ atom_pool_php_envs }}"
-    - PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php70/root/bin/"
+    - PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php{{ php_version }}/root/bin/"
 
 - name: "Restart smbd"
   service:

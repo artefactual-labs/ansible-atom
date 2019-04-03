@@ -2,40 +2,39 @@
 # Note that this file is included with the following in main.yml 
 #  so no need to put in each task: 
 #    become_user: "{{ atom_user }}"
-#    environment: "{{ atom_pool_php_envs }}"
+#    environment:
+#      -  "{{ atom_pool_php_envs }}"
+#      - PATH: {{ ansible_env.PATH }}:/opt/rh/rh-php{{ php_version }}/root/bin/
 #    when: "atom_flush_data is defined and atom_flush_data|bool"
 
-# string to activate scl rh-php70 if required
-- set_fact:
-    php_prep: "{{ 'source scl_source enable rh-php72;' if ansible_os_family == 'RedHat' else '' }}"
 
 - name: "Purge database"
-  shell: "{{ php_prep }} php symfony tools:purge --no-confirmation --email='{{ atom_user_email }}' --username='{{ atom_user_username }}' --password='{{ atom_user_password }}' --title='{{ atom_title }}' --description='{{ atom_description }}' --url='http://undefined'"
+  shell: "php symfony tools:purge --no-confirmation --email='{{ atom_user_email }}' --username='{{ atom_user_username }}' --password='{{ atom_user_password }}' --title='{{ atom_title }}' --description='{{ atom_description }}' --url='http://undefined'"
   args:
     chdir: "{{ atom_path }}"
   when: "atom_drmc is undefined or not atom_drmc|bool"
 
 - name: "Purge DRMC database"
-  shell: "{{ php_prep }} php symfony tools:purge --no-confirmation --email='{{ atom_user_email }}' --username='{{ atom_user_username }}' --password='{{ atom_user_password }}' --title='{{ atom_title }}' --description='{{ atom_description }}'"
+  shell: "php symfony tools:purge --no-confirmation --email='{{ atom_user_email }}' --username='{{ atom_user_username }}' --password='{{ atom_user_password }}' --title='{{ atom_title }}' --description='{{ atom_description }}'"
   args:
     chdir: "{{ atom_path }}"
   when: "atom_drmc is defined and atom_drmc|bool"
 
 - name: "Add initial DRMC data"
-  shell: "{{ php_prep }} php symfony binder:bootstrap"
+  shell: "php symfony binder:bootstrap"
   args:
     chdir: "{{ atom_path }}"
   when: "atom_drmc is defined and atom_drmc|bool"
 
 - name: "Set database settings (only available in DRMC)"
-  shell: "{{ php_prep }} php symfony tools:set-db-setting {{ item.k }} {{ item.v }}"
+  shell: "php symfony tools:set-db-setting {{ item.k }} {{ item.v }}"
   args:
     chdir: "{{ atom_path }}"
   when: "atom_drmc is defined and atom_drmc|bool and atom_db_settings is defined"
   with_items: "atom_db_settings"
 
 - name: "Add extra super users"
-  shell: "{{ php_prep }} php symfony tools:add-superuser --email='{{ item.email }}' --password='{{ item.password }}' {{ item.username }}"
+  shell: "php symfony tools:add-superuser --email='{{ item.email }}' --password='{{ item.password }}' {{ item.username }}"
   args:
     chdir: "{{ atom_path }}"
   when: "atom_extra_superusers is defined"

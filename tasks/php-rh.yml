@@ -48,8 +48,6 @@
   args:
     chdir: "/opt/rh/rh-php{{ php_version }}/pecl-memcache-NON_BLOCKING_IO_php7" 
     creates: "/opt/rh/rh-php{{ php_version }}/root/usr/lib64/php/modules/memcache.so"
-  environment:
-    - PATH: "/opt/rh/rh-php{{ php_version }}/root/bin:{{ ansible_env.PATH}}"
 
 - name: "Configure memcache php extension"
   shell: printf "extension=memcache.so\n" >> /etc/opt/rh/rh-php{{ php_version }}/php.d/20-memcache.ini

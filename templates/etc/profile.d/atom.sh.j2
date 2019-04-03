@@ -9,5 +9,5 @@ export {{ key }}="{{ value }}"
 
 {% if ansible_os_family == "RedHat" -%}
 # enable SCLs for node and php
-source scl_source enable rh-nodejs6 rh-php70
+source scl_source enable rh-nodejs6 rh-php{{ php_version }}
 {% endif %}
