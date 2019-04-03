@@ -10,7 +10,8 @@ atom_group: "www-data"
 atom_path: "/usr/share/nginx/atom"
 atom_repository_url: "https://github.com/artefactual/atom.git"
 atom_repository_version: "stable/2.4.x"
-
+atom_install_site: "true"
+atom_install_dependencies: "true"
 # Install some extra packages specific to our official Vagrant-based
 # development box. See `tasks/devbox.yml` for more details.
 atom_devbox: "no"

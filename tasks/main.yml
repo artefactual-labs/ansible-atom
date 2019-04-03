@@ -7,68 +7,74 @@
     - "{{ ansible_distribution }}.yml"
   tags: "always"
 
-- include: "deps.yml"
-  tags:
-    - "atom-deps"
-  when:
-    - ansible_distribution == "Ubuntu"
+- name: "Install AtoM dependencies"
+  block:
+    - include: "deps.yml"
+      tags:
+        - "atom-deps"
+      when:
+        - ansible_distribution == "Ubuntu"
 
-- include: "deps-rh.yml"
-  tags:
-    - "atom-deps"
-  when:
-    - ansible_os_family == "RedHat"
+    - include: "deps-rh.yml"
+      tags:
+        - "atom-deps"
+      when:
+        - ansible_os_family == "RedHat"
 
-- include: "php.yml"
-  tags:
-    - "atom-php"
-  when:
-    - ansible_distribution == "Ubuntu"
+    - include: "php.yml"
+      tags:
+        - "atom-php"
+      when:
+        - ansible_distribution == "Ubuntu"
 
-- include: "php-rh.yml"
-  environment:
-    - PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php{{ php_version }}/root/bin/"
-  tags:
-    - "atom-php"
-  when:
-    - ansible_os_family == "RedHat"
+    - include: "php-rh.yml"
+      environment:
+        - PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php{{ php_version }}/root/bin/"
+      tags:
+        - "atom-php"
+      when:
+        - ansible_os_family == "RedHat"
+  when: atom_install_dependencies|bool == true
+    
+- name: "Install AtoM site"
+  block:
+    - include: "basic.yml"
+      tags:
+        - "atom-basic"
+    - include: "flush.yml"
+      become_user: "{{ atom_user }}"
+      environment:
+        - "{{ atom_pool_php_envs }}"
+        - PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php{{ php_version }}/root/bin/"
+      when: "atom_flush_data is defined and atom_flush_data|bool"
+      tags:
+        - "atom-flush"
 
-- include: "basic.yml"
-  tags:
-    - "atom-basic"
+    - include: "plugins.yml"
+      become_user: "{{ atom_user }}"
+      environment:
+        - "{{ atom_pool_php_envs }}"
+        - PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php{{ php_version }}/root/bin/"
+      tags:
+        - "atom-plugins"
 
-- include: "flush.yml"
-  become_user: "{{ atom_user }}"
-  environment:
-    - "{{ atom_pool_php_envs }}"
-    - PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php{{ php_version }}/root/bin/"
-  when: "atom_flush_data is defined and atom_flush_data|bool"
-  tags:
-    - "atom-flush"
+    - include: "search.yml"
+      become_user: "{{ atom_user }}"
+      when: "atom_populate_index is defined and atom_populate_index|bool"
+      tags:
+        - "atom-search"
+     # do not build as user www-data due to errors with npm
+    - include: "build.yml"
+      when: "atom_build_static_assets is defined and atom_build_static_assets|bool"
+      tags:
+        - "atom-build"
 
-- include: "plugins.yml"
-  become_user: "{{ atom_user }}"
-  environment:
-    - "{{ atom_pool_php_envs }}"
-    - PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php{{ php_version }}/root/bin/"
-  tags:
-    - "atom-plugins"
+    - include: "worker.yml"
+      when: "atom_worker_setup is defined and atom_worker_setup|bool"
+      tags:
+        - "atom-worker"
 
-- include: "search.yml"
-  become_user: "{{ atom_user }}"
-  when: "atom_populate_index is defined and atom_populate_index|bool"
-  tags:
-    - "atom-search"
-# do not build as user www-data due to errors with npm
-- include: "build.yml"
-  when: "atom_build_static_assets is defined and atom_build_static_assets|bool"
-  tags:
-    - "atom-build"
-
-- include: "worker.yml"
-  when: "atom_worker_setup is defined and atom_worker_setup|bool"
-  tags:
-    - "atom-worker"
+  when: atom_install_site|bool == true
 
 - include: "drmc-mock.yml"
   when: "atom_drmc_mock is defined and atom_drmc_mock|bool"
