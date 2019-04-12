@@ -34,6 +34,11 @@
         - "atom-php"
       when:
         - ansible_os_family == "RedHat"
+
+    - include: "fop.yml"
+      tags:
+        - "atom-php"
+
   when: atom_install_dependencies|bool == true
     
 - name: "Install AtoM site"
