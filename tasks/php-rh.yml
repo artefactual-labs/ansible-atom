@@ -17,7 +17,13 @@
     - "rh-php{{ php_version }}-php-pecl-apcu"
     - "zlib-devel" # needed for memcached
     - "unzip"
-  
+
+- name: "Create /usr/bin/php link"
+  file:
+    src: "/opt/rh/rh-php{{ php_version }}/root/usr/bin/php"
+    dest: "/usr/bin/php"
+    state: "link"
+
 - name: "Remove default www pool"
   file:
     state: "absent"
