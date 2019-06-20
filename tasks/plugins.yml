@@ -5,6 +5,12 @@
 #    become_user: "{{ atom_user }}"
 #    environment: "{{ atom_pool_php_envs }}"
 
+- name: "Update database"
+  command: "php symfony tools:upgrade-sql -B"
+  args:
+    chdir: "{{ atom_path }}"
+  when:
+    - "(atom_upgrade_sql is defined and atom_upgrade_sql|bool == true)"
 
 - name: "Enable AtoM plug-ins"
   shell: "php symfony tools:atom-plugins add {{ item }}"
