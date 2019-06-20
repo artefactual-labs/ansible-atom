@@ -50,6 +50,8 @@ atom_themes:
 atom_plugins:
   - "qtSwordPlugin"
 
+atom_gdpr_enabled: "False"
+
 # Default user for tools:purge
 atom_user_email: "demo@example.com"
 atom_user_username: "demo"
