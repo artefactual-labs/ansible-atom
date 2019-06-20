@@ -34,6 +34,13 @@
         - "atom-php"
       when:
         - ansible_os_family == "RedHat"
+
+    - include: "fop.yml"
+      environment:
+        - PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php{{ php_version }}/root/bin/"
+      tags:
+        - "fop"
+
   when: atom_install_dependencies|bool == true
     
 - name: "Install AtoM site"

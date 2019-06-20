@@ -39,6 +39,7 @@
     - "make"              #
     - "python-pip"        #
     - "python-setuptools" #
+    - "openjdk-8-jre-headless" # Needed by FOP
 
 - name: "Install Sphinx"
   pip:

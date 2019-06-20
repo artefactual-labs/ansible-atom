@@ -1,0 +1,55 @@
+---
+
+- name: "Install FOP ( Ubuntu 18.04)"
+  apt:
+    pkg: "fop"
+    state: "latest"
+  when: "ansible_distribution_version | version_compare('18.04', '==')"
+  tags:
+    - "fop"
+
+- name: "Use FOP 2.1 in AtoM 2.3 or newer (Ubuntu 16.04)"
+  set_fact:
+    fop_version: "2.1"
+  tags:
+    - "fop"
+
+- name: "Install Apache FOP: unarchive"
+  unarchive:
+    src: "https://archive.apache.org/dist/xmlgraphics/fop/binaries/fop-{{ fop_version }}-bin.tar.gz"
+    dest: "/usr/share"
+    creates: "/usr/share/fop-{{ fop_version }}"
+    copy: "no"
+    owner: "root"
+    group: "root"
+  when: ( ansible_distribution_version | version_compare('16.04', '==') ) or
+        ( ansible_os_family == "RedHat" )
+  tags:
+    - "fop"
+
+- name: "Install Apache FOP: set up FOP_HOME"
+  lineinfile:
+    dest: "/etc/environment"
+    line: "FOP_HOME=/usr/share/fop-{{ fop_version }}"
+  when: ( ansible_distribution_version | version_compare('16.04', '==') ) or
+        ( ansible_os_family == "RedHat" )
+  tags:
+    - "fop"
+
+- name: "Install Apache FOP: symlink"
+  file:
+    src: "/usr/share/fop-{{ fop_version }}/fop"
+    dest: "/usr/local/bin/fop"
+    state: "link"
+  when: ( ansible_distribution_version | version_compare('16.04', '==') ) or
+        ( ansible_os_family == "RedHat" )
+  tags:
+    - "fop"
+
+- name: "Allow pdfs to be converted by ImageMagick (Ubuntu)"
+  lineinfile:
+    path: "/etc/ImageMagick-6/policy.xml"
+    state: "absent"
+    regexp: 'PDF" />$'
+  when: "ansible_distribution_version | version_compare('16.04', '>=')"
+

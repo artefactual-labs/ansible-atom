@@ -17,6 +17,7 @@
     - "rh-php{{ php_version }}-php-pecl-apcu"
     - "zlib-devel" # needed for memcached
     - "unzip"
+    - "java-1.8.0-openjdk-headless" # needed for fop
 
 - name: "Create /usr/bin/php link"
   file:
