@@ -19,19 +19,10 @@
   when:
     - ansible_distribution == "CentOS"
 
-- name: "Install scl repo (RedHat)"
-  command: "yum-config-manager --enable rhel-server-rhscl-7-rpm" 
-  when:
-    - ansible_distribution == "RedHat"
+# (In addition to CentOS, this role previously had tasks to enable
+# a SCL repo in RedHat, but they were removed because they caused the
+# role to fail)
 
-- name: "Enable scl repo (RedHat)"
-  ini_file:
-    path: /etc/yum.repos.d/redhat.repo
-    section: rhel-server-rhscl-7-rpms
-    option: enabled
-    value: 1
-  when:
-    - ansible_distribution == "RedHat"
 
 - name: "Add rpmfusion free repo (for ffmpeg)"
   command: 'yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm'
