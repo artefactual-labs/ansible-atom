@@ -1,6 +1,10 @@
 [Unit]
 Description=AtoM worker
 After=network.target
+# High interval and low restart limit to increase the possibility
+# of hitting the rate limits in long running recurrent jobs.
+StartLimitIntervalSec=24h
+StartLimitBurst=3
 
 [Install]
 WantedBy=multi-user.target
@@ -24,7 +28,8 @@ ExecStart=/usr/bin/php{{ php_version }} -d memory_limit=-1 -d error_reporting="E
 {% endif %}
 {% endif %}
 KillSignal=SIGTERM
-Restart=no
+Restart=on-failure
+RestartSec=30
 
 #Environment=ATOM_FOO_1=BAR
 #Environment=ATOM_FOO_2=BAR
