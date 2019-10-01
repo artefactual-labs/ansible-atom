@@ -50,6 +50,7 @@
 - name: "Build memcached extension"
   shell: "phpize && \
          ./configure --enable-memcache && \
+         make clean && \
          make && \
          cp modules/memcache.so /opt/rh/rh-php{{ php_version }}/root/usr/lib64/php/modules/memcache.so"
   args:
