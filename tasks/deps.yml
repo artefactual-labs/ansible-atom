@@ -24,7 +24,7 @@
     update_cache: "yes"
   when: "ansible_distribution_version | version_compare('14.04', '<=')"
 
-- name: "Install AtoM dependencies"
+- name: "Install AtoM dependencies (Ubuntu <= Xenial/16.04)"
   apt:
     pkg: "{{ item }}"
     state: "latest"
@@ -35,11 +35,28 @@
     - "ffmpeg"            #
     - "git"               # ↓ Build dependencies
     - "nodejs"            #
+    - "make"              #
+    - "python-pip"        #
+    - "python-setuptools" #
+    - "openjdk-8-jre-headless" # Needed by FOP
+  when: "ansible_distribution_version | version_compare('16.04', '<=')"
+
+- name: "Install AtoM dependencies (Ubuntu >= Bionic/18.04)"
+  apt:
+    pkg: "{{ item }}"
+    state: "latest"
+  with_items:
+    - "imagemagick"       # ↓ AtoM dependencies
+    - "ghostscript"       #
+    - "poppler-utils"     #
+    - "ffmpeg"            #
+    - "git"               # ↓ Build dependencies
     - "npm"               #
     - "make"              #
     - "python-pip"        #
     - "python-setuptools" #
     - "openjdk-8-jre-headless" # Needed by FOP
+  when: "ansible_distribution_version | version_compare('18.04', '>=')"
 
 - name: "Install Sphinx"
   pip:
