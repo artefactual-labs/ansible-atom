@@ -3,7 +3,7 @@
 # Some issues with git:
 # - git with become_user set to atom_user fails (keys, permissions)
 #   workaround: use the ansible user (become: no) (temporarily change permissions of the dir. to allow this)
-#     Note: a previous version of the role changed dir owner to ansible_ssh_user instead of changing perms, 
+#     Note: a previous version of the role changed dir owner to ansible_ssh_user instead of changing perms,
 #           but broke with ansible 2  (ref  https://github.com/ansible/ansible/issues/13982)
 # - Using depth=1 produces errors when the repo was already cloned on the site directory
 #   workarounds: either rename existing atom_path or do not use depth=1
@@ -18,6 +18,12 @@
 
 - name: "Cleanup cache/ directory"
   command: "rm -rf {{ atom_path }}/cache/*"
+
+- name: "Temporarily delete uploads symlink to avoid long waits on recursive chmod"
+  file:
+    state: "absent"
+    path: "{{ atom_path }}/uploads"
+  when: "atom_uploads_symlink is defined"
 
 - name: "Temporarily change permissions of site directory to be able to clone repo"
   file:
@@ -81,24 +87,6 @@
     - "Clear sf_cache"
     - "Reload PHP service"
 
-- name: "Uploads symlink"
-  file:
-    state: "link"
-    src: "{{ atom_uploads_symlink }}"
-    path: "{{ atom_path }}/uploads"
-    force: "yes"
-    owner: "{{ atom_user }}"
-    group: "{{ atom_group }}"
-  when: "atom_uploads_symlink is defined"
-
-- name: "Uploads directory"
-  file:
-    state: "directory"
-    path: "{{ atom_path }}/uploads"
-    owner: "{{ atom_user }}"
-    group: "{{ atom_group }}"
-  when: "atom_uploads_symlink is undefined"
-
 - name: "Install sf symlink"
   file:
     state: "link"
@@ -110,15 +98,37 @@
 # Export php pool env vars to the login shell, for CLI tools
 #   (such as ARCHIVEMATICA_SS_USER, required in Binder)
 #   To preserve env vars when doing sudo use -E flag
-#   Example: Instead of: sudo -u www-data php symfony cc   
-#                    do: sudo -E -u www-data php symfony cc  
+#   Example: Instead of: sudo -u www-data php symfony cc
+#                    do: sudo -E -u www-data php symfony cc
 - name: "Add config to /etc/profile.d"
   template:
     src: "etc/profile.d/atom.sh.j2"
     dest: "/etc/profile.d/atom.sh"
 
+- name: "Check if the composer.lock file exists"
+  stat:
+    path: "{{ atom_path }}/composer.lock"
+  register: composer_lock
+
+- name: "Install Composer dependencies for production"
+  composer:
+    command: install
+    working_dir: "{{ atom_path }}"
+  when:
+    - composer_lock.stat.exists
+    - atom_environment_type != "development"
+
+- name: "Install Composer dependencies for dev"
+  composer:
+    command: install
+    working_dir: "{{ atom_path }}"
+    no_dev: no
+  when:
+    - composer_lock.stat.exists
+    - atom_environment_type == "development"
+
 - name: "SELinux tasks"
-  block: 
+  block:
     - name: "Selinux: allow httpd to write on atom folder"
       shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_path }}\(/.*\)? && restorecon -R -v {{ atom_path }}'
     - name: "Selinux: allow httpd to write on uploads folders"

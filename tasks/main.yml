@@ -42,7 +42,7 @@
         - "fop"
 
   when: atom_install_dependencies|bool == true
-    
+
 - name: "Install AtoM site"
   block:
     - include: "basic.yml"
@@ -81,13 +81,17 @@
       tags:
         - "atom-worker"
 
+    - include: "uploads-dir.yml"
+      tags:
+        - "atom-uploads"
+
   when: atom_install_site|bool == true
 
 - include: "drmc-mock.yml"
   when: "atom_drmc_mock is defined and atom_drmc_mock|bool"
   tags:
     - "drmc-mock"
- 
+
 - include: "devbox.yml"
   when: "atom_devbox|bool"
   tags:
