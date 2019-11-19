@@ -14,7 +14,7 @@
   file:
     state: "absent"
     path: "/etc/php{{ php_version }}/fpm/pool.d/www.conf"
-  when: "ansible_distribution_version | version_compare('14.04', '==')"
+  when: "ansible_distribution_version is version_compare('14.04', '==')"
   notify:
     - "Restart PHP service"
 
@@ -22,7 +22,7 @@
   file:
     state: "absent"
     path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
-  when: "ansible_distribution_version | version_compare('16.04', '>=')"
+  when: "ansible_distribution_version is version_compare('16.04', '>=')"
   notify:
     - "Restart PHP service"
 
@@ -30,17 +30,17 @@
   template:
     src: "etc/php{{ php_version }}/fpm/pool.d/atom.conf"
     dest: "/etc/php/{{ php_version }}/fpm/pool.d/atom.conf"
-  when: "ansible_distribution_version | version_compare('14.04', '==')"
+  when: "ansible_distribution_version is version_compare('14.04', '==')"
 
 - name: "Install pool configuration file ( Ubuntu >= 16.04 )"
   template:
     src: "etc/php/{{ php_version }}/fpm/pool.d/atom.conf"
     dest: "/etc/php/{{ php_version }}/fpm/pool.d/atom.conf"
-  when: "ansible_distribution_version | version_compare('16.04', '>=')"
+  when: "ansible_distribution_version is version_compare('16.04', '>=')"
 
 # See https://bugs.launchpad.net/ubuntu/+source/php5/+bug/1272788
 - name: "Fix php5-fpm upstart"
   lineinfile:
     dest: "/etc/init/php5-fpm.conf"
     line: "reload signal USR2"
-  when: "ansible_distribution_version | version_compare('14.04', '==')"
+  when: "ansible_distribution_version is version_compare('14.04', '==')"

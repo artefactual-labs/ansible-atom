@@ -4,7 +4,7 @@
   apt:
     pkg: "fop"
     state: "latest"
-  when: "ansible_distribution_version | version_compare('18.04', '==')"
+  when: "ansible_distribution_version is version_compare('18.04', '==')"
   tags:
     - "fop"
 
@@ -22,7 +22,7 @@
     copy: "no"
     owner: "root"
     group: "root"
-  when: ( ansible_distribution_version | version_compare('16.04', '==') ) or
+  when: ( ansible_distribution_version is version_compare('16.04', '==') ) or
         ( ansible_os_family == "RedHat" )
   tags:
     - "fop"
@@ -31,7 +31,7 @@
   lineinfile:
     dest: "/etc/environment"
     line: "FOP_HOME=/usr/share/fop-{{ fop_version }}"
-  when: ( ansible_distribution_version | version_compare('16.04', '==') ) or
+  when: ( ansible_distribution_version is version_compare('16.04', '==') ) or
         ( ansible_os_family == "RedHat" )
   tags:
     - "fop"
@@ -41,7 +41,7 @@
     src: "/usr/share/fop-{{ fop_version }}/fop"
     dest: "/usr/local/bin/fop"
     state: "link"
-  when: ( ansible_distribution_version | version_compare('16.04', '==') ) or
+  when: ( ansible_distribution_version is version_compare('16.04', '==') ) or
         ( ansible_os_family == "RedHat" )
   tags:
     - "fop"
@@ -51,5 +51,5 @@
     path: "/etc/ImageMagick-6/policy.xml"
     state: "absent"
     regexp: 'PDF" />$'
-  when: "ansible_distribution_version | version_compare('16.04', '>=')"
+  when: "ansible_distribution_version is version_compare('16.04', '>=')"
 

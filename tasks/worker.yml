@@ -41,7 +41,7 @@
     state: "latest"
   when:
     - ansible_distribution == "Ubuntu"
-    - ansible_distribution_version | version_compare('14.04', '<=')
+    - ansible_distribution_version is version_compare('14.04', '<=')
   tags:
     - "fop"
 
@@ -51,10 +51,10 @@
     state: "latest"
   when:
     - ansible_distribution == "Ubuntu"
-    - ansible_distribution_version | version_compare('14.04', '>')
+    - ansible_distribution_version is version_compare('14.04', '>')
   tags:
     - "fop"
- 
+
 - name: "Install OpenJDK 8 (RedHat/Centos)"
   yum:
     name: "java-1.8.0-openjdk-headless"
@@ -64,18 +64,18 @@
   tags:
     - "fop"
 
-- name: "Use FOP 2.1 in AtoM 2.3 or newer (Ubuntu 16.04)" 
+- name: "Use FOP 2.1 in AtoM 2.3 or newer (Ubuntu 16.04)"
   set_fact:
     fop_version: "2.1"
-  when: ( ansible_distribution_version | version_compare('16.04', '>=') ) or
+  when: ( ansible_distribution_version is version_compare('16.04', '>=') ) or
         ( ansible_os_family == "RedHat" )
   tags:
     - "fop"
 
-- name: "Use FOP 1.0 in AtoM 2.2 (Ubuntu 14.04)" 
+- name: "Use FOP 1.0 in AtoM 2.2 (Ubuntu 14.04)"
   set_fact:
     fop_version: "1.0"
-  when: "ansible_distribution_version | version_compare('14.04', '==')"
+  when: "ansible_distribution_version is version_compare('14.04', '==')"
   tags:
     - "fop"
 
