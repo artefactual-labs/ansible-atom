@@ -10,7 +10,7 @@ return array (
       'class' => 'sfPropelDatabase',
       'param' =>
       array (
-        'encoding' => 'utf8',
+        'encoding' => '{{ atom_config_db_encoding }}',
         'persistent' => true,
         'pooling' => true,
         'dsn' => 'mysql:dbname={{ atom_config_db_name }};host={{ atom_config_db_hostname }};port={{ atom_config_db_port }}',

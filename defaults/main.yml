@@ -111,6 +111,7 @@ atom_config_db_password: "root"
 atom_config_db_hostname: "localhost"
 atom_config_db_port: "3306"
 atom_config_db_name: "atom"
+atom_config_db_encoding: "utf8"
 
 #
 # search.yml
