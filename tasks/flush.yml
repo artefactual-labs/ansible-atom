@@ -31,11 +31,11 @@
   args:
     chdir: "{{ atom_path }}"
   when: "atom_drmc is defined and atom_drmc|bool and atom_db_settings is defined"
-  with_items: "atom_db_settings"
+  with_items: "{{ atom_db_settings }}"
 
 - name: "Add extra super users"
   shell: "php symfony tools:add-superuser --email='{{ item.email }}' --password='{{ item.password }}' {{ item.username }}"
   args:
     chdir: "{{ atom_path }}"
   when: "atom_extra_superusers is defined"
-  with_items: "atom_extra_superusers"
+  with_items: "{{ atom_extra_superusers }}"
