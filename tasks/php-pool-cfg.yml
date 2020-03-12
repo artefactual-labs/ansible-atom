@@ -1,0 +1,55 @@
+---
+
+# we are using the basename of the atom_path to name the pool
+# if atom_path is /usr/share/nginx/atom the pool name is atom, pool config file: atom.conf
+#                 /usr/share/nginx/atom-pub              atom-pub                atom-pub.conf
+- name: "Obtain site name for the php-fpm pool"
+  set_fact:
+    atom_pool_name: "{{ atom_path | basename }}"
+
+- name: "Configure php-fpm pool (Ubuntu 14.04)"
+  block:
+    - name: "Remove default www pool (Ubuntu 14.04)"
+      file:
+        state: "absent"
+        path: "/etc/php{{ php_version }}/fpm/pool.d/www.conf"
+    - name: "Install pool configuration file (Ubuntu 14.04)"
+      template:
+        src: "etc/php{{ php_version }}/fpm/pool.d/atom.conf"
+        dest: "/etc/php/{{ php_version }}/fpm/pool.d/{{ atom_pool_name }}.conf"
+      notify:
+        - "Restart PHP service"
+  when: 
+    - ansible_distribution == "Ubuntu"
+    - "ansible_distribution_version is version_compare('14.04', '==')"
+
+- name: "Configure php-fpm pool (Ubuntu >= 16.04)"
+  block:
+    - name: "Remove default www pool (Ubuntu >= 16.04)"
+      file:
+        state: "absent"
+        path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
+    - name: "Install pool configuration file ( Ubuntu >= 16.04 )"
+      template:
+        src: "etc/php/{{ php_version }}/fpm/pool.d/atom.conf"
+        dest: "/etc/php/{{ php_version }}/fpm/pool.d/{{ atom_pool_name }}.conf"
+      notify:
+        - "Restart PHP service"
+  when: 
+    - "ansible_distribution_version is version_compare('16.04', '>=')"
+    - ansible_distribution == "Ubuntu"
+
+- name: "Configure php-fpm pool (RH)"
+  block:
+    - name: "Remove default www pool"
+      file:
+        state: "absent"
+        path: "/etc/opt/rh/rh-php{{ php_version }}/php-fpm.d/www.conf"
+    - name: "Install pool configuration file"
+      template:
+        src: "etc/php/7.0/fpm/pool.d/atom.conf"
+        dest: "/etc/opt/rh/rh-php{{ php_version }}/php-fpm.d/{{ atom_pool_name }}.conf"
+      notify:
+        - "Restart PHP service"
+  when:
+    - ansible_os_family == "RedHat"

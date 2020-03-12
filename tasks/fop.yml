@@ -1,50 +1,54 @@
 ---
 
-- name: "Install FOP ( Ubuntu 18.04)"
+- name: "Install FOP package (Ubuntu 18.04)"
   apt:
     pkg: "fop"
     state: "latest"
   when: "ansible_distribution_version is version_compare('18.04', '==')"
   tags:
-    - "fop"
+    - "atom-fop"
 
-- name: "Use FOP 2.1 in AtoM 2.3 or newer (Ubuntu 16.04)"
+- name: "Use FOP 2.1 in AtoM 2.3 or newer (Ubuntu 16.04 or RH)"
   set_fact:
     fop_version: "2.1"
-  tags:
-    - "fop"
-
-- name: "Install Apache FOP: unarchive"
-  unarchive:
-    src: "https://archive.apache.org/dist/xmlgraphics/fop/binaries/fop-{{ fop_version }}-bin.tar.gz"
-    dest: "/usr/share"
-    creates: "/usr/share/fop-{{ fop_version }}"
-    copy: "no"
-    owner: "root"
-    group: "root"
   when: ( ansible_distribution_version is version_compare('16.04', '==') ) or
-        ( ansible_os_family == "RedHat" )
+    ( ansible_os_family == "RedHat" )
   tags:
-    - "fop"
+    - "atom-fop"
 
-- name: "Install Apache FOP: set up FOP_HOME"
-  lineinfile:
-    dest: "/etc/environment"
-    line: "FOP_HOME=/usr/share/fop-{{ fop_version }}"
-  when: ( ansible_distribution_version is version_compare('16.04', '==') ) or
-        ( ansible_os_family == "RedHat" )
+- name: "Use FOP 1.0 in AtoM 2.2 (Ubuntu 14.04)"
+  set_fact:
+    fop_version: "1.0"
+  when: "ansible_distribution_version is version_compare('14.04', '==')"
   tags:
-    - "fop"
+    - "atom-fop"
 
-- name: "Install Apache FOP: symlink"
-  file:
-    src: "/usr/share/fop-{{ fop_version }}/fop"
-    dest: "/usr/local/bin/fop"
-    state: "link"
-  when: ( ansible_distribution_version is version_compare('16.04', '==') ) or
-        ( ansible_os_family == "RedHat" )
+- name: "Install FOP from source (ubuntu <=16.04 or RH)"
+  block:
+    - name: "Install Apache FOP: unarchive (ubuntu <=16.04 or RH)"
+      unarchive:
+        src: "https://archive.apache.org/dist/xmlgraphics/fop/binaries/fop-{{ fop_version }}-bin.tar.gz"
+        dest: "/usr/share"
+        creates: "/usr/share/fop-{{ fop_version }}"
+        copy: "no"
+        owner: "root"
+        group: "root"
+
+    - name: "Install Apache FOP: set up FOP_HOME (ubuntu <=16.04 or RH)"
+      lineinfile:
+        dest: "/etc/environment"
+        line: "FOP_HOME=/usr/share/fop-{{ fop_version }}"
+
+    - name: "Install Apache FOP: symlink (ubuntu <=16.04 or RH)"
+      file:
+        src: "/usr/share/fop-{{ fop_version }}/fop"
+        dest: "/usr/local/bin/fop"
+        state: "link"
+  when: ( ansible_distribution_version is version_compare('16.04', '<=') ) or
+          ( ansible_os_family == "RedHat" )
   tags:
-    - "fop"
+      - "atom-fop"
+
 
 - name: "Allow pdfs to be converted by ImageMagick (Ubuntu)"
   lineinfile:

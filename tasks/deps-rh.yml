@@ -44,6 +44,7 @@
     - "gcc"               #
     - "python-pip"        #
     - "python-setuptools" #
+    - "java-1.8.0-openjdk-headless" # needed by FOP
 
 - name: "Upgrade pip"
   pip:

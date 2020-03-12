@@ -9,7 +9,7 @@
 
 - name: "Restart PHP service"
   service:
-    name: "rh-php70-php-fpm"
+    name: "rh-php{{ php_version }}-php-fpm"
     state: "restarted"
   when: ansible_os_family == "RedHat"
 
@@ -22,7 +22,7 @@
 
 - name: "Reload PHP service"
   service:
-    name: "rh-php70-php-fpm"
+    name: "rh-php{{ php_version }}-php-fpm"
     state: "reloaded"
   when: ansible_os_family == "RedHat"
 

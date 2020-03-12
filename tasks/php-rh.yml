@@ -25,19 +25,6 @@
     dest: "/usr/bin/php"
     state: "link"
 
-- name: "Remove default www pool"
-  file:
-    state: "absent"
-    path: "/etc/opt/rh/rh-php{{ php_version }}/php-fpm.d/www.conf"
-  notify:
-    - "Restart PHP service"
-
-- name: "Install pool configuration file"
-  template:
-    src: "etc/php/7.0/fpm/pool.d/atom.conf"
-    dest: "/etc/opt/rh/rh-php{{ php_version }}/php-fpm.d/atom.conf"
-
-
 - name: "Download memcached module source"
   unarchive: 
     src: "https://github.com/websupport-sk/pecl-memcache/archive/NON_BLOCKING_IO_php7.zip"

@@ -21,7 +21,8 @@ atom_devbox: "no"
 #
 
 atom_worker_setup: "yes"
-atom_worker_service_name: "atom-worker"
+# atom worker service name: atom site dir name with "-worker" suffix
+atom_worker_service_name: "{{ atom_path | basename }}-worker"
 # use old config (atom 2.0.x) for atom worker (atom-worker.conf, app.yml)
 # for binder set to "yes"
 atom_worker_old_config: "no"
@@ -158,7 +159,7 @@ atom_es_fields_limit: "3000"
 
 atom_pool_user: "{{ atom_user }}"
 atom_pool_group: "{{ atom_group }}"
-atom_pool_listen: "/var/run/php-fpm.atom.sock"
+atom_pool_listen: "/var/run/php-fpm.{{ atom_path | basename }}.sock"
 atom_pool_listen_allowed_clients: ""
 atom_pool_listen_owner: www-data  # Nginx will use this if it's installed in the same machine
 atom_pool_listen_group: www-data  # Nginx will use this if it's installed in the same machine

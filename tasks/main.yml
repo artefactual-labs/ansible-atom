@@ -45,6 +45,10 @@
 
 - name: "Install AtoM site"
   block:
+    - include: "php-pool-cfg.yml"
+      tags:
+        - "atom-php-pool-cfg"
+
     - include: "basic.yml"
       tags:
         - "atom-basic"
@@ -84,8 +88,9 @@
     - include: "uploads-dir.yml"
       tags:
         - "atom-uploads"
-
   when: atom_install_site|bool == true
+  tags:
+    - "atom-site"
 
 - include: "drmc-mock.yml"
   when: "atom_drmc_mock is defined and atom_drmc_mock|bool"
