@@ -7,7 +7,7 @@ all:
   cache_engine: {{ atom_app_cache_engine }}
 {% if atom_app_cache_engine_options is defined %}
   cache_engine_param:
-{% for key, value in atom_app_cache_engine_options.iteritems() %}
+{% for key, value in atom_app_cache_engine_options.items() %}
     {{ key }}: {{ value }}
 {% endfor %}
 {% endif %}

@@ -1,7 +1,7 @@
 #!/bin/bash
 # this file managed by ansible
 # AtoM environment variables (required by CLI tools)
-{% for key, value in atom_pool_php_envs.iteritems() %}
+{% for key, value in atom_pool_php_envs.items() %}
 {% if value != "" -%}
 export {{ key }}="{{ value }}"
 {% endif %}
