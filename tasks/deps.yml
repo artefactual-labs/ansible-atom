@@ -51,7 +51,7 @@
     - "poppler-utils"     #
     - "ffmpeg"            #
     - "git"               # ↓ Build dependencies
-    - "npm"               #
+    #- "npm"              # Not needed for Binder, as Binder needs node 6
     - "make"              #
     - "python-pip"        #
     - "python-setuptools" #
