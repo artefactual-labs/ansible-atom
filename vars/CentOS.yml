@@ -1,1 +1,1 @@
-php_version: "72" # Without dots. 70 and 71 are also available
+php_version: "{{ atom_php_version|default('72') }}" # Without dots. 70 and 71 are also available

@@ -1,4 +1,4 @@
-php_version: 7.2
+php_version: "{{ atom_php_version|default('7.2') }}"
 php_packages:
   - "php7.2-cli"
   - "php7.2-curl"

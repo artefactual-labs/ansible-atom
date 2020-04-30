@@ -1,4 +1,4 @@
-php_version: 7.0
+php_version: "{{ atom_php_version|default('7.0') }}"
 php_packages:
   - "php7.0-cli"
   - "php7.0-curl"

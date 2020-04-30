@@ -17,6 +17,14 @@ atom_install_dependencies: "true"
 atom_devbox: "no"
 
 #
+# Choose php version to use
+#   - For RH/Centos 70,71,72 and 73 are available. Default is 72
+#   - Ubuntu 14.04 uses php 5, 16.04 7.0 and 18.04 7.2
+#
+# atom_php_version: 72
+#
+
+#
 # Worker
 #
 
