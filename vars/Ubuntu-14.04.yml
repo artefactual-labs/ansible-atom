@@ -1,4 +1,4 @@
-php_version: 5
+php_version: "{{ atom_php_version| default('5') }}"
 php_packages:
   - "php5-cli"
   - "php5-fpm"
