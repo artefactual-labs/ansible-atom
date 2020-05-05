@@ -1,5 +1,11 @@
 ---
 
+- name: "Add PHP repository"
+  apt_repository:
+    repo: "ppa:ondrej/php"
+    state: "present"
+    update_cache: "yes"
+
 - name: "Install PHP packages"
   become: "true"
   apt:
@@ -9,6 +15,11 @@
     cache_valid_time: "3600"
     force: "yes"
   with_items: "{{ php_packages }}"
+
+- name: Correct default PHP version
+  alternatives:
+    name: php
+    path: /usr/bin/php5.6
 
 - name: "Remove default www pool (Ubuntu 14.04)"
   file:
