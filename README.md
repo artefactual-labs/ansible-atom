@@ -98,4 +98,6 @@ done elsewhere)
 
 The `-t atom-site` option makes ansible execute only the tasks tagged
 as `atom-site` in the role (i.e., tasks required to deploy a site)
-and skip the tasks that are required only once per host deploy.
+and skip the tasks that are required only once per host deploy. The
+database and user for the new site will also need to be configured in
+the database server if not done already.
