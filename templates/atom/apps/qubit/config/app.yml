@@ -33,3 +33,6 @@ all:
   # Gearman job server
   gearman_job_server: {{ atom_app_gearman_job_server }}
 {% endif %}
+
+  # Password hash algorithm
+  password_hash_algorithm: {{ password_hash_algorithm|default('PASSWORD_ARGON21') }}
