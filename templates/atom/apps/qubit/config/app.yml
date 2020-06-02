@@ -34,5 +34,7 @@ all:
   gearman_job_server: {{ atom_app_gearman_job_server }}
 {% endif %}
 
+{% if atom_app_password_hash_algorithm is defined %}
   # Password hash algorithm
-  password_hash_algorithm: {{ password_hash_algorithm|default('PASSWORD_ARGON21') }}
+  password_hash_algorithm: {{ atom_app_password_hash_algorithm }}
+{% endif %}
