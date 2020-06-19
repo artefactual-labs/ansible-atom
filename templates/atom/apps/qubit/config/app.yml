@@ -35,4 +35,4 @@ all:
 {% endif %}
 
   # Password hash algorithm
-  password_hash_algorithm: {{ password_hash_algorithm|default('PASSWORD_ARGON21') }}
+  password_hash_algorithm: {{ password_hash_algorithm|default('PASSWORD_ARGON2I') }}
