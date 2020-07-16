@@ -81,7 +81,7 @@
   git:
     update: "yes"
     repo: "https://github.com/artefactual/atom-docs.git"
-    version: "2.4"
+    version: "2.7"
     dest: "{{ ansible_env.HOME }}/atom-docs"
     accept_hostkey: "yes"
   become_user: "vagrant"
