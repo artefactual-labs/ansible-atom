@@ -25,6 +25,12 @@
     path: "{{ atom_path }}/{{ atom_extra_path }}/uploads"
   when: "atom_uploads_symlink is defined"
 
+- name: "Temporarily delete downloads symlink to avoid long waits on recursive chmod"
+  file:
+    state: "absent"
+    path: "{{ atom_path }}/{{ atom_extra_path }}/downloads"
+  when: "atom_downloads_symlink is defined"
+
 - name: "Temporarily change permissions of site directory to be able to clone repo"
   file:
     path: "{{ atom_path }}/{{ atom_extra_path }}"
@@ -135,6 +141,10 @@
       shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_uploads_symlink }}\(/.*\)? && restorecon -R -v {{ atom_uploads_symlink }}'
       when:
         - "atom_uploads_symlink is defined"
+    - name: "Selinux: allow httpd to write on downloads folders"
+      shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_downloads_symlink }}\(/.*\)? && restorecon -R -v {{ atom_downloads_symlink }}'
+      when:
+        - "atom_downloads_symlink is defined"
     - name: "Selinux: enable httpd_can_network_connect"
       seboolean:
         name: httpd_can_network_connect
