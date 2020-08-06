@@ -12,6 +12,20 @@
     - "atom_revision_directory_latest_symlink_dir is defined"
     - "atom_revision_directory|bool"
 
+# AtoM private symlink for digital object access control
+- name: "Create private symlink"
+  file:
+    state: "link"
+    src: "{{ atom_path }}/{{ atom_revision_directory_latest_symlink_dir }}"
+    dest: "{{ atom_path }}/private"
+    force: "yes"
+    owner: "{{ atom_user }}"
+    group: "{{ atom_group }}"
+  when:
+    - "atom_revision_directory_latest_symlink_dir is defined"
+    - "atom_revision_directory|bool"
+    - "atom_private_symlink|bool"
+
 - name: "Ensure uploads symlink directory exists"
   file:
     state: "directory"

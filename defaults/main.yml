@@ -18,6 +18,9 @@ atom_devbox: "no"
 # Use a different AtoM directory for each revision
 atom_revision_directory: "no"
 atom_revision_directory_latest_symlink_dir: "src"
+# Create a symlink from atom_path/private to
+# atom_path/atom_revision_directory_latest_symlink_dir
+atom_private_symlink: "no"
 
 #
 # Choose php version to use
