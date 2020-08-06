@@ -16,23 +16,51 @@
 # AtoM
 #
 
+- name: "Find themes"
+  shell: "find {{ atom_path }}/{{ atom_extra_path }}/plugins -name Makefile | sed -r 's/Makefile//g'"
+  register: theme_makefiles
+  when: atom_compile_all_themes|bool
+
 - name: "Build AtoM themes (Ubuntu)"
-  command: "{{ item.build_cmd }}"
-  args:
-    chdir: "{{ item.path }}"
-  with_items: "{{ atom_themes }}"
-  become: "no"
-  when:
-    - ansible_os_family == "Debian"
+  block:
+    - name: "Build all AtoM themes (Ubuntu)"
+      command: "make"
+      args:
+        chdir: "{{ item }}"
+      with_items: "{{ theme_makefiles.stdout_lines }}"
+      become: "no"
+      when:
+        - atom_compile_all_themes|bool
+    - name: "Build selected AtoM themes (Ubuntu)"
+      command: "{{ item.build_cmd }}"
+      args:
+        chdir: "{{ item.path }}"
+      with_items: "{{ atom_themes }}"
+      become: "no"
+      when:
+        - not atom_compile_all_themes|bool # Don't compile themes when they are alreay compiled
+  when: ansible_os_family == "Debian"
 
 - name: "Build AtoM themes (CentOS/RH)"
-  command: "scl enable rh-nodejs6 {{ item.build_cmd }}"
-  args:
-    chdir: "{{ item.path }}"
-  with_items: "{{ atom_themes }}"
-  become: "no"
-  when:
-    - ansible_os_family == "RedHat"
+  block:
+    - name: "Build all AtoM themes (CentOS/RH)"
+      command: "scl enable rh-nodejs6 make"
+      args:
+        chdir: "{{ item }}"
+      with_items: "{{ theme_makefiles.stdout_lines }}"
+      become: "no"
+      when:
+        - atom_compile_all_themes|bool
+    - name: "Build selected AtoM themes (CentOS/RH)"
+      command: "scl enable rh-nodejs6 {{ item.build_cmd }}"
+      args:
+        chdir: "{{ item.path }}"
+      with_items: "{{ atom_themes }}"
+      become: "no"
+      when:
+        - not atom_compile_all_themes|bool # Don't compile themes when they are alreay compiled
+  when: ansible_os_family == "RedHat"
+
 #
 # DRMC/Binder
 #

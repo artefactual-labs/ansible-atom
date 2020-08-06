@@ -105,11 +105,11 @@
       tags:
         - "atom-plugins"
 
-    - include: "search.yml"
+    - include: "cli_tools.yml"
       become_user: "{{ atom_user }}"
-      when: "atom_populate_index is defined and atom_populate_index|bool"
       tags:
         - "atom-search"
+        - "atom-cli"
 
      # do not build as user www-data due to errors with npm
     - include: "build.yml"
