@@ -1,0 +1,41 @@
+---
+
+- name: "Update database"
+  command: "php symfony tools:upgrade-sql -B"
+  args:
+    chdir: "{{ atom_path }}/{{ atom_extra_path }}"
+  when: "atom_upgrade_sql|bool"
+
+- name: "Build nested set"
+  command: "php symfony propel:build-nested-set"
+  args:
+    chdir: "{{ atom_path }}/{{ atom_extra_path }}"
+  when: "atom_fix_data|bool"
+
+- name: "Generate slugs"
+  command: "php symfony propel:generate-slugs"
+  args:
+    chdir: "{{ atom_path }}/{{ atom_extra_path }}"
+  when: "atom_fix_data|bool"
+
+- name: "Clear cache"
+  command: "php symfony cache:clear"
+  args:
+    chdir: "{{ atom_path }}/{{ atom_extra_path }}"
+  notify:
+    - "Reload PHP service"
+
+# stdout is ignored, not very useful and too verbose (--quiet opt would be nice)
+- name: "Populate search index"
+  shell: "php symfony search:populate"
+  args:
+    chdir: "{{ atom_path }}/{{ atom_extra_path }}"
+  ignore_errors: "yes" # segfault in php7, not sure yet why!
+  environment: "{{ atom_pool_php_envs }}"
+  register: "search_populate"
+  when: "atom_populate_index|bool"
+
+- name: "Print populate search index output"
+  debug:
+    msg: "{{ search_populate.stdout_lines | last }}"
+  when: "search_populate.changed"
