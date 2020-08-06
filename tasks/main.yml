@@ -129,9 +129,6 @@
         - "atom-build"
         - "atom-worker"
 
-    - include: "uploads-dir.yml"
-      tags:
-        - "atom-uploads"
   when: atom_install_site|bool == true
   tags:
     - "atom-site"
