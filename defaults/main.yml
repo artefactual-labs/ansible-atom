@@ -15,6 +15,9 @@ atom_install_dependencies: "true"
 # Install some extra packages specific to our official Vagrant-based
 # development box. See `tasks/devbox.yml` for more details.
 atom_devbox: "no"
+# Use a different AtoM directory for each revision
+atom_revision_directory: "no"
+atom_revision_directory_latest_symlink_dir: "src"
 
 #
 # Choose php version to use
@@ -50,9 +53,9 @@ atom_build_static_assets: "yes"
 
 # Themes (to build)
 atom_themes:
-  - path: "{{ atom_path }}/plugins/arDominionPlugin"
+  - path: "{{ atom_path }}/{{ atom_extra_path }}/plugins/arDominionPlugin"
     build_cmd: "make"
-  - path: "{{ atom_path }}/plugins/arArchivesCanadaPlugin"
+  - path: "{{ atom_path }}/{{ atom_extra_path }}/plugins/arArchivesCanadaPlugin"
     build_cmd: "make"
 
 # Plug-ins
@@ -204,7 +207,7 @@ atom_pool_php_envs:
 #
 
 atom_drmc: "no"
-atom_drmc_path: "{{ atom_path }}/plugins/arDrmcPlugin/frontend"
+atom_drmc_path: "{{ atom_path }}/{{ atom_extra_path }}/plugins/arDrmcPlugin/frontend"
 # Install Mock API
 atom_drmc_mock: "no"
 # Copy ES plugins to /etc/elasticsearch

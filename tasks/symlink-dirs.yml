@@ -1,0 +1,13 @@
+---
+
+- name: "Create revision symlink"
+  file:
+    state: "link"
+    src: "{{ atom_path }}/{{ atom_extra_path }}"
+    dest: "{{ atom_path }}/{{ atom_revision_directory_latest_symlink_dir }}"
+    force: "yes"
+    owner: "{{ atom_user }}"
+    group: "{{ atom_group }}"
+  when: 
+    - "atom_revision_directory_latest_symlink_dir is defined"
+    - "atom_revision_directory|bool"

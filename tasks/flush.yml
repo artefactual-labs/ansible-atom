@@ -11,31 +11,31 @@
 - name: "Purge database"
   shell: "php symfony tools:purge --no-confirmation --email='{{ atom_user_email }}' --username='{{ atom_user_username }}' --password='{{ atom_user_password }}' --title='{{ atom_title }}' --description='{{ atom_description }}' --url='http://undefined'"
   args:
-    chdir: "{{ atom_path }}"
+    chdir: "{{ atom_path }}/{{ atom_extra_path }}"
   when: "atom_drmc is undefined or not atom_drmc|bool"
 
 - name: "Purge DRMC database"
   shell: "php symfony tools:purge --no-confirmation --email='{{ atom_user_email }}' --username='{{ atom_user_username }}' --password='{{ atom_user_password }}' --title='{{ atom_title }}' --description='{{ atom_description }}'"
   args:
-    chdir: "{{ atom_path }}"
+    chdir: "{{ atom_path }}/{{ atom_extra_path }}"
   when: "atom_drmc is defined and atom_drmc|bool"
 
 - name: "Add initial DRMC data"
   shell: "php symfony binder:bootstrap"
   args:
-    chdir: "{{ atom_path }}"
+    chdir: "{{ atom_path }}/{{ atom_extra_path }}"
   when: "atom_drmc is defined and atom_drmc|bool"
 
 - name: "Set database settings (only available in DRMC)"
   shell: "php symfony tools:set-db-setting {{ item.k }} {{ item.v }}"
   args:
-    chdir: "{{ atom_path }}"
+    chdir: "{{ atom_path }}/{{ atom_extra_path }}"
   when: "atom_drmc is defined and atom_drmc|bool and atom_db_settings is defined"
   with_items: "{{ atom_db_settings }}"
 
 - name: "Add extra super users"
   shell: "php symfony tools:add-superuser --email='{{ item.email }}' --password='{{ item.password }}' {{ item.username }}"
   args:
-    chdir: "{{ atom_path }}"
+    chdir: "{{ atom_path }}/{{ atom_extra_path }}"
   when: "atom_extra_superusers is defined"
   with_items: "{{ atom_extra_superusers }}"

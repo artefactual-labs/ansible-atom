@@ -7,7 +7,7 @@
 
 - name: "Temporarily change ownership of site directory (to be able to build)"
   file:
-    path: "{{ atom_path }}"
+    path: "{{ atom_path }}/{{ atom_extra_path }}"
     state: "directory"
     mode: "o+w"
     recurse: yes
@@ -72,7 +72,7 @@
 
 - name: "Restore permissions and fix ownership of site directory"
   file:
-    path: "{{ atom_path }}"
+    path: "{{ atom_path }}/{{ atom_extra_path }}"
     state: "directory"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"

@@ -13,7 +13,11 @@ WantedBy=multi-user.target
 Type=simple
 User={{ atom_user }}
 Group={{ atom_group }}
+{% if atom_revision_directory|bool %}
+WorkingDirectory={{ atom_path }}/{{ atom_revision_directory_latest_symlink_dir }}
+{% else %}
 WorkingDirectory={{ atom_path }}
+{% endif %}
 {% if ansible_os_family == "RedHat" %}
 {% if atom_worker_old_config|bool %}
 ExecStart=/opt/rh/rh-php{{ php_version }}/root/bin/php -d memory_limit=-1 -d error_reporting="E_ALL" symfony tools:gearman-worker
