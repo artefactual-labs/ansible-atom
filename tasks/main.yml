@@ -7,6 +7,41 @@
     - "{{ ansible_distribution }}.yml"
   tags: "always"
 
+- name: "Define default atom_extra_path"
+  set_fact:
+    atom_extra_path: ""
+  tags:
+    - "atom-basic"
+    - "atom-build"
+    - "atom-cli"
+    - "atom-devbox"
+    - "atom-downloads"
+    - "atom-flush"
+    - "atom-plugins"
+    - "atom-search"
+    - "atom-site"
+    - "atom-uploads"
+    - "atom-worker"
+    - "drmc-mock"
+
+- include: "revision-dir.yml"
+  when:
+    - "atom_revision_directory_latest_symlink_dir is defined"
+    - "atom_revision_directory|bool"
+  tags:
+    - "atom-basic"
+    - "atom-build"
+    - "atom-cli"
+    - "atom-devbox"
+    - "atom-downloads"
+    - "atom-flush"
+    - "atom-plugins"
+    - "atom-search"
+    - "atom-site"
+    - "atom-uploads"
+    - "atom-worker"
+    - "drmc-mock"
+
 - name: "Install AtoM dependencies"
   block:
     - include: "deps.yml"
@@ -52,6 +87,7 @@
     - include: "basic.yml"
       tags:
         - "atom-basic"
+
     - include: "flush.yml"
       become_user: "{{ atom_user }}"
       environment:
@@ -74,6 +110,7 @@
       when: "atom_populate_index is defined and atom_populate_index|bool"
       tags:
         - "atom-search"
+
      # do not build as user www-data due to errors with npm
     - include: "build.yml"
       when: "atom_build_static_assets is defined and atom_build_static_assets|bool"
@@ -83,6 +120,13 @@
     - include: "worker.yml"
       when: "atom_worker_setup is defined and atom_worker_setup|bool"
       tags:
+        - "atom-worker"
+
+    - include: "symlink-dirs.yml"
+      tags:
+        - "atom-uploads"
+        - "atom-downloads"
+        - "atom-build"
         - "atom-worker"
 
     - include: "uploads-dir.yml"

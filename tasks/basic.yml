@@ -10,24 +10,24 @@
 
 - name: "Create site directory if it doesn't exist'"
   file:
-    path: "{{ atom_path }}"
+    path: "{{ atom_path }}/{{ atom_extra_path }}"
     state: "directory"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
     mode: "u=rwx,g=rwx,o=rx"
 
 - name: "Cleanup cache/ directory"
-  command: "rm -rf {{ atom_path }}/cache/*"
+  command: "rm -rf {{ atom_path }}/{{ atom_extra_path }}/cache/*"
 
 - name: "Temporarily delete uploads symlink to avoid long waits on recursive chmod"
   file:
     state: "absent"
-    path: "{{ atom_path }}/uploads"
+    path: "{{ atom_path }}/{{ atom_extra_path }}/uploads"
   when: "atom_uploads_symlink is defined"
 
 - name: "Temporarily change permissions of site directory to be able to clone repo"
   file:
-    path: "{{ atom_path }}"
+    path: "{{ atom_path }}/{{ atom_extra_path }}"
     state: "directory"
     mode: "o+w"
     recurse: yes
@@ -37,7 +37,7 @@
     update: "yes"
     repo: "{{ atom_repository_url }}"
     version: "{{ atom_repository_version }}"
-    dest: "{{ atom_path }}"
+    dest: "{{ atom_path }}/{{ atom_extra_path }}"
     accept_hostkey: "yes"
   notify:
     - "Clear sf_cache"
@@ -46,7 +46,7 @@
 
 - name: "Restore permissions and fix ownership of site directory"
   file:
-    path: "{{ atom_path }}"
+    path: "{{ atom_path }}/{{ atom_extra_path }}"
     state: "directory"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
@@ -55,7 +55,7 @@
 
 - name: "Create log directory"
   file:
-    path: "{{ atom_path }}/log"
+    path: "{{ atom_path }}/{{ atom_extra_path }}/log"
     state: "directory"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
@@ -70,19 +70,19 @@
     backup: "yes"
   with_items:
     - src:  "{{ atom_template_config_php }}"
-      dest: "{{ atom_path }}/config/config.php"
+      dest: "{{ atom_path }}/{{ atom_extra_path }}/config/config.php"
     - src:  "{{ atom_template_propel_ini }}"
-      dest: "{{ atom_path }}/config/propel.ini"
+      dest: "{{ atom_path }}/{{ atom_extra_path }}/config/propel.ini"
     - src:  "{{ atom_template_app_yml }}"
-      dest: "{{ atom_path }}/apps/qubit/config/app.yml"
+      dest: "{{ atom_path }}/{{ atom_extra_path }}/apps/qubit/config/app.yml"
     - src:  "{{ atom_template_factories_yml }}"
-      dest: "{{ atom_path }}/apps/qubit/config/factories.yml"
+      dest: "{{ atom_path }}/{{ atom_extra_path }}/apps/qubit/config/factories.yml"
     - src:  "{{ atom_template_settings_yml }}"
-      dest: "{{ atom_path }}/apps/qubit/config/settings.yml"
+      dest: "{{ atom_path }}/{{ atom_extra_path }}/apps/qubit/config/settings.yml"
     - src:  "{{ atom_template_gearman_yml }}"
-      dest: "{{ atom_path }}/apps/qubit/config/gearman.yml"
+      dest: "{{ atom_path }}/{{ atom_extra_path }}/apps/qubit/config/gearman.yml"
     - src:  "{{ atom_template_search_yml }}"
-      dest: "{{ atom_path }}/apps/qubit/config/search.yml"
+      dest: "{{ atom_path }}/{{ atom_extra_path }}/apps/qubit/config/search.yml"
   notify:
     - "Clear sf_cache"
     - "Reload PHP service"
@@ -90,8 +90,8 @@
 - name: "Install sf symlink"
   file:
     state: "link"
-    src: "{{ atom_path }}/vendor/symfony/data/web/sf"
-    path: "{{ atom_path }}/sf"
+    src: "{{ atom_path }}/{{ atom_extra_path }}/vendor/symfony/data/web/sf"
+    path: "{{ atom_path }}/{{ atom_extra_path }}/sf"
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
 
@@ -107,13 +107,13 @@
 
 - name: "Check if the composer.lock file exists"
   stat:
-    path: "{{ atom_path }}/composer.lock"
+    path: "{{ atom_path }}/{{ atom_extra_path }}/composer.lock"
   register: composer_lock
 
 - name: "Install Composer dependencies for production"
   composer:
     command: install
-    working_dir: "{{ atom_path }}"
+    working_dir: "{{ atom_path }}/{{ atom_extra_path }}"
   when:
     - composer_lock.stat.exists
     - atom_environment_type != "development"
@@ -121,7 +121,7 @@
 - name: "Install Composer dependencies for dev"
   composer:
     command: install
-    working_dir: "{{ atom_path }}"
+    working_dir: "{{ atom_path }}/{{ atom_extra_path }}"
     no_dev: no
   when:
     - composer_lock.stat.exists
@@ -130,7 +130,7 @@
 - name: "SELinux tasks"
   block:
     - name: "Selinux: allow httpd to write on atom folder"
-      shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_path }}\(/.*\)? && restorecon -R -v {{ atom_path }}'
+      shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_path }}/{{ atom_extra_path }}\(/.*\)? && restorecon -R -v {{ atom_path }}/{{ atom_extra_path }}'
     - name: "Selinux: allow httpd to write on uploads folders"
       shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_uploads_symlink }}\(/.*\)? && restorecon -R -v {{ atom_uploads_symlink }}'
       when:

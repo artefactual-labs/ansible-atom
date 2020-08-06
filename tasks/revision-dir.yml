@@ -1,0 +1,32 @@
+---
+
+- name: "Get candidate revision"
+  become: "no"
+  git:
+    repo: "{{ atom_repository_url }}"
+    version: "{{ atom_repository_version }}"
+    clone: "no"
+    update: "no"
+    accept_hostkey: "yes"
+  register: "atom_candidate_revision"
+
+- name: "Get current revision"
+  become: "no"
+  git:
+    repo: "{{ atom_repository_url }}"
+    version: "{{ atom_repository_version }}"
+    dest: "{{ atom_path }}/{{ atom_revision_directory_latest_symlink_dir }}"
+    clone: "no"
+    update: "no"
+    accept_hostkey: "yes"
+  register: "atom_current_revision"
+
+- name: "Print revisions"
+  debug:
+    msg:
+       - "current={{ atom_current_revision.before }}"
+       - "candidate={{ atom_candidate_revision.after }}"
+
+- name: "Define atom_extra_path when using atom_revision_directory"
+  set_fact:
+    atom_extra_path: "atom-{{ atom_candidate_revision.after }}"

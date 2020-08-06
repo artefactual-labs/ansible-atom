@@ -29,7 +29,7 @@
 - name: "Clear sf_cache"
   shell: "php symfony cc"
   args:
-    chdir: "{{ atom_path }}"
+    chdir: "{{ atom_path }}/{{ atom_extra_path }}"
   become_user: "{{ atom_user }}"
   environment:
     - "{{ atom_pool_php_envs }}"

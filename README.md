@@ -101,3 +101,23 @@ as `atom-site` in the role (i.e., tasks required to deploy a site)
 and skip the tasks that are required only once per host deploy. The
 database and user for the new site will also need to be configured in
 the database server if not done already.
+
+## Use a different revision dir for every site update
+
+When the `atom_revision_directory` variable is set to `yes`, a new
+`$atom_path/atom-COMMIT_ID` directory is created for every update and a
+`$atom_path/$atom_revision_directory_latest_symlink_dir` symlink is created
+pointing to the latest revision dir.
+
+For instance:
+
+```
+/usr/share/nginx/atom
+├── atom-0134577b6ecd763dedf82a7eee4ddc35043c5345
+├── atom-1234567b6ecd763dedf92a7bad4ddc35043c5438
+├── atom-381f849b6ecd763dedf92a7bad43cc350a3c5439
+├── downloads
+├── private -> /usr/share/nginx/atom/src
+├── src -> /usr/share/nginx/atom/atom-381f849b6ecd763dedf92a7bad43cc350a3c5439
+└── uploads
+```

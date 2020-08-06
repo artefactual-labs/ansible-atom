@@ -8,26 +8,26 @@
 - name: "Update database"
   command: "php symfony tools:upgrade-sql -B"
   args:
-    chdir: "{{ atom_path }}"
+    chdir: "{{ atom_path }}/{{ atom_extra_path }}"
   when:
     - "(atom_upgrade_sql is defined and atom_upgrade_sql|bool == true)"
 
 - name: "Enable AtoM plug-ins"
   shell: "php symfony tools:atom-plugins add {{ item }}"
   args:
-    chdir: "{{ atom_path }}"
+    chdir: "{{ atom_path }}/{{ atom_extra_path }}"
   with_items: "{{ atom_plugins }}"
 
 - name: "Enable AtoM GDPR privacy page"
   command: "php symfony tools:run lib/task/tools/addGdprSettings.php"
   args:
-    chdir: "{{ atom_path }}"
+    chdir: "{{ atom_path }}/{{ atom_extra_path }}"
   when: "atom_gdpr_enabled is defined and atom_gdpr_enabled|bool"
 
 # copy ES plugins to /etc/elasticsearch (assumes ES running on same server) 
 # (copy manually if ES is on a separate backend server)
 - name: "Copy elasticsearch plugins"
-  command: "cp -rf {{ atom_path }}/plugins/arElasticSearchPlugin/scripts /etc/elasticsearch/"
+  command: "cp -rf {{ atom_path }}/{{ atom_extra_path }}/plugins/arElasticSearchPlugin/scripts /etc/elasticsearch/"
   become: "yes"
   become_user: "root"
   when: "atom_drmc_es_scripts is defined and atom_drmc_es_scripts|bool"
