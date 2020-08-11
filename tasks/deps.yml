@@ -8,7 +8,7 @@
     url: https://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0x1655A0AB68576280
     id: "68576280"
     state: present
-  when: "ansible_distribution_version is version_compare('16.04', '<=')"
+  when: "ansible_distribution_version is version('16.04', '<=')"
 
 - name: "Add external repositories"
   apt_repository:
@@ -16,13 +16,13 @@
     update_cache: "yes"
   with_items:
     - "deb https://deb.nodesource.com/node_5.x {{ ansible_distribution_release }} main"
-  when: "ansible_distribution_version is version_compare('16.04', '<=')"
+  when: "ansible_distribution_version is version('16.04', '<=')"
 
 - name: "Add archivematica/externals-dev PPA (ffmpeg in Ubuntu <= 14.04)"
   apt_repository:
     repo: "ppa:archivematica/externals-dev"
     update_cache: "yes"
-  when: "ansible_distribution_version is version_compare('14.04', '<=')"
+  when: "ansible_distribution_version is version('14.04', '<=')"
 
 - name: "Install AtoM dependencies (Ubuntu <= Xenial/16.04)"
   apt:
@@ -39,7 +39,7 @@
     - "python-pip"        #
     - "python-setuptools" #
     - "openjdk-8-jre-headless" # Needed by FOP
-  when: "ansible_distribution_version is version_compare('16.04', '<=')"
+  when: "ansible_distribution_version is version('16.04', '<=')"
 
 - name: "Install AtoM dependencies (Ubuntu >= Bionic/18.04)"
   apt:
@@ -56,7 +56,7 @@
     - "python-pip"        #
     - "python-setuptools" #
     - "openjdk-8-jre-headless" # Needed by FOP
-  when: "ansible_distribution_version is version_compare('18.04', '>=')"
+  when: "ansible_distribution_version is version('18.04', '>=')"
 
 - name: "Install Sphinx"
   pip:

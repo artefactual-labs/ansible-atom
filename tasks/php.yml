@@ -15,4 +15,4 @@
   lineinfile:
     dest: "/etc/init/php5-fpm.conf"
     line: "reload signal USR2"
-  when: "ansible_distribution_version is version_compare('14.04', '==')"
+  when: "ansible_distribution_version is version('14.04', '==')"
