@@ -21,7 +21,7 @@
         - "Restart PHP service"
   when: 
     - ansible_distribution == "Ubuntu"
-    - "ansible_distribution_version is version_compare('14.04', '==')"
+    - "ansible_distribution_version is version('14.04', '==')"
 
 - name: "Configure php-fpm pool (Ubuntu >= 16.04)"
   block:
@@ -36,7 +36,7 @@
       notify:
         - "Restart PHP service"
   when: 
-    - "ansible_distribution_version is version_compare('16.04', '>=')"
+    - "ansible_distribution_version is version('16.04', '>=')"
     - ansible_distribution == "Ubuntu"
 
 - name: "Configure php-fpm pool (RH)"
