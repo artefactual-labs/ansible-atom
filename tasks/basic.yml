@@ -45,6 +45,8 @@
     version: "{{ atom_repository_version }}"
     dest: "{{ atom_path }}/{{ atom_extra_path }}"
     accept_hostkey: "yes"
+    depth: "{{ atom_git_pull_code_depth | default(omit) }}"
+    force: "{{ atom_git_pull_code_force | default('no') }}"
   notify:
     - "Clear sf_cache"
     - "Reload PHP service"
