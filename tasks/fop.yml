@@ -1,10 +1,10 @@
 ---
 
-- name: "Install FOP package (Ubuntu 18.04)"
+- name: "Install FOP package (Ubuntu >= 18.04)"
   apt:
     pkg: "fop"
     state: "latest"
-  when: "ansible_distribution_version is version('18.04', '==')"
+  when: "ansible_distribution_version is version_compare('18.04', '>=')"
   tags:
     - "atom-fop"
 
@@ -55,5 +55,9 @@
     path: "/etc/ImageMagick-6/policy.xml"
     state: "absent"
     regexp: 'PDF" />$'
+<<<<<<< HEAD
   when: "ansible_distribution_version is version('16.04', '>=')"
 
+=======
+  when: "ansible_distribution_version is version_compare('16.04', '>=')"
+>>>>>>> 2bdecaf... AtoM on Ubuntu 20.04
