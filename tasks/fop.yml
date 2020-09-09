@@ -55,9 +55,4 @@
     path: "/etc/ImageMagick-6/policy.xml"
     state: "absent"
     regexp: 'PDF" />$'
-<<<<<<< HEAD
   when: "ansible_distribution_version is version('16.04', '>=')"
-
-=======
-  when: "ansible_distribution_version is version_compare('16.04', '>=')"
->>>>>>> 2bdecaf... AtoM on Ubuntu 20.04
