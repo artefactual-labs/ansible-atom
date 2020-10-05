@@ -44,7 +44,7 @@
 - name: "Build AtoM themes (CentOS/RH)"
   block:
     - name: "Build all AtoM themes (CentOS/RH)"
-      command: "scl enable rh-nodejs6 make"
+      shell: "scl enable rh-nodejs6 make || make"
       args:
         chdir: "{{ item }}"
       with_items: "{{ theme_makefiles.stdout_lines }}"
@@ -52,7 +52,7 @@
       when:
         - atom_compile_all_themes|bool
     - name: "Build selected AtoM themes (CentOS/RH)"
-      command: "scl enable rh-nodejs6 {{ item.build_cmd }}"
+      shell: "scl enable rh-nodejs6 {{ item.build_cmd }} || {{ item.build_cmd }}"
       args:
         chdir: "{{ item.path }}"
       with_items: "{{ atom_themes }}"
@@ -69,12 +69,12 @@
 - name: "Binder npm build tasks (CentOS/RedHat)"
   block:
     - name: "Install npm local dependencies (SCL)"
-      command: "scl enable rh-nodejs6 'npm update'"
+      command: "scl enable rh-nodejs6 'npm update' || npm update"
       args:
         chdir: "{{ atom_drmc_path }}"
     # using --force option to ignore Error compiling ../../arDominionPlugin/css/main.less
     - name: "Build DRMC (SCL)"
-      command: "scl enable rh-nodejs6 'grunt build --force'"
+      shell: "scl enable rh-nodejs6 'grunt build --force' || grunt build --force"
       args:
         chdir: "{{ atom_drmc_path }}"
   when: 
