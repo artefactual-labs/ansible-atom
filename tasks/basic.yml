@@ -119,6 +119,7 @@
   register: composer_lock
 
 - name: "Install Composer dependencies for production"
+  become_user: "{{ atom_user }}"
   composer:
     command: install
     working_dir: "{{ atom_path }}/{{ atom_extra_path }}"
@@ -127,6 +128,7 @@
     - atom_environment_type != "development"
 
 - name: "Install Composer dependencies for dev"
+  become_user: "{{ atom_user }}"
   composer:
     command: install
     working_dir: "{{ atom_path }}/{{ atom_extra_path }}"
