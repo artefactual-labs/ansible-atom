@@ -2,29 +2,13 @@
 
 - name: "Restart PHP service"
   service:
-    name: "php{{ php_version }}-fpm"
+    name: "{{ php_service_name }}"
     state: "restarted"
-  when:
-    - ansible_distribution == "Ubuntu"
-
-- name: "Restart PHP service"
-  service:
-    name: "rh-php{{ php_version }}-php-fpm"
-    state: "restarted"
-  when: ansible_os_family == "RedHat"
 
 - name: "Reload PHP service"
   service:
-    name: "php{{ php_version }}-fpm"
+    name: "{{ php_service_name }}"
     state: "reloaded"
-  when: 
-    - ansible_distribution == "Ubuntu"
-
-- name: "Reload PHP service"
-  service:
-    name: "rh-php{{ php_version }}-php-fpm"
-    state: "reloaded"
-  when: ansible_os_family == "RedHat"
 
 - name: "Clear sf_cache"
   shell: "php symfony cc"

@@ -1,4 +1,5 @@
 php_version: "7.4"
+php_service_name: "php{{ php_version }}-fpm"
 php_packages:
   - "php7.4-cli"
   - "php7.4-curl"

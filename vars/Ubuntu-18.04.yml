@@ -1,4 +1,5 @@
 php_version: "{{ atom_php_version|default('7.2') }}"
+php_service_name: "php{{ php_version }}-fpm"
 php_packages:
   - "php7.2-cli"
   - "php7.2-curl"

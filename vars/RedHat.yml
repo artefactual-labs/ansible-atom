@@ -1,1 +1,2 @@
 php_version: "{{ atom_php_version|default('72') }}" # Without dots. 70 and 71 are also available
+php_service_name: "rh-php{{ php_version }}-php-fpm"
