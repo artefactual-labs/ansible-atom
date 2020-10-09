@@ -126,6 +126,11 @@ atom_app_cache_engine_options:
   host: "127.0.0.1"
   port: "11211"
   persistent: "yes"
+# atom_app_google_maps_api_key:
+# atom_app_google_analytics_api_key:
+# atom_app_google_analytics_institutions_dimension_index:
+# atom_app_google_tag_manager_container_id:
+# atom_app_csv_transform_script_name:
 
 #
 # factories.yml
@@ -144,8 +149,6 @@ atom_default_culture: "en"
 atom_default_timezone: "America/Vancouver"
 
 atom_app_read_only: false
-# atom_app_google_maps_api_key:
-# atom_app_google_analytics_api_key:
 
 #
 # gearman.yml

@@ -22,6 +22,19 @@ all:
   google_analytics_api_key: {{ atom_app_google_analytics_api_key }}
 {% endif %}
 
+{% if atom_app_google_analytics_institutions_dimension_index is defined %}
+  google_analytics_institutions_dimension_index: {{ atom_app_google_analytics_institutions_dimension_index }}
+{% endif %}
+{% if atom_app_google_tag_manager_container_id is defined %}
+  google_tag_manager_container_id: {{ atom_app_google_tag_manager_container_id }}
+{% endif %}
+
+{% if atom_app_csv_transform_script_name is defined %}
+  # Specify a CSV Transform script that can be automatically applied from
+  # the CSV Import Page in AtoM
+  csv_transform_script_name: {{ atom_app_csv_transform_script_name }}
+{% endif %}
+
 {% if atom_factory_user == "adLdapUser" %}
   ldap_account_suffix: {{ atom_app_ldap_account_suffix }}
   ldap_base_dn: {{ atom_app_ldap_base_dn }}
