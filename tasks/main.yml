@@ -7,41 +7,6 @@
     - "{{ ansible_distribution }}.yml"
   tags: "always"
 
-- name: "Define default atom_extra_path"
-  set_fact:
-    atom_extra_path: ""
-  tags:
-    - "atom-basic"
-    - "atom-build"
-    - "atom-cli"
-    - "atom-devbox"
-    - "atom-downloads"
-    - "atom-flush"
-    - "atom-plugins"
-    - "atom-search"
-    - "atom-site"
-    - "atom-uploads"
-    - "atom-worker"
-    - "drmc-mock"
-
-- include: "revision-dir.yml"
-  when:
-    - "atom_revision_directory_latest_symlink_dir is defined"
-    - "atom_revision_directory|bool"
-  tags:
-    - "atom-basic"
-    - "atom-build"
-    - "atom-cli"
-    - "atom-devbox"
-    - "atom-downloads"
-    - "atom-flush"
-    - "atom-plugins"
-    - "atom-search"
-    - "atom-site"
-    - "atom-uploads"
-    - "atom-worker"
-    - "drmc-mock"
-
 - name: "Install AtoM dependencies"
   block:
     - include: "deps.yml"
@@ -77,6 +42,41 @@
         - "fop"
 
   when: atom_install_dependencies|bool == true
+
+- name: "Define default atom_extra_path"
+  set_fact:
+    atom_extra_path: ""
+  tags:
+    - "atom-basic"
+    - "atom-build"
+    - "atom-cli"
+    - "atom-devbox"
+    - "atom-downloads"
+    - "atom-flush"
+    - "atom-plugins"
+    - "atom-search"
+    - "atom-site"
+    - "atom-uploads"
+    - "atom-worker"
+    - "drmc-mock"
+
+- include: "revision-dir.yml"
+  when:
+    - "atom_revision_directory_latest_symlink_dir is defined"
+    - "atom_revision_directory|bool"
+  tags:
+    - "atom-basic"
+    - "atom-build"
+    - "atom-cli"
+    - "atom-devbox"
+    - "atom-downloads"
+    - "atom-flush"
+    - "atom-plugins"
+    - "atom-search"
+    - "atom-site"
+    - "atom-uploads"
+    - "atom-worker"
+    - "drmc-mock"
 
 - name: "Install AtoM site"
   block:
