@@ -50,4 +50,8 @@ all:
 {% if atom_app_password_hash_algorithm is defined %}
   # Password hash algorithm
   password_hash_algorithm: {{ atom_app_password_hash_algorithm }}
+{% else %}
+  {% if ansible_os_family == 'RedHat' or ansible_distribution_version is version('16.04', '==') %}
+     password_hash_algorithm: 'PASSWORD_BCRYPT'
+  {% endif %}
 {% endif %}
