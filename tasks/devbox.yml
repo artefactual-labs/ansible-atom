@@ -8,16 +8,15 @@
 
 - name: "Install packages useful for development"
   apt:
-    name: "{{ item }}"
+    name:
+      - "tig"
+      - "htop"
+      - "vim"
+      - "tmux"
+      - "byobu"
+      - "git"
     update_cache: "yes"
     state: "latest"
-  with_items:
-    - "tig"
-    - "htop"
-    - "vim"
-    - "tmux"
-    - "byobu"
-    - "git"
 
 - name: "Install /etc/motd"
   template:

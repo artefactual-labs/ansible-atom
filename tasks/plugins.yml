@@ -1,7 +1,7 @@
 ---
 
-# Note that this file is included with the following in main.yml 
-#  so no need to put in each task: 
+# Note that this file is included with the following in main.yml
+#  so no need to put in each task:
 #    become_user: "{{ atom_user }}"
 #    environment: "{{ atom_pool_php_envs }}"
 
@@ -17,7 +17,7 @@
     chdir: "{{ atom_path }}/{{ atom_extra_path }}"
   when: "atom_gdpr_enabled is defined and atom_gdpr_enabled|bool"
 
-# copy ES plugins to /etc/elasticsearch (assumes ES running on same server) 
+# copy ES plugins to /etc/elasticsearch (assumes ES running on same server)
 # (copy manually if ES is on a separate backend server)
 - name: "Copy elasticsearch plugins"
   command: "cp -rf {{ atom_path }}/{{ atom_extra_path }}/plugins/arElasticSearchPlugin/scripts /etc/elasticsearch/"

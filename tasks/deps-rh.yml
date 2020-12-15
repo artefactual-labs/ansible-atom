@@ -1,7 +1,7 @@
 ---
 
 - name: "Install epel repo"
-  yum: 
+  yum:
     name: "epel-release"
     state: "installed"
 
@@ -13,7 +13,7 @@
     value: 1
 
 - name: "Install scl repo (CentOS)"
-  yum: 
+  yum:
     name: "centos-release-scl"
     state: "installed"
   when:
@@ -31,20 +31,19 @@
 
 - name: "Install AtoM dependencies"
   yum:
-    name: "{{ item }}"
+    name:
+      - "ImageMagick"                 # ↓ AtoM dependencies
+      - "ghostscript"                 #
+      - "poppler-utils"               #
+      - "ffmpeg"                      #
+      - "git"                         # ↓ Build dependencies
+      - "rh-nodejs6"                  #
+      - "make"                        #
+      - "gcc"                         #
+      - "python-pip"                  #
+      - "python-setuptools"           #
+      - "java-1.8.0-openjdk-headless" # needed by FOP
     state: "latest"
-  with_items:
-    - "ImageMagick"       # ↓ AtoM dependencies
-    - "ghostscript"       #
-    - "poppler-utils"     #
-    - "ffmpeg"            #
-    - "git"               # ↓ Build dependencies
-    - "rh-nodejs6"        #
-    - "make"              #
-    - "gcc"               #
-    - "python-pip"        #
-    - "python-setuptools" #
-    - "java-1.8.0-openjdk-headless" # needed by FOP
 
 - name: "Upgrade pip"
   pip:
@@ -53,12 +52,11 @@
 
 - name: "Install Sphinx"
   pip:
-    name: "{{ item }}"
+    name:
+      - "sphinx"
+      - "sphinxcontrib-httpdomain"
+      - "sphinx_rtd_theme"
     state: "latest"
-  with_items:
-    - "sphinx"
-    - "sphinxcontrib-httpdomain"
-    - "sphinx_rtd_theme"
 
 # don't quote the shell command, or it won't work (also need to escape the <)
 - name: "Install npm (SCL) global dependencies (also required during the build)"
