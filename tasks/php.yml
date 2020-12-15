@@ -3,12 +3,11 @@
 - name: "Install PHP packages"
   become: "true"
   apt:
-    pkg: "{{ item }}"
+    pkg: "{{ php_packages }}"
     state: "latest"
     update_cache: "yes"
     cache_valid_time: "3600"
     force: "yes"
-  with_items: "{{ php_packages }}"
 
 # See https://bugs.launchpad.net/ubuntu/+source/php5/+bug/1272788
 - name: "Fix php5-fpm upstart"

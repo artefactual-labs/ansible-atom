@@ -19,7 +19,7 @@
         dest: "/etc/php/{{ php_version }}/fpm/pool.d/{{ atom_pool_name }}.conf"
       notify:
         - "Restart PHP service"
-  when: 
+  when:
     - ansible_distribution == "Ubuntu"
     - "ansible_distribution_version is version('14.04', '==')"
 
@@ -35,7 +35,7 @@
         dest: "/etc/php/{{ php_version }}/fpm/pool.d/{{ atom_pool_name }}.conf"
       notify:
         - "Restart PHP service"
-  when: 
+  when:
     - "ansible_distribution_version is version('16.04', '>=')"
     - ansible_distribution == "Ubuntu"
 

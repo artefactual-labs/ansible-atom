@@ -26,65 +26,61 @@
 
 - name: "Install AtoM dependencies (Ubuntu <= Xenial/16.04)"
   apt:
-    pkg: "{{ item }}"
+    pkg:
+      - "imagemagick"            # ↓ AtoM dependencies
+      - "ghostscript"            #
+      - "poppler-utils"          #
+      - "ffmpeg"                 #
+      - "git"                    # ↓ Build dependencies
+      - "nodejs"                 #
+      - "make"                   #
+      - "python-pip"             #
+      - "python-setuptools"      #
+      - "openjdk-8-jre-headless" # Needed by FOP
     state: "latest"
-  with_items:
-    - "imagemagick"       # ↓ AtoM dependencies
-    - "ghostscript"       #
-    - "poppler-utils"     #
-    - "ffmpeg"            #
-    - "git"               # ↓ Build dependencies
-    - "nodejs"            #
-    - "make"              #
-    - "python-pip"        #
-    - "python-setuptools" #
-    - "openjdk-8-jre-headless" # Needed by FOP
   when: "ansible_distribution_version is version('16.04', '<=')"
 
 - name: "Install AtoM dependencies (Ubuntu == Bionic/18.04)"
   apt:
-    pkg: "{{ item }}"
+    pkg:
+      - "imagemagick"            # ↓ AtoM dependencies
+      - "ghostscript"            #
+      - "poppler-utils"          #
+      - "ffmpeg"                 #
+      - "git"                    # ↓ Build dependencies
+      - "libssl1.0-dev"          #
+      - "npm"                    #
+      - "make"                   #
+      - "python-pip"             #
+      - "python-setuptools"      #
+      - "openjdk-8-jre-headless" # Needed by FOP
     state: "latest"
-  with_items:
-    - "imagemagick"       # ↓ AtoM dependencies
-    - "ghostscript"       #
-    - "poppler-utils"     #
-    - "ffmpeg"            #
-    - "git"               # ↓ Build dependencies
-    - "libssl1.0-dev"     #
-    - "npm"               #
-    - "make"              #
-    - "python-pip"        #
-    - "python-setuptools" #
-    - "openjdk-8-jre-headless" # Needed by FOP
   when: "ansible_distribution_version is version_compare('18.04', '==')"
 
 - name: "Install AtoM dependencies (Ubuntu >= Focal/20.04)"
   apt:
-    pkg: "{{ item }}"
+    pkg:
+      - "imagemagick"            # ↓ AtoM dependencies
+      - "ghostscript"            #
+      - "poppler-utils"          #
+      - "ffmpeg"                 #
+      - "git"                    # ↓ Build dependencies
+      - "npm"                    #
+      - "make"                   #
+      - "python-is-python3"      #
+      - "python3-pip"            #
+      - "python-setuptools"      #
+      - "openjdk-8-jre-headless" # Needed by FOP
     state: "latest"
-  with_items:
-    - "imagemagick"       # ↓ AtoM dependencies
-    - "ghostscript"       #
-    - "poppler-utils"     #
-    - "ffmpeg"            #
-    - "git"               # ↓ Build dependencies
-    - "npm"               #
-    - "make"              #
-    - "python-is-python3" #
-    - "python3-pip"       #
-    - "python-setuptools" #
-    - "openjdk-8-jre-headless" # Needed by FOP
   when: "ansible_distribution_version is version_compare('20.04', '>=')"
 
 - name: "Install Sphinx"
   pip:
-    name: "{{ item }}"
+    name:
+      - "sphinx"
+      - "sphinxcontrib-httpdomain"
+      - "sphinx_rtd_theme"
     state: "latest"
-  with_items:
-    - "sphinx"
-    - "sphinxcontrib-httpdomain"
-    - "sphinx_rtd_theme"
 
 - name: "Install npm global dependencies (also required during the build)"
   npm:
