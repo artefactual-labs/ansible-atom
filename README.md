@@ -30,6 +30,18 @@ playbook structure won't work.  E.g. Changing the "atom/config/config.php"
 to "myatom/config/config.php" will load a template file at that relative
 path in your playbook directory structure.
 
+## Automatic database initialization
+
+**Use with caution! This feature is experimental.**
+
+If `atom_auto_init` is enabled, this role will initialize the database using
+`tools:purge` as long as the uninitialized criteria is met.
+
+We discourage to use this feature unless you are deploying temporary
+environments such as those used in camps, demos or QA environments. In the long
+term, AtoM may provide a CLI installer with safer guarantees that we could use
+in this role.
+
 ## Deploy multiple sites on the same host
 
 To deploy multiple AtoM sites on the same host, it is possible to have

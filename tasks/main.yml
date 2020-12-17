@@ -88,12 +88,18 @@
       tags:
         - "atom-basic"
 
+    - include: "init.yml"
+      when:
+        - "atom_auto_init is defined and atom_auto_init|bool"
+      tags:
+        - "atom-site"
+
     - include: "flush.yml"
       become_user: "{{ atom_user }}"
       environment:
         - "{{ atom_pool_php_envs }}"
         - PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php{{ php_version }}/root/bin/"
-      when: "atom_flush_data is defined and atom_flush_data|bool"
+      when: "uninitialized or (atom_flush_data is defined and atom_flush_data|bool)"
       tags:
         - "atom-flush"
 
