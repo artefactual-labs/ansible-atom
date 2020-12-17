@@ -1,0 +1,55 @@
+---
+
+# The goal of the tasks in this file is to determine whether AtoM needs to be
+# initialized. The inconvenience is that the current mechanism to initialize
+# the database is the same used to flush an existing database.
+
+- name: "Look up database contents 1/2"
+  check_mode: "no"
+  changed_when: False
+  register: "db_information_object_exists"
+  command: >
+    mysql \
+      --user={{ atom_config_db_username }} \
+      --password={{ atom_config_db_password }} \
+      --host={{ atom_config_db_hostname }} \
+      --port={{ atom_config_db_port }} \
+      --skip-column-names \
+      --execute="SHOW TABLES LIKE 'information_object';" \
+        {{ atom_config_db_name }}
+  ignore_errors: true
+  failed_when: false
+
+- name: "Look up database contents 2/2"
+  check_mode: "no"
+  changed_when: False
+  register: "db_lookup"
+  command: >
+    mysql \
+      --user={{ atom_config_db_username }} \
+      --password={{ atom_config_db_password }} \
+      --host={{ atom_config_db_hostname }} \
+      --port={{ atom_config_db_port }} \
+      --skip-column-names \
+      --execute="SELECT COUNT(*) FROM information_object WHERE id = 1;" \
+        {{ atom_config_db_name }}
+  ignore_errors: true
+  failed_when: false
+
+- name: "Create uninitialized fact"
+  set_fact:
+    uninitialized: False
+
+- name: "Determine if flush/init is needed 1/2"
+  set_fact:
+    uninitialized: True
+  when:
+    - "db_information_object_exists.rc == 0"
+    - "db_information_object_exists.stdout_lines == []"
+
+- name: "Determine if flush/init is needed 2/2"
+  set_fact:
+    uninitialized: True
+  when:
+    - "db_lookup.rc == 0"
+    - "db_lookup.stdout_lines == ['0']"
