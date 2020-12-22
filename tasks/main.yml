@@ -99,7 +99,9 @@
       environment:
         - "{{ atom_pool_php_envs }}"
         - PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php{{ php_version }}/root/bin/"
-      when: "uninitialized or (atom_flush_data is defined and atom_flush_data|bool)"
+      when: >
+        (uninitialized is defined and uninitialized|bool) or
+        (atom_flush_data is defined and atom_flush_data|bool)
       tags:
         - "atom-flush"
 
