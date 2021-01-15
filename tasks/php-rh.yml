@@ -48,11 +48,11 @@
   args:
     creates: /etc/opt/rh/rh-php{{ php_version }}/php.d/20-memcache.ini
 
-- name: "Set php.ini memory to 512"
+- name: "Set memory limit in php.ini"
   lineinfile:
     path: /etc/opt/rh/rh-php{{ php_version }}/php.ini
     regexp: '^memory_limit'
-    line: 'memory_limit = 512M'
+    line: 'memory_limit = {{ atom_pool_php_memory_limit }}'
 
 - name: "Enable rh-php{{ php_version }}-php-fpm service"
   systemd:
