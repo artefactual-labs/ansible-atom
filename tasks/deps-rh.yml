@@ -40,23 +40,7 @@
       - "rh-nodejs6"                  #
       - "make"                        #
       - "gcc"                         #
-      - "python-pip"                  #
-      - "python-setuptools"           #
       - "java-1.8.0-openjdk-headless" # needed by FOP
-    state: "latest"
-
-- name: "Upgrade pip"
-  pip:
-    name: "pip"
-    state: "present"
-    version: "20.3"
-
-- name: "Install Sphinx"
-  pip:
-    name:
-      - "sphinx"
-      - "sphinxcontrib-httpdomain"
-      - "sphinx_rtd_theme"
     state: "latest"
 
 # don't quote the shell command, or it won't work (also need to escape the <)

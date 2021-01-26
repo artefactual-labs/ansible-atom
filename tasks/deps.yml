@@ -34,8 +34,6 @@
       - "git"                    # ↓ Build dependencies
       - "nodejs"                 #
       - "make"                   #
-      - "python-pip"             #
-      - "python-setuptools"      #
       - "openjdk-8-jre-headless" # Needed by FOP
     state: "latest"
   when: "ansible_distribution_version is version('16.04', '<=')"
@@ -51,8 +49,6 @@
       - "libssl1.0-dev"          #
       - "npm"                    #
       - "make"                   #
-      - "python-pip"             #
-      - "python-setuptools"      #
       - "openjdk-8-jre-headless" # Needed by FOP
     state: "latest"
   when: "ansible_distribution_version is version_compare('18.04', '==')"
@@ -67,20 +63,9 @@
       - "git"                    # ↓ Build dependencies
       - "npm"                    #
       - "make"                   #
-      - "python-is-python3"      #
-      - "python3-pip"            #
-      - "python-setuptools"      #
       - "openjdk-8-jre-headless" # Needed by FOP
     state: "latest"
   when: "ansible_distribution_version is version_compare('20.04', '>=')"
-
-- name: "Install Sphinx"
-  pip:
-    name:
-      - "sphinx"
-      - "sphinxcontrib-httpdomain"
-      - "sphinx_rtd_theme"
-    state: "latest"
 
 - name: "Install npm global dependencies (also required during the build)"
   npm:
