@@ -17,3 +17,6 @@ php_packages:
   - "php-memcache"
   - "php-apcu"
 
+devbox_packages:
+  - "python-pip"
+  - "python-setuptools"

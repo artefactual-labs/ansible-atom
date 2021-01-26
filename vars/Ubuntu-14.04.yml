@@ -9,3 +9,7 @@ php_packages:
   - "php5-ldap"
   - "php5-memcache"
   - "php5-apcu"
+
+devbox_packages:
+  - "python-pip"
+  - "python-setuptools"

@@ -60,19 +60,19 @@ an arrangement as follows:
 |-- playbook-atom.yml      => AtoM deployment playbook
 |-- ansible.cfg
 |-- hosts
-|-- ... 
+|-- ...
 ```
 
 Where `atomsite1.yml`, `atomsite2.yml`, ... define role variables that
-need to be different for site1, site2,... 
+need to be different for site1, site2,...
 
-As a minimum, the variable `atom_path` must be different for each site. 
-The basename of `atom_path` is used to create identifiers that need to be 
+As a minimum, the variable `atom_path` must be different for each site.
+The basename of `atom_path` is used to create identifiers that need to be
 different for each site, such as php pool and worker names (the basename
-is the last component of the path, e.g., if `atom_path` is 
+is the last component of the path, e.g., if `atom_path` is
 "/usr/share/nginx/atom" then the basename is "atom")
 
-For example, if deploying AtoM production and test sites, we could 
+For example, if deploying AtoM production and test sites, we could
 define the production site variables in `atomsite1.yml`:
 
 ```
@@ -103,7 +103,7 @@ Then to deploy the second site:
 ansible-playbook playbook-atom.yml -l atomhost -e @sites/atomsite2.yml -t atom-site
 ```
 
-The `-e @<file>` (extra vars) option makes ansible use the variables defined in the 
+The `-e @<file>` (extra vars) option makes ansible use the variables defined in the
 specified file in addition to the variables defined in host_vars and the playbook
 (with the values assigned as extra vars taking precedence over assignments
 done elsewhere)
@@ -133,3 +133,17 @@ For instance:
 ├── src -> /usr/share/nginx/atom/atom-381f849b6ecd763dedf92a7bad43cc350a3c5439
 └── uploads
 ```
+
+## Development box
+
+This role is also used to set up our [Vagrant box](vagrantbox) for development
+purposes, including workflows where code changes and documentation work is
+required.
+
+The role variable that controls this behaviour is `atom_devbox` (boolean).
+However, this is only known to work in the context of Vagrant and our build
+system based on [Packer](packer), e.g. it assumes that the `vagrant` user has
+been previously created.
+
+vagrantbox: https://www.accesstomemory.org/en/docs/latest/dev-manual/env/vagrant/
+packer: https://github.com/artefactual-labs/am-packbuild/tree/qa/1.x/packer/templates

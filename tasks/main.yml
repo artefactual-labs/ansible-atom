@@ -147,6 +147,8 @@
     - "drmc-mock"
 
 - include: "devbox.yml"
-  when: "atom_devbox|bool"
+  when:
+    - "atom_devbox|bool"
+    - "ansible_distribution == 'Ubuntu'"
   tags:
     - "atom-devbox"

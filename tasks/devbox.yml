@@ -85,6 +85,21 @@
     accept_hostkey: "yes"
   become_user: "vagrant"
 
+- name: "Install packages"
+  package:
+    name: "{{ devbox_packages }}"
+    state: "present"
+
+- name: "Upgrade pip"
+  pip:
+    name: "pip"
+    state: "present"
+    version: "20.3"
+
+- name: "Install atom-docs requirements"
+  pip:
+    requirements: "{{ ansible_env.HOME }}/atom-docs/requirements.txt"
+
 - name: "Create symlink to AtoM sources"
   file:
     src: "/usr/share/nginx/atom"

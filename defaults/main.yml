@@ -13,7 +13,8 @@ atom_repository_version: "stable/2.4.x"
 atom_install_site: "true"
 atom_install_dependencies: "true"
 # Install some extra packages specific to our official Vagrant-based
-# development box. See `tasks/devbox.yml` for more details.
+# development box. See `tasks/devbox.yml` for more details. It is only
+# compatible with Vagrant machines.
 atom_devbox: "no"
 # Use a different AtoM directory for each revision
 atom_revision_directory: "no"
