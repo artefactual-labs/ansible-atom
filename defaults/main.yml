@@ -207,7 +207,7 @@ atom_pool_php_post_max_size: "72M"
 atom_pool_php_upload_max_filesize: "64M"
 atom_pool_php_envs:
   ATOM_DEBUG_IP: "127.0.0.1"
-  ATOM_READ_ONLY: "off"
+  ATOM_READ_ONLY: "{% if atom_app_read_only|bool %}on{% else %}off{% endif %}"
 ## For Binder(DRMC), there are some other env vars required. Example:
 ## (re-define atom_pool_php_envs in the playbook or in host_vars)
 ## atom_pool_php_envs:
