@@ -1,0 +1,56 @@
+# Based on geerlingguy/ansible-role-composer (MIT):
+# https://github.com/geerlingguy/ansible-role-composer
+
+- name: Check if Composer is installed.
+  stat: "path={{ composer_path }}"
+  register: composer_bin
+
+- name: Get Composer installer signature.
+  uri:
+    url: https://composer.github.io/installer.sig
+    return_content: true
+  register: composer_installer_signature
+  when: not composer_bin.stat.exists
+
+- name: Download Composer installer.
+  get_url:
+    url: https://getcomposer.org/installer
+    dest: /tmp/composer-installer.php
+    mode: 0755
+    checksum: "sha384:{{ composer_installer_signature.content }}"
+  when: not composer_bin.stat.exists
+
+- name: Run Composer installer.
+  command: >
+    php composer-installer.php {% if composer_version_branch %} {{ composer_version_branch }}{% elif composer_version %} --version={{ composer_version }}{% endif %}
+    chdir=/tmp
+  when: not composer_bin.stat.exists
+
+- name: Move Composer into globally-accessible location.
+  command: >
+    mv /tmp/composer.phar {{ composer_path }}
+    creates={{ composer_path }}
+  when: not composer_bin.stat.exists
+
+- name: Update Composer to latest version (if configured).
+  command: >
+    php {{ composer_path }} self-update {{ composer_version_branch }}
+  register: composer_update
+  changed_when: "'Updating to version' in composer_update.stdout"
+  when: composer_keep_updated | bool
+
+- name: Ensure composer directory exists.
+  become: true
+  become_user: "{{ composer_home_owner }}"
+  file:
+    path: "{{ composer_home_path }}"
+    owner: "{{ composer_home_owner }}"
+    group: "{{ composer_home_group }}"
+    state: directory
+    mode: 0755
+
+- name: Add composer_home_path bin directory to global $PATH.
+  template:
+    src: etc/profile.d/composer.sh.j2
+    dest: /etc/profile.d/composer.sh
+    mode: 0644

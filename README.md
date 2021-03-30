@@ -147,3 +147,12 @@ been previously created.
 
 vagrantbox: https://www.accesstomemory.org/en/docs/latest/dev-manual/env/vagrant/
 packer: https://github.com/artefactual-labs/am-packbuild/tree/qa/1.x/packer/templates
+
+## License
+
+AGPL-3.0.
+
+Composer management based on [Ansible Role: Composer] (Jeff Geerling, MIT).
+
+
+[Ansible Role: Composer]: https://github.com/geerlingguy/ansible-role-composer
