@@ -1,0 +1,8 @@
+---
+composer_path: "/usr/local/bin/composer"
+composer_home_path: "~/.composer"
+composer_home_owner: "root"
+composer_home_group: "root"
+composer_keep_updated: false
+composer_version: ""
+composer_version_branch: '--2'

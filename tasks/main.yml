@@ -35,6 +35,13 @@
       when:
         - ansible_os_family == "RedHat"
 
+    - include: "php-composer.yml"
+      environment:
+        - PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php{{ php_version }}/root/bin/"
+      tags:
+        - "atom-php"
+        - "atom-php-composer"
+
     - include: "fop.yml"
       environment:
         - PATH: "{{ ansible_env.PATH }}:/opt/rh/rh-php{{ php_version }}/root/bin/"
