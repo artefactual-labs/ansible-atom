@@ -155,7 +155,7 @@
 
 - include: "devbox.yml"
   when:
-    - "atom_devbox|bool"
+    - "atom_environment_type == 'development'"
     - "ansible_distribution == 'Ubuntu'"
   tags:
     - "atom-devbox"
