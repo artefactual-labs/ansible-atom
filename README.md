@@ -140,13 +140,12 @@ This role is also used to set up our [Vagrant box](vagrantbox) for development
 purposes, including workflows where code changes and documentation work is
 required.
 
-The role variable that controls this behaviour is `atom_devbox` (boolean).
-However, this is only known to work in the context of Vagrant and our build
-system based on [Packer](packer), e.g. it assumes that the `vagrant` user has
-been previously created.
+The role variable that controls this behaviour is `atom_environment_type` when
+its value is set to `development`. However, this is only known to work in the
+context of Vagrant and builds based on Ubuntu, e.g. it assumes that the `vagrant`
+user has been previously created.
 
 vagrantbox: https://www.accesstomemory.org/en/docs/latest/dev-manual/env/vagrant/
-packer: https://github.com/artefactual-labs/am-packbuild/tree/qa/1.x/packer/templates
 
 ## License
 
