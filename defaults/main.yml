@@ -120,13 +120,20 @@ atom_template_propel_ini: "atom/config/propel.ini"
 
 atom_template_app_yml: "atom/apps/qubit/config/app.yml"
 atom_app_upload_limit: "-1"
+
+## app.yml cache settings (prefix must be different for each site in a multisite deploy)
 atom_app_cache_engine: "sfMemcacheCache"
 atom_app_cache_engine_options:
   storeCacheInfo: "yes"
-  prefix: "atom"
+  prefix: "{{ atom_path | basename }}"
   host: "127.0.0.1"
   port: "11211"
   persistent: "yes"
+## if not using memcached, replace with:
+# atom_app_cache_engine: "sfAPCCache"
+# atom_app_cache_engine_options:
+#   prefix: "{{ atom_path | basename }}"
+
 # atom_app_google_maps_api_key:
 # atom_app_google_analytics_api_key:
 # atom_app_google_analytics_institutions_dimension_index:
