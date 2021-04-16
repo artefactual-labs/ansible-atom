@@ -77,3 +77,19 @@
     owner: "{{ atom_user }}"
     group: "{{ atom_group }}"
   when: "atom_downloads_symlink is undefined"
+
+- name: "SELinux tasks for symlinks"
+  block:
+    - name: "Selinux: allow httpd to write on uploads folders"
+      shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_uploads_symlink }}\(/.*\)? && restorecon -R -v {{ atom_uploads_symlink }}'
+      when:
+        - "atom_uploads_symlink is defined"
+    - name: "Selinux: allow httpd to write on downloads folders"
+      shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_downloads_symlink }}\(/.*\)? && restorecon -R -v {{ atom_downloads_symlink }}'
+      when:
+        - "atom_downloads_symlink is defined"
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_selinux is defined and ansible_selinux != False and ansible_selinux.status == 'enabled'
+  tags:
+    - selinux
