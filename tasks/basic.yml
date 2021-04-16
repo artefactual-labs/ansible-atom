@@ -145,14 +145,6 @@
     - name: "Selinux: allow httpd to write on atom folder (when not using atom_revision_directory)"
       shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_path }}\(/.*\)? && restorecon -R -v {{ atom_path }}'
       when: not atom_revision_directory|bool
-    - name: "Selinux: allow httpd to write on uploads folders"
-      shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_uploads_symlink }}\(/.*\)? && restorecon -R -v {{ atom_uploads_symlink }}'
-      when:
-        - "atom_uploads_symlink is defined"
-    - name: "Selinux: allow httpd to write on downloads folders"
-      shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_downloads_symlink }}\(/.*\)? && restorecon -R -v {{ atom_downloads_symlink }}'
-      when:
-        - "atom_downloads_symlink is defined"
     - name: "Selinux: enable httpd_can_network_connect"
       seboolean:
         name: httpd_can_network_connect
