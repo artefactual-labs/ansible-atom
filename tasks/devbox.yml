@@ -106,3 +106,24 @@
     dest: "{{ ansible_env.HOME }}/atom"
     state: "link"
   become_user: "vagrant"
+
+#
+# Install and disable PCOV
+#
+
+- name: "Install PCOV"
+  package:
+    name: "php-pcov"
+    state: "present"
+
+- name: "Disable PCOV"
+  blockinfile:
+    dest: "{{ item }}"
+    marker: ";{mark} Ansible managed: Disable PCOV"
+    block: |
+      [pcov]
+      pcov.enabled=0
+  with_items:
+    - "/etc/php/{{ php_version }}/cli/php.ini"
+    - "/etc/php/{{ php_version }}/fpm/php.ini"
+  notify: "Restart PHP service"
