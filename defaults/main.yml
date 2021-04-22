@@ -18,6 +18,9 @@ atom_revision_directory_latest_symlink_dir: "src"
 # Create a symlink from atom_path/private to
 # atom_path/atom_revision_directory_latest_symlink_dir
 atom_private_symlink: "no"
+# CSRF protection should be enabled in 2.7.x and higher
+# but it must be disabled in 2.6.x and lower.
+atom_csrf_protection: "no"
 
 #
 # Choose php version to use

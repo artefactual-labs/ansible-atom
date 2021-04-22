@@ -69,6 +69,12 @@
     group: "{{ atom_group }}"
     mode: "u=rwx,g=rwx,o=rx"
 
+- name: "Generate CSRF secret"
+  vars:
+    secret: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
+  set_fact:
+    atom_csrf_secret: "{{ secret if atom_csrf_protection|bool else 'false' }}"
+
 - name: "Install configuration files"
   template:
     src: "{{ item.src }}"
