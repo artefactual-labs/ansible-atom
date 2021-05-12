@@ -132,16 +132,16 @@
       tags:
         - "atom-build"
 
-    - include: "worker.yml"
-      when: "atom_worker_setup is defined and atom_worker_setup|bool"
-      tags:
-        - "atom-worker"
-
     - include: "symlink-dirs.yml"
       tags:
         - "atom-uploads"
         - "atom-downloads"
         - "atom-build"
+        - "atom-worker"
+
+    - include: "worker.yml"
+      when: "atom_worker_setup is defined and atom_worker_setup|bool"
+      tags:
         - "atom-worker"
 
   when: atom_install_site|bool == true
