@@ -9,7 +9,7 @@ atom_user: "www-data"
 atom_group: "www-data"
 atom_path: "/usr/share/nginx/atom"
 atom_repository_url: "https://github.com/artefactual/atom.git"
-atom_repository_version: "stable/2.4.x"
+atom_repository_version: "stable/2.6.x"
 atom_install_site: "true"
 atom_install_dependencies: "true"
 # Use a different AtoM directory for each revision
