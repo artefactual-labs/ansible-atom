@@ -182,7 +182,7 @@ atom_app_gearman_job_server: "127.0.0.1:4730"
 #   Atom 2.1, Binder 0.8: "2.1"
 #   Atom 2.4: "2.4"
 #   Atom 2.5, Binder 0.9: "2.5"
-atom_es_config_version: "2.4"
+atom_es_config_version: "2.6"
 atom_template_search_yml: "atom/apps/qubit/config/{{ atom_es_config_version }}-search.yml"
 
 atom_es_host: "127.0.0.1"
