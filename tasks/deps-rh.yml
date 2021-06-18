@@ -46,4 +46,4 @@
 
 # don't quote the shell command, or it won't work (also need to escape the <)
 - name: "Install npm (SCL) global dependencies (also required during the build)"
-  shell: scl enable rh-nodejs6 'npm install -g grunt-cli less@\<2.0.0'
+  shell: scl enable rh-nodejs6 'npm install -g grunt-cli less@\<4.0.0'
