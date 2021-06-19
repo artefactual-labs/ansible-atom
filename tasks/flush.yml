@@ -9,7 +9,7 @@
 
 
 - name: "Purge database"
-  shell: "php -d memory_limit=-1 symfony tools:purge --no-confirmation --email='{{ atom_user_email }}' --username='{{ atom_user_username }}' --password='{{ atom_user_password }}' --title='{{ atom_title }}' --description='{{ atom_description }}' --url='http://undefined'"
+  shell: "php -d memory_limit=-1 symfony tools:purge --no-confirmation --email='{{ atom_user_email }}' --username='{{ atom_user_username }}' --password='{{ atom_user_password }}' --title='{{ atom_title }}' --description='{{ atom_description }}' --url='http://127.0.0.1'"
   args:
     chdir: "{{ atom_path }}/{{ atom_extra_path }}"
   when: "atom_drmc is undefined or not atom_drmc|bool"
