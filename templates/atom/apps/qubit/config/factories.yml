@@ -4,14 +4,14 @@
 
 prod:
   storage:
-{% if atom_app_cache_engine == "sfMemcacheCache" %}
+{% if atom_app_cache_engine == "sfMemcacheCache" or atom_app_cache_engine == "sfAPCCache" %}
     class: QubitCacheSessionStorage
     param:
       session_name: symfony
       session_cookie_httponly: true
       session_cookie_secure: false
       cache:
-        class: sfMemcacheCache
+        class: {{ atom_app_cache_engine }}
         param:
 {% for key, value in atom_app_cache_engine_options.items() %}
           {{ key }}: {{ value }}
