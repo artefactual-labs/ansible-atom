@@ -9,6 +9,9 @@
   uri:
     url: https://composer.github.io/installer.sig
     return_content: true
+{% if atom_php_composer_validate_certs is defined %}
+    validate_certs: {{ atom_php_composer_validate_certs }}
+{% endif %}
   register: composer_installer_signature
   when: not composer_bin.stat.exists
 
