@@ -29,6 +29,10 @@ all:
   google_tag_manager_container_id: {{ atom_app_google_tag_manager_container_id }}
 {% endif %}
 
+{% if atom_app_htmlpurifier_enabled is defined %}
+  htmlpurifier_enabled: {{ atom_app_htmlpurifier_enabled }}
+{% endif %}
+
 {% if atom_app_csv_transform_script_name is defined %}
   # Specify a CSV Transform script that can be automatically applied from
   # the CSV Import Page in AtoM

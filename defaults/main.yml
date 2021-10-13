@@ -143,6 +143,8 @@ atom_app_cache_engine_options:
 # atom_app_cache_engine_options:
 #   prefix: "{{ atom_path | basename }}"
 
+#atom_app_htmlpurifier_enabled: false
+
 # atom_app_google_maps_api_key:
 # atom_app_google_analytics_api_key:
 # atom_app_google_analytics_institutions_dimension_index:
