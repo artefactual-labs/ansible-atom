@@ -3,8 +3,8 @@ Description=AtoM worker
 After=network.target
 # High interval and low restart limit to increase the possibility
 # of hitting the rate limits in long running recurrent jobs.
-StartLimitIntervalSec=24h
-StartLimitBurst=3
+StartLimitIntervalSec={{ atom_worker_systemd_start_limit_interval_sec }}
+StartLimitBurst={{ atom_worker_systemd_start_limit_burst }}
 
 [Install]
 WantedBy=multi-user.target
@@ -20,21 +20,22 @@ WorkingDirectory={{ atom_path }}
 {% endif %}
 {% if ansible_os_family == "RedHat" %}
 {% if atom_worker_old_config|bool %}
-ExecStart=/opt/rh/rh-php{{ php_version }}/root/bin/php -d memory_limit=-1 -d error_reporting="E_ALL" symfony tools:gearman-worker
+ExecStart=/opt/rh/rh-php{{ php_version }}/root/bin/php -d memory_limit={{ atom_worker_systemd_memory_limit }} -d error_reporting="{{ atom_worker_systemd_error_reporting }}" {{ atom_worker_systemd_execstart_php_extra_args }} symfony tools:gearman-worker {{ atom_worker_systemd_execstart_worker_extra_args }}
 {% else %}
-ExecStart=/opt/rh/rh-php{{ php_version }}/root/bin/php -d memory_limit=-1 -d error_reporting="E_ALL" symfony jobs:worker
+ExecStart=/opt/rh/rh-php{{ php_version }}/root/bin/php -d memory_limit={{ atom_worker_systemd_memory_limit }} -d error_reporting="{{ atom_worker_systemd_error_reporting }}" {{ atom_worker_systemd_execstart_php_extra_args }} symfony jobs:worker {{ atom_worker_systemd_execstart_worker_extra_args }}
 {% endif %}
 {% else %}
 {% if atom_worker_old_config|bool %}
-ExecStart=/usr/bin/php{{ php_version }} -d memory_limit=-1 -d error_reporting="E_ALL" symfony tools:gearman-worker
+ExecStart=/usr/bin/php{{ php_version }} -d memory_limit={{ atom_worker_systemd_memory_limit }} -d error_reporting="{{ atom_worker_systemd_error_reporting }}" {{ atom_worker_systemd_execstart_php_extra_args }} symfony tools:gearman-worker {{ atom_worker_systemd_execstart_worker_extra_args }}
 {% else %}
-ExecStart=/usr/bin/php{{ php_version }} -d memory_limit=-1 -d error_reporting="E_ALL" symfony jobs:worker
+ExecStart=/usr/bin/php{{ php_version }} -d memory_limit={{ atom_worker_systemd_memory_limit }} -d error_reporting="{{ atom_worker_systemd_error_reporting }}" {{ atom_worker_systemd_execstart_php_extra_args }} symfony jobs:worker {{ atom_worker_systemd_execstart_worker_extra_args }}
 {% endif %}
 {% endif %}
 KillSignal=SIGTERM
-Restart=on-failure
-RestartSec=30
-
+Restart={{ atom_worker_systemd_restart }}
+RestartSec={{ atom_worker_systemd_restart_sec }}
+RestartForceExitStatus={{ atom_worker_systemd_restart_force_exit_status }}
+SuccessExitStatus={{ atom_worker_systemd_success_exit_status }}
 #Environment=ATOM_FOO_1=BAR
 #Environment=ATOM_FOO_2=BAR
 # AtoM PHP pool vars 
