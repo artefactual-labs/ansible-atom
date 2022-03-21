@@ -249,3 +249,23 @@ atom_drmc_mock: "no"
 #   Binder 0.8: "yes" (assumes ES running on same server)
 #   Binder 0.9: "no"
 atom_drmc_es_scripts: "no"
+
+#
+# Systemd AtoM worker parameters
+#
+
+# Check templates/lib/systemd/system/atom-worker.service
+
+atom_worker_systemd_start_limit_interval_sec: "24h"
+atom_worker_systemd_start_limit_burst: "3"
+atom_worker_systemd_execstart_php_extra_args: ""
+atom_worker_systemd_execstart_worker_extra_args: ""
+atom_worker_systemd_restart: "on-failure"
+atom_worker_systemd_restart_sec: "30"
+
+atom_worker_systemd_memory_limit: "-1"
+atom_worker_systemd_error_reporting: "E_ALL"
+
+atom_worker_systemd_restart_force_exit_status: "111"
+atom_worker_systemd_success_exit_status: "111"
+
