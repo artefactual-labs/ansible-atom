@@ -42,6 +42,7 @@
       - "make"                        #
       - "gcc"                         #
       - "java-1.8.0-openjdk-headless" # needed by FOP
+      - "Judy-devel"                  # needed by memprof
     state: "latest"
 
 # don't quote the shell command, or it won't work (also need to escape the <)

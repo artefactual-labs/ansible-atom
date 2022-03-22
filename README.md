@@ -135,6 +135,42 @@ For instance:
 └── uploads
 ```
 
+## Install and configure memprof extension and use `max-job-count` and `max-mem-limit` features
+
+The `memprof` extension is needed by the following feature:
+
+* https://projects.artefactual.com/issues/13573
+
+The extension is downloaded from:
+
+* https://github.com/arnaud-lb/php-memory-profiler
+
+By default the module is not installed, you need to set as true or yes:
+
+* `atom_php_install_memprof_module`
+
+It has been tested on CentOS 7, Ubuntu 18 and Ubuntu 20.
+
+An ansible config sample for AtoM qa/2.x and gearman:
+
+```
+atom_php_install_memprof_module: "yes"
+
+atom_worker_systemd_memory_limit: "2000M"
+atom_worker_systemd_execstart_php_extra_args: "-dextension=memprof.so"
+atom_worker_systemd_start_limit_burst: "0"
+atom_worker_systemd_restart_sec: "2"
+
+atom_worker_systemd_execstart_worker_extra_args: "--max-job-count=10 --max-mem-usage=200000"
+
+gearman_queue_parameters: "--queue-type=builtin --job-retries=1"
+```
+
+With the above config, the AtoM worker will be restarted (no daily restart
+limit) after every job run and/or when using more than 200M of memory. Note the
+`systemd_memory_limit` is 2GB and the `max-mem-usage` is 200MB, because
+`systemd_memory_limit` must be higher than `max-mem-usage`.
+
 ## Development box
 
 This role is also used to set up our [Vagrant box](vagrantbox) for development

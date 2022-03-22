@@ -15,6 +15,7 @@ php_packages:
   - "php7.4-zip"
   - "php-memcache"
   - "php-apcu"
+  - "php7.4-dev"
 
 devbox_packages:
   - "python-is-python3"
