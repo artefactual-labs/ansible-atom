@@ -15,3 +15,59 @@
     dest: "/etc/init/php5-fpm.conf"
     line: "reload signal USR2"
   when: "ansible_distribution_version is version('14.04', '==')"
+
+- name: "Download memprof module source (Ubuntu >=18.04)"
+  unarchive:
+    src: "https://github.com/arnaud-lb/php-memory-profiler/archive/refs/tags/3.0.2.zip"
+    dest: "/tmp/"
+    creates: "/tmp/php-memory-profiler-3.0.2"
+    copy: "no"
+    owner: "root"
+    group: "root"
+  when:
+    - atom_php_install_memprof_module|bool
+    - ansible_distribution_version is version('18.04', '>=')
+
+- name: "Build memprof extension (Bionic)"
+  shell: >
+    phpize &&
+    ./configure &&
+    make clean &&
+    make &&
+    cp modules/memprof.so /usr/lib/php/20170718/memprof.so
+  args:
+    chdir: "/tmp/php-memory-profiler-3.0.2"
+    creates: "/usr/lib/php/20170718/memprof.so"
+  when:
+    - atom_php_install_memprof_module|bool
+    - ansible_distribution_version is version('18.04', '==')
+
+- name: "Build memprof extension (Focal)"
+  shell: >
+    phpize &&
+    ./configure &&
+    make clean &&
+    make &&
+    cp modules/memprof.so /usr/lib/php/20190902/memprof.so
+  args:
+    chdir: "/tmp/php-memory-profiler-3.0.2"
+    creates: "/usr/lib/php/20190902/memprof.so"
+  when:
+    - atom_php_install_memprof_module|bool
+    - ansible_distribution_version is version('20.04', '==')
+
+- name: "Delete memprof temp source dir (Ubuntu >=18.04)"
+  file:
+    state: "absent"
+    path: "/tmp/php-memory-profiler-3.0.2"
+  when:
+    - atom_php_install_memprof_module|bool
+    - ansible_distribution_version is version('18.04', '>=')
+
+- name: "Configure memprof php extension (Ubuntu >=18.04)"
+  shell: printf "extension=memprof.so\n" >> "/etc/php/{{ php_version }}/mods-available/memprof.ini"
+  args:
+    creates: "/etc/php/{{ php_version }}/mods-available/memprof.ini"
+  when:
+    - atom_php_install_memprof_module|bool
+    - ansible_distribution_version is version('18.04', '>=')

@@ -16,6 +16,7 @@ php_packages:
   - "php7.2-zip"
   - "php-memcache"
   - "php-apcu"
+  - "php7.2-dev"
 
 devbox_packages:
   - "python-pip"

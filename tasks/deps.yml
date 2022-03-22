@@ -50,6 +50,7 @@
       - "npm"                    #
       - "make"                   #
       - "openjdk-8-jre-headless" # Needed by FOP
+      - "libjudy-dev"            # Needed by memprof
     state: "latest"
   when: "ansible_distribution_version is version_compare('18.04', '==')"
 
@@ -64,6 +65,7 @@
       - "npm"                    #
       - "make"                   #
       - "openjdk-8-jre-headless" # Needed by FOP
+      - "libjudy-dev"            # Needed by memprof
     state: "latest"
   when: "ansible_distribution_version is version_compare('20.04', '>=')"
 

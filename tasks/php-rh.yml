@@ -48,6 +48,36 @@
   args:
     creates: /etc/opt/rh/rh-php{{ php_version }}/php.d/20-memcache.ini
 
+- name: "Download memprof module source"
+  unarchive:
+    src: "https://github.com/arnaud-lb/php-memory-profiler/archive/refs/tags/3.0.2.zip"
+    dest: "/opt/rh/rh-php{{ php_version }}/"
+    creates: "/opt/rh/rh-php{{ php_version }}/php-memory-profiler-3.0.2"
+    copy: "no"
+    owner: "root"
+    group: "root"
+  when:
+    - atom_php_install_memprof_module|bool
+
+- name: "Build memprof extension"
+  shell: "phpize && \
+         ./configure && \
+         make clean && \
+         make && \
+         cp modules/memprof.so /opt/rh/rh-php{{ php_version }}/root/usr/lib64/php/modules/memprof.so"
+  args:
+    chdir: "/opt/rh/rh-php{{ php_version }}/php-memory-profiler-3.0.2"
+    creates: "/opt/rh/rh-php{{ php_version }}/root/usr/lib64/php/modules/memprof.so"
+  when:
+    - atom_php_install_memprof_module|bool
+
+- name: "Configure memprof php extension"
+  shell: printf "extension=memprof.so\n" >> /etc/opt/rh/rh-php{{ php_version }}/php.d/20-memprof.ini
+  args:
+    creates: /etc/opt/rh/rh-php{{ php_version }}/php.d/20-memprof.ini
+  when:
+    - atom_php_install_memprof_module|bool
+
 - name: "Set php.ini memory to 512"
   lineinfile:
     path: /etc/opt/rh/rh-php{{ php_version }}/php.ini
