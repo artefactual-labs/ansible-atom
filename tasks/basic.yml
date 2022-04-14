@@ -38,6 +38,19 @@
     mode: "o+w"
     recurse: yes
 
+- name: "Get git config global safe directories dir"
+  shell: "git config --global --get-all safe.directory || echo ''"
+  register: "__git_config_global_safe_dir"
+  become: "no"
+
+- name: "Set site directory as git safe dir"
+  command: "git config --global --add safe.directory {{ __atom_path | trim | regex_replace('\\/$', '') }}"
+  vars:
+    __atom_path: "{{ atom_path }}/{{ atom_extra_path }}"
+  when:
+    - __atom_path | trim() | regex_replace('\\/$', '') not in __git_config_global_safe_dir.stdout_lines
+  become: "no"
+
 - name: "Pull new code"
   git:
     update: "yes"
