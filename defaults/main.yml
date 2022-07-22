@@ -211,6 +211,7 @@ atom_pool_listen_owner: www-data  # Nginx will use this if it's installed in the
 atom_pool_listen_group: www-data  # Nginx will use this if it's installed in the same machine
 atom_pool_listen_mode: "0600"
 atom_pool_pm: "dynamic"
+atom_pool_pm_process_idle_timeout: "10s" # Only used with pm=ondemand, not used on dynamic or static
 atom_pool_pm_max_children: "30"
 atom_pool_pm_start_servers: "10"
 atom_pool_pm_min_spare_servers: "10"
