@@ -220,7 +220,7 @@ atom_pool_pm_max_requests: "200"
 atom_pool_php_memory_limit: "512M"
 atom_pool_php_max_execution_time: "120"
 atom_pool_php_post_max_size: "72M"
-atom_pool_php_upload_max_filesize: "64M"
+atom_pool_php_upload_max_filesize: "{{ atom_pool_php_upload_max_filesize | default('64M') }}"
 atom_pool_php_envs:
   ATOM_DEBUG_IP: "127.0.0.1"
   ATOM_READ_ONLY: "{% if atom_app_read_only|bool %}on{% else %}off{% endif %}"
