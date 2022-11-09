@@ -24,6 +24,18 @@
     update_cache: "yes"
   when: "ansible_distribution_version is version('14.04', '<=')"
 
+- name: "Add nodesource repo for nodejs (Ubuntu >=20.04)"
+  apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
+  when: "ansible_distribution_version is version('20.04', '>=')"
+
+- name: "Add nodejs 14.x ppa for apt repo (Ubuntu >=20.04)"
+  apt_repository:
+     repo: "deb https://deb.nodesource.com/node_14.x focal main"
+     update_cache: "yes"
+  when: "ansible_distribution_version is version('20.04', '>=')"
+
 - name: "Install AtoM dependencies (Ubuntu <= Xenial/16.04)"
   apt:
     pkg:
@@ -62,7 +74,7 @@
       - "poppler-utils"          #
       - "ffmpeg"                 #
       - "git"                    # ↓ Build dependencies
-      - "npm"                    #
+      - "nodejs"                 #
       - "make"                   #
       - "openjdk-8-jre-headless" # Needed by FOP
       - "libjudy-dev"            # Needed by memprof

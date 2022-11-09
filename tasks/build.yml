@@ -41,7 +41,7 @@
         - not atom_compile_all_themes|bool # Don't compile themes when they are alreay compiled
   when: ansible_os_family == "Debian"
 
-- name: "Build AtoM themes (CentOS/RH)"
+- name: "Build AtoM themes (CentOS/RH and php version < 7.4)"
   block:
     - name: "Build all AtoM themes (CentOS/RH)"
       shell: "scl enable rh-nodejs6 make || make"
@@ -59,14 +59,78 @@
       become: "no"
       when:
         - not atom_compile_all_themes|bool # Don't compile themes when they are alreay compiled
-  when: ansible_os_family == "RedHat"
+  when:
+    - ansible_os_family == "RedHat"
+    - atom_php_version|int < 74
+
+- name: "Build AtoM themes (CentOS/RH and php version >= 7.4)"
+  block:
+    - name: "Build all AtoM themes (CentOS/RH)"
+      shell: "make"
+      args:
+        chdir: "{{ item }}"
+      with_items: "{{ theme_makefiles.stdout_lines }}"
+      become: "no"
+      when:
+        - atom_compile_all_themes|bool
+    - name: "Build selected AtoM themes (CentOS/RH)"
+      shell: "{{ item.build_cmd }}"
+      args:
+        chdir: "{{ item.path }}"
+      with_items: "{{ atom_themes }}"
+      become: "no"
+      when:
+        - not atom_compile_all_themes|bool # Don't compile themes when they are alreay compiled
+  when:
+    - ansible_os_family == "RedHat"
+    - atom_php_version|int >= 74
+
+#
+# Bootstrap 5 support
+#
+
+- name: "Prepare npm to be used with bootstrap5 themes"
+  block:
+    - name: "Update npm to latest version of its release"
+      command: "npm install -g npm@latest"
+    - name: "Get AtoM user home directory"
+      become_user: "{{ atom_user }}"
+      become: "yes"
+      shell: >
+             getent passwd {{ atom_user }}  | awk -F: '{ print $6 }'
+      changed_when: false
+      register: __atom_user_home_directory
+    - name: "Create npm directories on {{ atom_user }} home dir"
+      become: "yes"
+      file:
+        path: "{{ __atom_user_home_directory.stdout }}/{{ item }}"
+        state: "directory"
+        owner: "{{ atom_user }}"
+        group: "{{ atom_group }}"
+      loop:
+        - ".config"
+        - ".npm"
+    - name: "Clean cache, install and build with npm on AtoM site directory"
+      become: "yes"
+      become_user: "{{ atom_user }}"
+      command: "{{ item }}"
+      args:
+        chdir: "{{ atom_path }}/{{ atom_extra_path }}"
+      environment:
+        CYPRESS_INSTALL_BINARY: 0
+      loop:
+        - "npm cache clean --force"
+        - "npm install"
+        - "npm run build"
+  when:
+    - atom_php_version|int >= 74
 
 #
 # DRMC/Binder
 #
 
 
-- name: "Binder npm build tasks (CentOS/RedHat)"
+- name: "Binder npm build tasks (CentOS/RedHat and php version < 7.4)"
   block:
     - name: "Install npm local dependencies (SCL)"
       command: "scl enable rh-nodejs6 'npm update' || npm update"
@@ -80,6 +144,24 @@
   when:
     - "atom_drmc is defined and atom_drmc|bool"
     - ansible_os_family == "RedHat"
+    - atom_php_version|int < 74
+  become: "no"
+
+- name: "Binder npm build tasks (CentOS/RedHat and php version >= 7.4)"
+  block:
+    - name: "Install npm local dependencies"
+      npm:
+        path: "{{ atom_drmc_path }}"
+        state: "latest"
+    # using --force option to ignore Error compiling ../../arDominionPlugin/css/main.less
+    - name: "Build DRMC"
+      command: "grunt build --force"
+      args:
+        chdir: "{{ atom_drmc_path }}"
+  when:
+    - "atom_drmc is defined and atom_drmc|bool"
+    - ansible_os_family == "RedHat"
+    - atom_php_version|int >= 74
   become: "no"
 
 - name: "Binder npm build tasks (Ubuntu)"

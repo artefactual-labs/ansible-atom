@@ -7,7 +7,7 @@ export {{ key }}="{{ value }}"
 {% endif %}
 {% endfor %}
 
-{% if ansible_os_family == "RedHat" -%}
+{% if ansible_os_family == "RedHat" and atom_php_version|int < 74 %}
 # enable SCLs for node and php
 source scl_source enable rh-nodejs6 rh-php{{ php_version }}
 {% endif %}

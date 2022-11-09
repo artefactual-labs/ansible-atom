@@ -44,11 +44,11 @@
     - name: "Remove default www pool"
       file:
         state: "absent"
-        path: "/etc/opt/rh/rh-php{{ php_version }}/php-fpm.d/www.conf"
+        path: "{{ php_rh_centos_etc_path }}/php-fpm.d/www.conf"
     - name: "Install pool configuration file"
       template:
         src: "etc/php/7.0/fpm/pool.d/atom.conf"
-        dest: "/etc/opt/rh/rh-php{{ php_version }}/php-fpm.d/{{ atom_pool_name }}.conf"
+        dest: "{{ php_rh_centos_etc_path }}/php-fpm.d/{{ atom_pool_name }}.conf"
       notify:
         - "Restart PHP service"
   when:
