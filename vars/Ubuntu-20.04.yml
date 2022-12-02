@@ -1,4 +1,4 @@
-php_version: "7.4"
+php_version: "{{ atom_php_version|default('7.4') }}"
 php_service_name: "php{{ php_version }}-fpm"
 php_packages:
   - "php7.4-cli"

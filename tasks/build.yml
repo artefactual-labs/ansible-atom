@@ -61,7 +61,7 @@
         - not atom_compile_all_themes|bool # Don't compile themes when they are alreay compiled
   when:
     - ansible_os_family == "RedHat"
-    - atom_php_version|int < 74
+    - php_version|int < 74
 
 - name: "Build AtoM themes (CentOS/RH and php version >= 7.4)"
   block:
@@ -83,7 +83,7 @@
         - not atom_compile_all_themes|bool # Don't compile themes when they are alreay compiled
   when:
     - ansible_os_family == "RedHat"
-    - atom_php_version|int >= 74
+    - php_version|int >= 74
 
 #
 # Bootstrap 5 support
@@ -123,7 +123,8 @@
         - "npm install"
         - "npm run build"
   when:
-    - atom_php_version|int >= 74
+    # Removing "." for Ubuntu php_version, for instance: 7.4
+    - php_version|replace('.','')|int >= 74
 
 #
 # DRMC/Binder
@@ -144,7 +145,7 @@
   when:
     - "atom_drmc is defined and atom_drmc|bool"
     - ansible_os_family == "RedHat"
-    - atom_php_version|int < 74
+    - php_version|int < 74
   become: "no"
 
 - name: "Binder npm build tasks (CentOS/RedHat and php version >= 7.4)"
@@ -161,7 +162,7 @@
   when:
     - "atom_drmc is defined and atom_drmc|bool"
     - ansible_os_family == "RedHat"
-    - atom_php_version|int >= 74
+    - php_version|int >= 74
   become: "no"
 
 - name: "Binder npm build tasks (Ubuntu)"

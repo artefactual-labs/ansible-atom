@@ -20,14 +20,14 @@
         - "atom-deps"
       when:
         - ansible_os_family == "RedHat"
-        - atom_php_version|int < 74
+        - php_version|int < 74
 
     - include: "deps-rh-74.yml"
       tags:
         - "atom-deps"
       when:
         - ansible_os_family == "RedHat"
-        - atom_php_version|int >= 74
+        - php_version|int >= 74
 
     - include: "php.yml"
       tags:
@@ -42,7 +42,7 @@
         - "atom-php"
       when:
         - ansible_os_family == "RedHat"
-        - atom_php_version|int < 74
+        - php_version|int < 74
 
     - include: "php-rh-74.yml"
       environment:
@@ -51,7 +51,7 @@
         - "atom-php"
       when:
         - ansible_os_family == "RedHat"
-        - atom_php_version|int >= 74
+        - php_version|int >= 74
 
     - include: "php-composer.yml"
       environment:
