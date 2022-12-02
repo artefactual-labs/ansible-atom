@@ -22,7 +22,7 @@
         - ansible_os_family == "RedHat"
         - php_version|int < 74
 
-    - include: "deps-rh-74.yml"
+    - include: "deps-rh-php-74.yml"
       tags:
         - "atom-deps"
       when:
