@@ -17,7 +17,7 @@
   become_user: "{{ atom_user }}"
   environment:
     - "{{ atom_pool_php_envs }}"
-    - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('/opt/rh/rh-php{{ php_version }}/root/bin')}}"
+    - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('')}}"
 
 - name: "Restart smbd"
   service:

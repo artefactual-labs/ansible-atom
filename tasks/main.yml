@@ -55,14 +55,14 @@
 
     - include: "php-composer.yml"
       environment:
-        - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('/opt/rh/rh-php{{ php_version }}/root/bin/') }}"
+        - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('') }}"
       tags:
         - "atom-php"
         - "atom-php-composer"
 
     - include: "fop.yml"
       environment:
-        - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('/opt/rh/rh-php{{ php_version }}/root/bin/')}}"
+        - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('')}}"
       tags:
         - "fop"
 
@@ -123,7 +123,7 @@
       become_user: "{{ atom_user }}"
       environment:
         - "{{ atom_pool_php_envs }}"
-        - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('') }}"
+        - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('') }}"
       when: >
         (uninitialized is defined and uninitialized|bool) or
         (atom_flush_data is defined and atom_flush_data|bool)
@@ -134,7 +134,7 @@
       become_user: "{{ atom_user }}"
       environment:
         - "{{ atom_pool_php_envs }}"
-        - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('/opt/rh/rh-php{{ php_version }}/root/bin/') }}"
+        - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('') }}"
       tags:
         - "atom-plugins"
 
