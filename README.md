@@ -6,10 +6,42 @@ Please feel free to add support for other platforms, pull requests accepted!
 
 Please visit our [deploy-pub](https://github.com/artefactual/deploy-pub/tree/master/playbooks/atom) repository for a real usage example.
 
+## Notes on OS, AtoM version and php version
+
+This role allows to install AtoM on CentOS 7 and Ubuntu 14.04, 16:04, 18.04 and
+20.04. But not all the AtoM versions can be installed in all OS.
+
+|AtoM version| PHP version    | CentOS support | Ubuntu support | ElasticSearch version | MySQL version |
+|------------|----------------|----------------|----------------|-----------------------|---------------|
+|  AtoM 2.3  |5.5, 5.6 and 7.0|    CentOS 7    | 14.04 and 16.04|      >=1.3,<2.0       |  >=5.1,<6.0   |
+|  AtoM 2.4  |5.5, 5.6 and 7.0|    CentOS 7    | 14.04 and 16.04|      >=1.3,<2.0       |  >=5.1,<6.0   |
+|  AtoM 2.5  |  7.0 and 7.2   |    CentOS 7    | 16.04 and 18.04|      >=5.0,<6.0       |  >=5.1,<6.0   |
+|  AtoM 2.6  |  7.2 and 7.3   |    CentOS 7    |     18.04      |      >=5.0,<6.0       |     >=8.0     |
+|  AtoM 2.7  |      7.4       |    CentOS 7    |     20.04      |      >=5.0,<6.0       |     >=8.0     |
+
+The next table explains the valid `atom_php_version` values that you can use
+depending on the AtoM version and Linux Distro. It is very important to take
+into account the default value (last column), because if you need a different
+php version you must set the `atom_php_version` variable on ansible `host_vars`
+or `group_vars` files to the desired version.
+
+|Linux Distro| AtoM 2.3 | AtoM 2.4 | AtoM 2.5 | AtoM 2.6 | AtoM 2.7 |  Default |
+|------------|----------|----------|----------|----------|----------|----------|
+| CentOS 7   |    70    |     70   | 70,71,72 |  72,73   |    74    |    72    |
+|Ubuntu 14.04|     5    |      5   |          |          |          |     5    |
+|Ubuntu 16.04|    7.0   |     7.0  |    7.0   |          |          |    7.0   |
+|Ubuntu 18.04|          |          |    7.2   |   7.2    |          |    7.2   |
+|Ubuntu 20.04|          |          |          |          |   7.4    |    7.4   |
+
+From the table above, you can see the Linux distro you need depending on
+the AtoM version. For instance, AtoM 2.7 can only be installed on CentOS 7 or
+Ubuntu 20.04.
+
 ## Notes on dependencies
 
-- AtoM <=2.4, Binder 0.8: Elasticsearch>=1.3,<2.0
--   Atom 2.5, Binder 0.9: Elasticsearch>=5.3,<6.x
+- AtoM <=2.4, Binder 0.8: Elasticsearch>=1.3,<2.0; MySQL>5.1,<6.0
+- Atom 2.5, Binder 0.9: Elasticsearch>=5.3,<6.x; MySQL>5.1,<6.0
+- AtoM >= 2.6: Elasticsearch>=5.3,<6.x; MySQL>=8.0
 
 ## Overriding default templates
 
