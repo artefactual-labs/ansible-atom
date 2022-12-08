@@ -1,2 +1,4 @@
-php_version: "{{ atom_php_version|default('72') }}" # Without dots. 70 and 71 are also available
-php_service_name: "rh-php{{ php_version }}-php-fpm"
+php_version: "{{ atom_php_version|default('72') }}" # Without dots. 70, 71, 73 and 74 are also available
+php_service_name: "{% if atom_php_version|int < 74 %}rh-php{{ php_version }}-php-fpm{% else %}php{{ php_version }}-php-fpm{% endif %}"
+php_rh_centos_path: "{% if atom_php_version|int < 74 %}/opt/rh/rh-php{{ php_version }}/root/bin{% else %}/opt/remi/php{{ php_version }}/root/bin{% endif %}"
+php_rh_centos_etc_path: "{% if atom_php_version|int < 74 %}/etc/opt/rh/rh-php{{ php_version }}{% else %}/etc/opt/remi/php{{ php_version }}{% endif %}"

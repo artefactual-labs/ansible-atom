@@ -20,9 +20,9 @@ WorkingDirectory={{ atom_path }}
 {% endif %}
 {% if ansible_os_family == "RedHat" %}
 {% if atom_worker_old_config|bool %}
-ExecStart=/opt/rh/rh-php{{ php_version }}/root/bin/php -d memory_limit={{ atom_worker_systemd_memory_limit }} -d error_reporting="{{ atom_worker_systemd_error_reporting }}" {{ atom_worker_systemd_execstart_php_extra_args }} symfony tools:gearman-worker {{ atom_worker_systemd_execstart_worker_extra_args }}
+ExecStart={{ php_rh_centos_path }}/php -d memory_limit={{ atom_worker_systemd_memory_limit }} -d error_reporting="{{ atom_worker_systemd_error_reporting }}" {{ atom_worker_systemd_execstart_php_extra_args }} symfony tools:gearman-worker {{ atom_worker_systemd_execstart_worker_extra_args }}
 {% else %}
-ExecStart=/opt/rh/rh-php{{ php_version }}/root/bin/php -d memory_limit={{ atom_worker_systemd_memory_limit }} -d error_reporting="{{ atom_worker_systemd_error_reporting }}" {{ atom_worker_systemd_execstart_php_extra_args }} symfony jobs:worker {{ atom_worker_systemd_execstart_worker_extra_args }}
+ExecStart= {{ php_rh_centos_path }}/php -d memory_limit={{ atom_worker_systemd_memory_limit }} -d error_reporting="{{ atom_worker_systemd_error_reporting }}" {{ atom_worker_systemd_execstart_php_extra_args }} symfony jobs:worker {{ atom_worker_systemd_execstart_worker_extra_args }}
 {% endif %}
 {% else %}
 {% if atom_worker_old_config|bool %}

@@ -1,0 +1,66 @@
+---
+
+- name: "Install epel repo"
+  yum:
+    name: "epel-release"
+    state: "installed"
+
+- name: "Enable epel repo"
+  ini_file:
+    path: /etc/yum.repos.d/epel.repo
+    section: epel
+    option: enabled
+    value: 1
+
+- name: "Import Remi GPG key (php version >= 7.4)"
+  rpm_key:
+    key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi2022"
+    state: present
+
+- name: "Install Remi Repo (php version >= 7.4)"
+  yum:
+    name: "https://rpms.remirepo.net/enterprise/remi-release-7.rpm"
+    state: "installed"
+
+- name: "Import nodesource GPG key (php version >= 7.4)"
+  rpm_key:
+    key: "https://rpm.nodesource.com/pub/el/NODESOURCE-GPG-SIGNING-KEY-EL"
+    state: present
+
+- name: "Install nodesource Repo (php version >= 7.4)"
+  yum:
+    name: "https://rpm.nodesource.com/pub_14.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm"
+    state: "installed"
+
+- name: "Add rpmfusion free repo (for ffmpeg)"
+  command: 'yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm'
+  args:
+    creates: "/etc/yum.repos.d/rpmfusion-free-updates.repo"
+
+- name: "Install AtoM dependencies"
+  yum:
+    name:
+      - "ImageMagick"                 # ↓ AtoM dependencies
+      - "ghostscript"                 #
+      - "poppler-utils"               #
+      - "ffmpeg"                      #
+      - "git"                         # ↓ Build dependencies
+      - "make"                        #
+      - "gcc"                         #
+      - "java-1.8.0-openjdk-headless" # needed by FOP
+      - "Judy-devel"                  # needed by memprof
+    state: "latest"
+
+- name: "Install nodejs build dependency (php version >= 7.4)"
+  yum:
+    name:
+      - "nodejs"
+    state: "latest"
+
+- name: "Install npm global dependencies (also required during the build)"
+  npm:
+    name: "{{ item }}"
+    global: "yes"
+  with_items:
+    - "grunt-cli"
+    - "less@<4.0.0"
