@@ -47,7 +47,7 @@
       - "git"                         # ↓ Build dependencies
       - "make"                        #
       - "gcc"                         #
-      - "java-1.8.0-openjdk-headless" # needed by FOP
+      - "java-11-openjdk-headless"    # needed by FOP
       - "Judy-devel"                  # needed by memprof
     state: "latest"
 
