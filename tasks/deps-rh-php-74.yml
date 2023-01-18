@@ -57,6 +57,17 @@
       - "nodejs"
     state: "latest"
 
+- name: "Check if exists an old lessc symlink"
+  stat:
+    path: "/usr/bin/lessc"
+  register: _lessc_symlink
+
+- name: "Remove old lessc symlink"
+  file:
+    path: "/usr/bin/lessc"
+    state: "absent"
+  when: _lessc_symlink.stat.islnk is defined and _lessc_symlink.stat.islnk
+
 - name: "Install npm global dependencies (also required during the build)"
   npm:
     name: "{{ item }}"
