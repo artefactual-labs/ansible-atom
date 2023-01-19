@@ -69,15 +69,15 @@
 - name: "Install AtoM dependencies (Ubuntu >= Focal/20.04)"
   apt:
     pkg:
-      - "imagemagick"            # ↓ AtoM dependencies
-      - "ghostscript"            #
-      - "poppler-utils"          #
-      - "ffmpeg"                 #
-      - "git"                    # ↓ Build dependencies
-      - "nodejs"                 #
-      - "make"                   #
-      - "openjdk-8-jre-headless" # Needed by FOP
-      - "libjudy-dev"            # Needed by memprof
+      - "imagemagick"             # ↓ AtoM dependencies
+      - "ghostscript"             #
+      - "poppler-utils"           #
+      - "ffmpeg"                  #
+      - "git"                     # ↓ Build dependencies
+      - "nodejs"                  #
+      - "make"                    #
+      - "openjdk-11-jre-headless" # Needed by FOP
+      - "libjudy-dev"             # Needed by memprof
     state: "latest"
   when: "ansible_distribution_version is version_compare('20.04', '>=')"
 
