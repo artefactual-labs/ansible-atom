@@ -110,7 +110,20 @@
       loop:
         - ".config"
         - ".npm"
-    - name: "Clean cache, install and build with npm on AtoM site directory"
+    # Sometimes 'npm cache clean' fails. Ignoring errors
+    # See: https://github.com/artefactual-labs/ansible-atom/issues/119
+    - name: "Clean cache npm on AtoM site directory"
+      become: "yes"
+      become_user: "{{ atom_user }}"
+      command: "npm cache clean --force"
+      args:
+        chdir: "{{ atom_path }}/{{ atom_extra_path }}"
+      failed_when: false
+      changed_when: false
+      check_mode: false
+      environment:
+        CYPRESS_INSTALL_BINARY: 0
+    - name: "Install and build with npm on AtoM site directory"
       become: "yes"
       become_user: "{{ atom_user }}"
       command: "{{ item }}"
@@ -119,7 +132,6 @@
       environment:
         CYPRESS_INSTALL_BINARY: 0
       loop:
-        - "npm cache clean --force"
         - "npm install"
         - "npm run build"
   when:
