@@ -18,7 +18,7 @@ WorkingDirectory={{ atom_path }}/{{ atom_revision_directory_latest_symlink_dir }
 {% else %}
 WorkingDirectory={{ atom_path }}
 {% endif %}
-{% if ansible_os_family == "RedHat" %}
+{% if ansible_os_family in ["RedHat","Rocky"] %}
 {% if atom_worker_old_config|bool %}
 ExecStart={{ php_rh_centos_path }}/php -d memory_limit={{ atom_worker_systemd_memory_limit }} -d error_reporting="{{ atom_worker_systemd_error_reporting }}" {{ atom_worker_systemd_execstart_php_extra_args }} symfony tools:gearman-worker {{ atom_worker_systemd_execstart_worker_extra_args }}
 {% else %}

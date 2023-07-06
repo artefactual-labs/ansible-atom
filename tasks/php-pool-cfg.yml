@@ -52,4 +52,4 @@
       notify:
         - "Restart PHP service"
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_os_family in ["RedHat","Rocky"]

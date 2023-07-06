@@ -60,12 +60,12 @@
       when:
         - not atom_compile_all_themes|bool # Don't compile themes when they are alreay compiled
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_os_family in ["RedHat"]
     - php_version|int < 74
 
-- name: "Build AtoM themes (CentOS/RH and php version >= 7.4)"
+- name: "Build AtoM themes (CentOS/RH/Rocky and php version >= 7.4)"
   block:
-    - name: "Build all AtoM themes (CentOS/RH)"
+    - name: "Build all AtoM themes (CentOS/RH/Rocky)"
       shell: "make"
       args:
         chdir: "{{ item }}"
@@ -73,7 +73,7 @@
       become: "no"
       when:
         - atom_compile_all_themes|bool
-    - name: "Build selected AtoM themes (CentOS/RH)"
+    - name: "Build selected AtoM themes (CentOS/RH/Rocky)"
       shell: "{{ item.build_cmd }}"
       args:
         chdir: "{{ item.path }}"
@@ -82,7 +82,7 @@
       when:
         - not atom_compile_all_themes|bool # Don't compile themes when they are alreay compiled
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_os_family in ["RedHat","Rocky"]
     - php_version|int >= 74
 
 #
@@ -149,6 +149,7 @@
       command: "scl enable rh-nodejs6 'npm update' || npm update"
       args:
         chdir: "{{ atom_drmc_path }}"
+      when: install_rpm_repositories|bool
     # using --force option to ignore Error compiling ../../arDominionPlugin/css/main.less
     - name: "Build DRMC (SCL)"
       shell: "scl enable rh-nodejs6 'grunt build --force' || grunt build --force"
@@ -156,11 +157,11 @@
         chdir: "{{ atom_drmc_path }}"
   when:
     - "atom_drmc is defined and atom_drmc|bool"
-    - ansible_os_family == "RedHat"
+    - ansible_os_family in ["RedHat"]
     - php_version|int < 74
   become: "no"
 
-- name: "Binder npm build tasks (CentOS/RedHat and php version >= 7.4)"
+- name: "Binder npm build tasks (CentOS/RedHat/Rocky and php version >= 7.4)"
   block:
     - name: "Install npm local dependencies"
       npm:
@@ -173,7 +174,7 @@
         chdir: "{{ atom_drmc_path }}"
   when:
     - "atom_drmc is defined and atom_drmc|bool"
-    - ansible_os_family == "RedHat"
+    - ansible_os_family in ["RedHat","Rocky"]
     - php_version|int >= 74
   become: "no"
 

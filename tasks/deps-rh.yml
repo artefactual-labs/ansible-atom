@@ -4,6 +4,7 @@
   yum:
     name: "epel-release"
     state: "installed"
+  when: install_rpm_repositories|bool
 
 - name: "Enable epel repo"
   ini_file:
@@ -11,6 +12,7 @@
     section: epel
     option: enabled
     value: 1
+  when: install_rpm_repositories|bool
 
 - name: "Install scl repo (CentOS)"
   yum:
@@ -18,17 +20,20 @@
     state: "installed"
   when:
     - ansible_distribution == "CentOS"
+    - install_rpm_repositories|bool
 
 - name: "Enable scl repo (RedHat)"
   rhsm_repository:
     name: rhel-server-rhscl-7-rpms
   when:
     - ansible_distribution == "RedHat"
+    - install_rpm_repositories|bool
 
 - name: "Add rpmfusion free repo (for ffmpeg)"
   command: 'yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm'
   args:
     creates: "/etc/yum.repos.d/rpmfusion-free-updates.repo"
+  when: install_rpm_repositories|bool
 
 - name: "Install AtoM dependencies"
   yum:
@@ -48,3 +53,10 @@
 # don't quote the shell command, or it won't work (also need to escape the <)
 - name: "Install npm (SCL) global dependencies (also required during the build)"
   shell: scl enable rh-nodejs6 'npm install -g grunt-cli less@\<4.0.0'
+
+- name: "Install selinux necessary packages required by this ansible role"
+  yum:
+    name: "{{ atom_selinux_ansible_deps }}"
+    state: "latest"
+  when:
+    - ansible_selinux is defined and ansible_selinux != False and ansible_selinux.status == 'enabled'

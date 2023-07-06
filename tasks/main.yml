@@ -4,6 +4,7 @@
   include_vars: "{{ item }}"
   with_first_found:
     - "{{ ansible_distribution }}-{{ ansible_distribution_version}}.yml"
+    - "{{ ansible_distribution }}-{{ ansible_distribution_major_version}}.yml"
     - "{{ ansible_distribution }}.yml"
   tags: "always"
 
@@ -19,14 +20,14 @@
       tags:
         - "atom-deps"
       when:
-        - ansible_os_family == "RedHat"
+        - ansible_os_family in ["RedHat"]
         - php_version|int < 74
 
     - include: "deps-rh-php-74.yml"
       tags:
         - "atom-deps"
       when:
-        - ansible_os_family == "RedHat"
+        - ansible_os_family in ["RedHat","Rocky"]
         - php_version|int >= 74
 
     - include: "php.yml"
@@ -41,7 +42,7 @@
       tags:
         - "atom-php"
       when:
-        - ansible_os_family == "RedHat"
+        - ansible_os_family in ["RedHat","Rocky"]
         - php_version|int < 74
 
     - include: "php-rh-74.yml"
@@ -50,7 +51,7 @@
       tags:
         - "atom-php"
       when:
-        - ansible_os_family == "RedHat"
+        - ansible_os_family in ["RedHat","Rocky"]
         - php_version|int >= 74
 
     - include: "php-composer.yml"
