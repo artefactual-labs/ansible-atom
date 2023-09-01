@@ -279,3 +279,9 @@ atom_worker_systemd_success_exit_status: "111"
 #
 
 atom_php_install_memprof_module: "no"
+
+#
+# NPM
+#
+
+atom_npm_version: "9.8.1"
