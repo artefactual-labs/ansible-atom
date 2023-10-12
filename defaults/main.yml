@@ -72,6 +72,10 @@ atom_flush_data: "no"
 # Build static assets
 atom_build_static_assets: "yes"
 
+# Change to false if you don't want to install rpm repos
+# Useful in offline or rpm repos controlled environments
+install_rpm_repositories: "true"
+
 # Themes (to build)
 atom_themes:
   - path: "{{ atom_path }}/{{ atom_extra_path }}/plugins/arDominionPlugin"

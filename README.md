@@ -11,13 +11,13 @@ Please visit our [deploy-pub](https://github.com/artefactual/deploy-pub/tree/mas
 This role allows to install AtoM on CentOS 7 and Ubuntu 14.04, 16:04, 18.04 and
 20.04. But not all the AtoM versions can be installed in all OS.
 
-|AtoM version| PHP version    | CentOS support | Ubuntu support | ElasticSearch version | MySQL version |
-|------------|----------------|----------------|----------------|-----------------------|---------------|
-|  AtoM 2.3  |5.5, 5.6 and 7.0|    CentOS 7    | 14.04 and 16.04|      >=1.3,<2.0       |  >=5.1,<6.0   |
-|  AtoM 2.4  |5.5, 5.6 and 7.0|    CentOS 7    | 14.04 and 16.04|      >=1.3,<2.0       |  >=5.1,<6.0   |
-|  AtoM 2.5  |  7.0 and 7.2   |    CentOS 7    | 16.04 and 18.04|      >=5.0,<6.0       |  >=5.1,<6.0   |
-|  AtoM 2.6  |  7.2 and 7.3   |    CentOS 7    |     18.04      |      >=5.0,<6.0       |     >=8.0     |
-|  AtoM 2.7  |      7.4       |    CentOS 7    |     20.04      |      >=5.0,<6.0       |     >=8.0     |
+|AtoM version| PHP version    | CentOS/RH/Rocky support | Ubuntu support | ElasticSearch version | MySQL version |
+|------------|----------------|-------------------------|----------------|-----------------------|---------------|
+|  AtoM 2.3  |5.5, 5.6 and 7.0|     CentOS/RedHat 7     | 14.04 and 16.04|      >=1.3,<2.0       |  >=5.1,<6.0   |
+|  AtoM 2.4  |5.5, 5.6 and 7.0|     CentOS/RedHat 7     | 14.04 and 16.04|      >=1.3,<2.0       |  >=5.1,<6.0   |
+|  AtoM 2.5  |  7.0 and 7.2   |     CentOS/RedHat 7     | 16.04 and 18.04|      >=5.0,<6.0       |  >=5.1,<6.0   |
+|  AtoM 2.6  |  7.2 and 7.3   |     CentOS/RedHat 7     |     18.04      |      >=5.0,<6.0       |     >=8.0     |
+|  AtoM 2.7  |      7.4       |CentOS/RH 7, Rocky/RH 8-9|     20.04      |      >=5.0,<6.0       |     >=8.0     |
 
 The next table explains the valid `atom_php_version` values that you can use
 depending on the AtoM version and Linux Distro. It is very important to take
@@ -27,15 +27,17 @@ or `group_vars` files to the desired version.
 
 |Linux Distro| AtoM 2.3 | AtoM 2.4 | AtoM 2.5 | AtoM 2.6 | AtoM 2.7 |  Default |
 |------------|----------|----------|----------|----------|----------|----------|
-| CentOS 7   |    70    |     70   | 70,71,72 |  72,73   |    74    |    72    |
+|CentOS/RH 7 |    70    |     70   | 70,71,72 |  72,73   |    74    |    72    |
+|Rocky/RH 8  |          |          |          |          |    74    |    74    |
+|Rocky/RH 9  |          |          |          |          |    74    |    74    |
 |Ubuntu 14.04|     5    |      5   |          |          |          |     5    |
 |Ubuntu 16.04|    7.0   |     7.0  |    7.0   |          |          |    7.0   |
 |Ubuntu 18.04|          |          |    7.2   |   7.2    |          |    7.2   |
 |Ubuntu 20.04|          |          |          |          |   7.4    |    7.4   |
 
-From the table above, you can see the Linux distro you need depending on
-the AtoM version. For instance, AtoM 2.7 can only be installed on CentOS 7 or
-Ubuntu 20.04.
+From the table above, you can see the Linux distro you need depending on the
+AtoM version. For instance, AtoM 2.6 can only be installed on CentOS 7 or
+Ubuntu 18.04.
 
 ## Notes on dependencies
 

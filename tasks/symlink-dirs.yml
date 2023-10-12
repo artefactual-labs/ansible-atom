@@ -81,15 +81,29 @@
 - name: "SELinux tasks for symlinks"
   block:
     - name: "Selinux: allow httpd to write on uploads folders"
-      shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_uploads_symlink }}\(/.*\)? && restorecon -R -v {{ atom_uploads_symlink }}'
+      sefcontext:
+        target: "semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_uploads_symlink }}(/.*)?"
+        setype: httpd_sys_rw_content_t
+        state: present
+      when:
+        - "atom_uploads_symlink is defined"
+    - name: "Selinux: Apply restorecon on uploads folders"
+      shell: 'restorecon -R -v {{ atom_uploads_symlink }}'
       when:
         - "atom_uploads_symlink is defined"
     - name: "Selinux: allow httpd to write on downloads folders"
-      shell: 'semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_downloads_symlink }}\(/.*\)? && restorecon -R -v {{ atom_downloads_symlink }}'
+      sefcontext:
+        target: "semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_downloads_symlink }}(/.*)?"
+        setype: httpd_sys_rw_content_t
+        state: present
+      when:
+        - "atom_downloads_symlink is defined"
+    - name: "Selinux: Apply restorecon on downloads folders"
+      shell: 'restorecon -R -v {{ atom_downloads_symlink }}'
       when:
         - "atom_downloads_symlink is defined"
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_os_family in ["RedHat","Rocky"]
     - ansible_selinux is defined and ansible_selinux != False and ansible_selinux.status == 'enabled'
   tags:
     - selinux

@@ -1,0 +1,8 @@
+php_version: "{{ atom_php_version|default('74') }}" # Without dots.
+php_service_name: "php{{ php_version }}-php-fpm" # Using REMI repo (no 7.4 available in Appstream repo)
+php_rh_centos_path: "/opt/remi/php{{ php_version }}/root/bin"
+php_rh_centos_etc_path: "/etc/opt/remi/php{{ php_version }}"
+
+atom_selinux_ansible_deps:
+  - "python3-policycoreutils"
+  - "python3-libsemanage"

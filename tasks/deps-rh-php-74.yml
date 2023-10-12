@@ -4,6 +4,7 @@
   yum:
     name: "epel-release"
     state: "installed"
+  when: install_rpm_repositories|bool
 
 - name: "Enable epel repo"
   ini_file:
@@ -11,31 +12,50 @@
     section: epel
     option: enabled
     value: 1
+  when: install_rpm_repositories|bool
 
 - name: "Import Remi GPG key (php version >= 7.4)"
   rpm_key:
     key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi2022"
     state: present
+  when: install_rpm_repositories|bool
 
 - name: "Install Remi Repo (php version >= 7.4)"
   yum:
-    name: "https://rpms.remirepo.net/enterprise/remi-release-7.rpm"
+    name: "https://rpms.remirepo.net/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm"
     state: "installed"
+  when: install_rpm_repositories|bool
+
+- name: "Disable nodejs module on RedHat/Rocky 8"
+  command: "dnf module -y disable nodejs"
+  when:
+    - ansible_distribution_major_version|int == 8
+    - install_rpm_repositories|bool
 
 - name: "Import nodesource GPG key (php version >= 7.4)"
   rpm_key:
     key: "https://rpm.nodesource.com/pub/el/NODESOURCE-GPG-SIGNING-KEY-EL"
     state: present
+  when: install_rpm_repositories|bool
 
 - name: "Install nodesource Repo (php version >= 7.4)"
   yum:
-    name: "https://rpm.nodesource.com/pub_14.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm"
+    name: "https://rpm.nodesource.com/pub_14.x/el/{{ ansible_distribution_major_version }}/x86_64/nodesource-release-el{{ ansible_distribution_major_version }}-1.noarch.rpm"
     state: "installed"
+  when: install_rpm_repositories|bool
 
 - name: "Add rpmfusion free repo (for ffmpeg)"
-  command: 'yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm'
+  command: 'yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm'
   args:
     creates: "/etc/yum.repos.d/rpmfusion-free-updates.repo"
+  when: install_rpm_repositories|bool
+
+# Required by ffmpeg
+- name: "Enable powertools repo on RedHat/Rocky 8)"
+  command: "dnf config-manager --set-enabled powertools"
+  when:
+    - ansible_distribution_major_version|int == 8
+    - install_rpm_repositories|bool
 
 - name: "Install AtoM dependencies"
   yum:
@@ -48,7 +68,6 @@
       - "make"                        #
       - "gcc"                         #
       - "java-11-openjdk-headless"    # needed by FOP
-      - "Judy-devel"                  # needed by memprof
     state: "latest"
 
 - name: "Install nodejs build dependency (php version >= 7.4)"
@@ -75,3 +94,10 @@
   with_items:
     - "grunt-cli"
     - "less@<4.0.0"
+
+- name: "Install selinux necessary packages required by this ansible role"
+  yum:
+    name: "{{ atom_selinux_ansible_deps }}"
+    state: "latest"
+  when:
+    - ansible_selinux is defined and ansible_selinux != False and ansible_selinux.status == 'enabled'
