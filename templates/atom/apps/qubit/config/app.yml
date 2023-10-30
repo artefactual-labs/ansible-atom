@@ -55,3 +55,11 @@ all:
   # Password hash algorithm
   password_hash_algorithm: {{ atom_app_password_hash_algorithm }}
 {% endif %}
+
+{% if atom_csp_response_header is defined %}
+  csp:
+    response_header: {{ atom_csp_response_header }}
+{% if atom_csp_directives is defined %}
+    directives: {{ atom_csp_directives }}
+{% endif %}
+{% endif %}
