@@ -14,11 +14,30 @@
     value: 1
   when: install_rpm_repositories|bool
 
-- name: "Import Remi GPG key (php version >= 7.4)"
+- name: "Import Remi GPG key (php version >= 7.4) (EL9)"
   rpm_key:
-    key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi2022"
+    key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi2021"
     state: present
-  when: install_rpm_repositories|bool
+  when:
+    - install_rpm_repositories|bool
+    - ansible_distribution_major_version|int == 9
+
+- name: "Import Remi GPG key (php version >= 7.4) (EL8)"
+  rpm_key:
+    key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi2018"
+    state: present
+  when:
+    - install_rpm_repositories|bool
+    - ansible_distribution_major_version|int == 8
+
+- name: "Import Remi GPG key (php version >= 7.4) (EL7)"
+  rpm_key:
+    key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi"
+    state: present
+  when:
+    - install_rpm_repositories|bool
+    - ansible_distribution_major_version|int == 7
+
 
 - name: "Install Remi Repo (php version >= 7.4)"
   yum:
