@@ -4,15 +4,17 @@
   yum:
     name: "epel-release"
     state: "installed"
-  when: install_rpm_repositories|bool
+  when:
+    - ansible_distribution not in ['RedHat']
+    - install_rpm_repositories|bool
 
-- name: "Enable epel repo"
-  ini_file:
-    path: /etc/yum.repos.d/epel.repo
-    section: epel
-    option: enabled
-    value: 1
-  when: install_rpm_repositories|bool
+- name: "Add epel-release repository (RHEL)"
+  yum:
+    name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version|int }}.noarch.rpm"
+    state: "present"
+  when:
+    - ansible_distribution == 'RedHat'
+    - install_rpm_repositories|bool
 
 - name: "Import Remi GPG key (php version >= 7.4) (EL9)"
   rpm_key:

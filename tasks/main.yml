@@ -10,60 +10,68 @@
 
 - name: "Install AtoM dependencies"
   block:
-    - include: "deps.yml"
+    - include_tasks: "deps.yml"
       tags:
         - "atom-deps"
       when:
         - ansible_distribution == "Ubuntu"
 
-    - include: "deps-rh.yml"
+    - include_tasks: "deps-rh.yml"
       tags:
         - "atom-deps"
       when:
         - ansible_os_family in ["RedHat"]
         - php_version|int < 74
 
-    - include: "deps-rh-php-74.yml"
+    - include_tasks: "deps-rh-php-74.yml"
       tags:
         - "atom-deps"
       when:
         - ansible_os_family in ["RedHat","Rocky"]
         - php_version|int >= 74
 
-    - include: "php.yml"
+    - include_tasks: "php.yml"
       tags:
         - "atom-php"
       when:
         - ansible_distribution == "Ubuntu"
 
-    - include: "php-rh.yml"
-      environment:
-        - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path }}"
+    - include_tasks: "php-rh.yml"
+      args:
+        apply:
+          environment:
+            - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path }}"
       tags:
         - "atom-php"
       when:
         - ansible_os_family in ["RedHat","Rocky"]
         - php_version|int < 74
 
-    - include: "php-rh-74.yml"
-      environment:
-        - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path }}"
+    - include_tasks: "php-rh-74.yml"
+      args:
+        apply:
+          environment:
+            - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path }}"
       tags:
         - "atom-php"
       when:
         - ansible_os_family in ["RedHat","Rocky"]
         - php_version|int >= 74
 
-    - include: "php-composer.yml"
-      environment:
-        - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('') }}"
+    - include_tasks: "php-composer.yml"
+      args:
+        apply:
+          environment:
+            - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('') }}"
       tags:
         - "atom-php"
         - "atom-php-composer"
 
-    - include: "fop.yml"
-      environment:
-        - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('')}}"
+    - include_tasks: "fop.yml"
+      args:
+        apply:
+          environment:
+            - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('')}}"
       tags:
         - "fop"
 
@@ -86,7 +94,7 @@
     - "atom-worker"
     - "drmc-mock"
 
-- include: "revision-dir.yml"
+- include_tasks: "revision-dir.yml"
   when:
     - "atom_revision_directory_latest_symlink_dir is defined"
     - "atom_revision_directory|bool"
@@ -106,59 +114,65 @@
 
 - name: "Install AtoM site"
   block:
-    - include: "php-pool-cfg.yml"
+    - include_tasks: "php-pool-cfg.yml"
       tags:
         - "atom-php-pool-cfg"
 
-    - include: "basic.yml"
+    - include_tasks: "basic.yml"
       tags:
         - "atom-basic"
 
-    - include: "init.yml"
+    - include_tasks: "init.yml"
       when:
         - "atom_auto_init is defined and atom_auto_init|bool"
       tags:
         - "atom-site"
 
-    - include: "flush.yml"
-      become_user: "{{ atom_user }}"
-      environment:
-        - "{{ atom_pool_php_envs }}"
-        - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('') }}"
+    - include_tasks: "flush.yml"
+      args:
+        apply:
+          become_user: "{{ atom_user }}"
+          environment:
+            - "{{ atom_pool_php_envs }}"
+            - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('') }}"
       when: >
         (uninitialized is defined and uninitialized|bool) or
         (atom_flush_data is defined and atom_flush_data|bool)
       tags:
         - "atom-flush"
 
-    - include: "plugins.yml"
-      become_user: "{{ atom_user }}"
-      environment:
-        - "{{ atom_pool_php_envs }}"
-        - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('') }}"
+    - include_tasks: "plugins.yml"
+      args:
+        apply:
+          become_user: "{{ atom_user }}"
+          environment:
+            - "{{ atom_pool_php_envs }}"
+            - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path | default('') }}"
       tags:
         - "atom-plugins"
 
-    - include: "cli_tools.yml"
-      become_user: "{{ atom_user }}"
+    - include_tasks: "cli_tools.yml"
+      args:
+        apply:
+          become_user: "{{ atom_user }}"
       tags:
         - "atom-search"
         - "atom-cli"
 
      # do not build as user www-data due to errors with npm
-    - include: "build.yml"
+    - include_tasks: "build.yml"
       when: "atom_build_static_assets is defined and atom_build_static_assets|bool"
       tags:
         - "atom-build"
 
-    - include: "symlink-dirs.yml"
+    - include_tasks: "symlink-dirs.yml"
       tags:
         - "atom-uploads"
         - "atom-downloads"
         - "atom-build"
         - "atom-worker"
 
-    - include: "worker.yml"
+    - include_tasks: "worker.yml"
       when: "atom_worker_setup is defined and atom_worker_setup|bool"
       tags:
         - "atom-worker"
@@ -167,12 +181,12 @@
   tags:
     - "atom-site"
 
-- include: "drmc-mock.yml"
+- include_tasks: "drmc-mock.yml"
   when: "atom_drmc_mock is defined and atom_drmc_mock|bool"
   tags:
     - "drmc-mock"
 
-- include: "devbox.yml"
+- include_tasks: "devbox.yml"
   when:
     - "atom_environment_type == 'development'"
     - "ansible_distribution == 'Ubuntu'"
