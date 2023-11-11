@@ -19,17 +19,35 @@
 - name: "Cleanup cache/ directory"
   command: "rm -rf {{ atom_path }}/{{ atom_extra_path }}/cache/*"
 
+- name: "Check if uploads dir is a symlink"
+  stat:
+    path: "{{ atom_path }}/{{ atom_extra_path }}/uploads"
+  register: "_atom_uploads_stat"
+  when: "atom_uploads_symlink is defined"
+
+- name: "Check if downloads dir is a symlink"
+  stat:
+    path: "{{ atom_path }}/{{ atom_extra_path }}/downloads"
+  register: "_atom_downloads_stat"
+  when: "atom_downloads_symlink is defined"
+
 - name: "Temporarily delete uploads symlink to avoid long waits on recursive chmod"
   file:
     state: "absent"
     path: "{{ atom_path }}/{{ atom_extra_path }}/uploads"
-  when: "atom_uploads_symlink is defined"
+  when:
+    - "atom_uploads_symlink is defined"
+    - "_atom_uploads_stat.stat.islnk is defined"
+    - "_atom_uploads_stat.stat.islnk"
 
 - name: "Temporarily delete downloads symlink to avoid long waits on recursive chmod"
   file:
     state: "absent"
     path: "{{ atom_path }}/{{ atom_extra_path }}/downloads"
-  when: "atom_downloads_symlink is defined"
+  when:
+    - "atom_downloads_symlink is defined"
+    - "_atom_downloads_stat.stat.islnk is defined"
+    - "_atom_downloads_stat.stat.islnk"
 
 - name: "Temporarily change permissions of site directory to be able to clone repo"
   file:
