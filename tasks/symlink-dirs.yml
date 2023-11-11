@@ -82,7 +82,7 @@
   block:
     - name: "Selinux: allow httpd to write on uploads folders"
       sefcontext:
-        target: "semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_uploads_symlink }}(/.*)?"
+        target: "{{ atom_uploads_symlink }}(/.*)?"
         setype: httpd_sys_rw_content_t
         state: present
       when:
@@ -93,7 +93,7 @@
         - "atom_uploads_symlink is defined"
     - name: "Selinux: allow httpd to write on downloads folders"
       sefcontext:
-        target: "semanage fcontext -a -t httpd_sys_rw_content_t {{ atom_downloads_symlink }}(/.*)?"
+        target: "{{ atom_downloads_symlink }}(/.*)?"
         setype: httpd_sys_rw_content_t
         state: present
       when:

@@ -37,5 +37,6 @@
   shell: "php symfony tools:add-superuser --email='{{ item.email }}' --password='{{ item.password }}' {{ item.username }}"
   args:
     chdir: "{{ atom_path }}/{{ atom_extra_path }}"
+  no_log: true # Avoid printing passswords in ansible output
   when: "atom_extra_superusers is defined"
   with_items: "{{ atom_extra_superusers }}"
