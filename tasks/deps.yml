@@ -36,6 +36,12 @@
      update_cache: "yes"
   when: "ansible_distribution_version is version('20.04', '>=')"
 
+- name: "Add ondrej/php PPA (php 7.4 in Ubuntu 22.04)"
+  apt_repository:
+    repo: "ppa:ondrej/php"
+    update_cache: "yes"
+  when: "ansible_distribution_version is version('22.04', '>=')"
+
 - name: "Install AtoM dependencies (Ubuntu <= Xenial/16.04)"
   apt:
     pkg:
