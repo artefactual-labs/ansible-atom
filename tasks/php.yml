@@ -56,6 +56,20 @@
     - atom_php_install_memprof_module|bool
     - ansible_distribution_version is version('20.04', '==')
 
+- name: "Build memprof extension (Focal)"
+  shell: >
+    phpize &&
+    ./configure &&
+    make clean &&
+    make &&
+    cp modules/memprof.so /usr/lib/php/20210902/memprof.so
+  args:
+    chdir: "/tmp/php-memory-profiler-3.0.2"
+    creates: "/usr/lib/php/20210902/memprof.so"
+  when:
+    - atom_php_install_memprof_module|bool
+    - ansible_distribution_version is version('22.04', '==')
+
 - name: "Delete memprof temp source dir (Ubuntu >=18.04)"
   file:
     state: "absent"

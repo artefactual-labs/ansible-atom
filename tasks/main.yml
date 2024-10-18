@@ -28,7 +28,14 @@
         - "atom-deps"
       when:
         - ansible_os_family in ["RedHat","Rocky"]
-        - php_version|int >= 74
+        - php_version|int >= 74 and php_version|int < 81
+
+    - import_tasks: "deps-rh-php-81.yml"
+      tags:
+        - "atom-deps"
+      when:
+        - ansible_os_family in ["RedHat","Rocky"]
+        - php_version|int >= 81
 
     - import_tasks: "php.yml"
       tags:
@@ -45,6 +52,7 @@
         - ansible_os_family in ["RedHat","Rocky"]
         - php_version|int < 74
 
+    # Common for php7 and php8
     - import_tasks: "php-rh-74.yml"
       environment:
         - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path }}"

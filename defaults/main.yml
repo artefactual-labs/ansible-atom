@@ -49,6 +49,8 @@ atom_worker_old_config: "no"
 # CLI tasks
 #
 
+# Clear cache
+atom_clear_cache: "yes"
 # Compile all available themes
 atom_compile_all_themes: "no"
 # Populate search index
