@@ -290,4 +290,4 @@ atom_php_install_memprof_module: "no"
 # NPM
 #
 
-atom_npm_version: "9.8.1"
+atom_npm_version: "10.9.2"
