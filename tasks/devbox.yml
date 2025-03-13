@@ -80,7 +80,7 @@
   git:
     update: "yes"
     repo: "https://github.com/artefactual/atom-docs.git"
-    version: "2.7"
+    version: "2.9"
     dest: "{{ ansible_env.HOME }}/atom-docs"
     accept_hostkey: "yes"
   become_user: "vagrant"
@@ -94,11 +94,13 @@
   pip:
     name: "pip"
     state: "present"
-    version: "20.3"
+    version: "25.0.1"
+    break_system_packages: true
 
 - name: "Install atom-docs requirements"
   pip:
     requirements: "{{ ansible_env.HOME }}/atom-docs/requirements.txt"
+    break_system_packages: true
 
 - name: "Create symlink to AtoM sources"
   file:
