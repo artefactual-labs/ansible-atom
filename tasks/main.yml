@@ -52,7 +52,6 @@
         - ansible_os_family in ["RedHat","Rocky"]
         - php_version|int < 74
 
-    # Common for php7 and php8
     - import_tasks: "php-rh-74.yml"
       environment:
         - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path }}"
@@ -60,7 +59,16 @@
         - "atom-php"
       when:
         - ansible_os_family in ["RedHat","Rocky"]
-        - php_version|int >= 74
+        - php_version|int == 74
+
+    - import_tasks: "php-rh-8.yml"
+      environment:
+        - PATH: "{{ ansible_env.PATH }}:{{ php_rh_centos_path }}"
+      tags:
+        - "atom-php"
+      when:
+        - ansible_os_family in ["RedHat","Rocky"]
+        - php_version|int >= 80
 
     - import_tasks: "php-composer.yml"
       environment:

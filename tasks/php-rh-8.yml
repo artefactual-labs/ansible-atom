@@ -1,0 +1,45 @@
+---
+
+- name: Remove old PHP 7 packages
+  yum:
+    name: "php7*"
+    state: absent
+- name: "Install PHP packages in RH/Centos"
+  yum:
+    name:
+      - "php{{ php_version }}-php-cli"
+      - "php{{ php_version }}-php-ldap"
+      - "php{{ php_version }}-php-fpm"
+      - "php{{ php_version }}-php-mysqlnd"
+      - "php{{ php_version }}-php-xml"
+      - "php{{ php_version }}-php-opcache"
+      - "php{{ php_version }}-php-devel"
+      - "php{{ php_version }}-php-mbstring"
+      - "php{{ php_version }}-php-pecl-apcu"
+      - "php{{ php_version }}-php-pecl-memcache"
+      - "php{{ php_version }}-php-pecl-memprof"
+      - "php{{ php_version }}-php-pecl-zip"
+      - "zlib-devel" # needed for memcached
+      - "unzip"
+      - "java-1.8.0-openjdk-headless" # needed for fop
+    allowerasing: true
+    install_weak_deps: false
+    state: "latest"
+
+- name: "Create /usr/bin/php link"
+  file:
+    src: "{{ php_rh_centos_path }}/php"
+    dest: "/usr/bin/php"
+    state: "link"
+
+- name: "Set php.ini memory to 512"
+  lineinfile:
+    path: "{{ php_rh_centos_etc_path }}/php.ini"
+    regexp: '^memory_limit'
+    line: 'memory_limit = 512M'
+
+- name: "Enable php{{ php_version }}-php-fpm service"
+  systemd:
+     name: "php{{ php_version }}-php-fpm"
+     state: "restarted"
+     enabled: "yes"
