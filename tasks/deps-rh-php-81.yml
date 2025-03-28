@@ -55,14 +55,21 @@
 
 - name: "Import nodesource GPG key (php version >= 8.1)"
   rpm_key:
-    key: "https://rpm.nodesource.com/pub/el/NODESOURCE-GPG-SIGNING-KEY-EL"
+    key: "https://rpm.nodesource.com/gpgkey/ns-operations-public.key"
     state: present
   when: install_rpm_repositories|bool
 
-- name: "Install nodesource Repo (php version >= 8.1)"
-  yum:
-    name: "https://rpm.nodesource.com/pub_14.x/el/{{ ansible_distribution_major_version }}/x86_64/nodesource-release-el{{ ansible_distribution_major_version }}-1.noarch.rpm"
-    state: "installed"
+# Based on install script:  https://rpm.nodesource.com/setup_23.x
+- name: "Add NodeSource Node.js {{ nodejs_major_version }} repository"
+  yum_repository:
+    name: "nodesource-nodejs"
+    description: "Node.js Packages for Linux RPM based distros - x86_64"
+    baseurl: "https://rpm.nodesource.com/pub_22.x/nodistro/nodejs/x86_64"
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: "https://rpm.nodesource.com/gpgkey/ns-operations-public.key"
+    priority: 9
+    module_hotfixes: yes
   when: install_rpm_repositories|bool
 
 - name: "Add rpmfusion free repo (for ffmpeg)"

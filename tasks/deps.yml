@@ -36,17 +36,17 @@
     state: present
   when: "ansible_distribution_version is version('22.04', '>=')"
 
-- name: "Add nodejs 14.x PPA for apt repo (Ubuntu == 22.04)"
+- name: "Add nodejs 14.x PPA for apt repo (Ubuntu == 20.04)"
   apt_repository:
     repo: "deb https://deb.nodesource.com/node_14.x focal main"
     update_cache: yes
-  when: "ansible_distribution_version is version('22.04', '==')"
+  when: "ansible_distribution_version is version('20.04', '==')"
 
-- name: "Add nodejs 22.x PPA for apt repo (Ubuntu >22.04)"
+- name: "Add nodejs 22.x PPA for apt repo (Ubuntu >= 22.04)"
   apt_repository:
     repo: "deb https://deb.nodesource.com/node_22.x nodistro main"
     update_cache: yes
-  when: "ansible_distribution_version is version('22.04', '>')"
+  when: "ansible_distribution_version is version('22.04', '>=')"
 
 - name: "Install AtoM dependencies (Ubuntu <= Xenial/16.04)"
   apt:
