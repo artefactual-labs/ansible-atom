@@ -1,6 +1,6 @@
 # ansible-atom
 
-This role helps to install Access to Memory (AtoM) in Linux (trusty, xenial and Centos / RedHat 7).
+This role helps to install Access to Memory (AtoM) in Linux (trusty, xenial, bionic, focal, jammy, noble, Centos/RedHat 7, Rocky/ALmalinux/Redhat 8, Rocky/ALmalinux/Redhat 9).
 
 Please feel free to add support for other platforms, pull requests accepted!
 
@@ -29,13 +29,13 @@ or `group_vars` files to the desired version.
 
 |Linux Distro| AtoM 2.3 | AtoM 2.4 | AtoM 2.5 | AtoM 2.6 | AtoM 2.7 | AtoM 2.8 | AtoM 2.9 |  Default |
 |------------|----------|----------|----------|----------|----------|----------|----------|----------|
-|CentOS/RH 7 |    70    |     70   | 70,71,72 |  72,73   |    74    |    74    |    74    |    72    |
-|Rocky/RH 8  |          |          |          |          |    74    |    74    |    74    |    74    |
-|Rocky/RH 9  |          |          |          |          |    74    |    74    |    74    |    74    |
+|CentOS/RH 7 |    70    |     70   | 70,71,72 |  72,73   |    74    |    74    |          |    72    |
+|Rocky/RH 8  |          |          |          |          |    74    |    74    |          |    74    |
+|Rocky/RH 9  |          |          |          |          |    74    |    74    | 81,82,83 |    74    |
 |Ubuntu 14.04|     5    |      5   |          |          |          |          |          |     5    |
 |Ubuntu 16.04|    7.0   |     7.0  |    7.0   |          |          |          |          |    7.0   |
 |Ubuntu 18.04|          |          |    7.2   |   7.2    |          |          |          |    7.2   |
-|Ubuntu 20.04|          |          |          |          |   7.4    |   7.4    |   7.4    |    7.4   |
+|Ubuntu 20.04|          |          |          |          |   7.4    |   7.4    |          |    7.4   |
 |Ubuntu 22.04|          |          |          |          |          |          |   8.1    |    8.1   |
 |Ubuntu 24.04|          |          |          |          |          |          |   8.3    |    8.3   |
 
@@ -47,7 +47,9 @@ Ubuntu 18.04.
 
 - AtoM <=2.4, Binder 0.8: Elasticsearch>=1.3,<2.0; MySQL>5.1,<6.0
 - Atom 2.5, Binder 0.9: Elasticsearch>=5.3,<6.x; MySQL>5.1,<6.0
-- AtoM >= 2.6: Elasticsearch>=5.3,<6.x; MySQL>=8.0
+- AtoM 2.6-2.8: Elasticsearch>=5.3,<6.x; MySQL>=8.0
+- AtoM 2.9:  Elasticsearch=>6.0,<7.0; MySQL>=8.0
+
 
 ## Overriding default templates
 
