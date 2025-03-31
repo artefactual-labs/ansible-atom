@@ -49,6 +49,8 @@ atom_worker_old_config: "no"
 # CLI tasks
 #
 
+# Clear cache
+atom_clear_cache: "yes"
 # Compile all available themes
 atom_compile_all_themes: "no"
 # Populate search index
@@ -288,4 +290,13 @@ atom_php_install_memprof_module: "no"
 # NPM
 #
 
-atom_npm_version: "9.8.1"
+# Define default `atom_npm_version` depending on OS and version
+atom_npm_version: >-
+  {{
+    (
+      "10.9.2" if ansible_os_family == 'Debian' and ansible_distribution_version >= '22.04' else
+      "10.9.2" if ansible_os_family == 'RedHat'  and ansible_distribution_version > '7' else
+      "9.8.1"
+    ) | trim
+  }}
+

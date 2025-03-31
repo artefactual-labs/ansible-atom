@@ -22,6 +22,7 @@
   command: "php symfony cache:clear"
   args:
     chdir: "{{ atom_path }}/{{ atom_extra_path }}"
+  when: "atom_clear_cache|bool"
   notify:
     - "Reload PHP service"
 

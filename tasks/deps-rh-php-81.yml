@@ -1,0 +1,131 @@
+---
+
+- name: "Install epel repo"
+  yum:
+    name: "epel-release"
+    state: "installed"
+  when:
+    - ansible_distribution not in ['RedHat']
+    - install_rpm_repositories|bool
+
+- name: "Add epel-release repository (RHEL)"
+  yum:
+    name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version|int }}.noarch.rpm"
+    state: "present"
+  when:
+    - ansible_distribution == 'RedHat'
+    - install_rpm_repositories|bool
+
+- name: "Import Remi GPG key (php version >= 8.1) (EL9)"
+  rpm_key:
+    key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi2021"
+    state: present
+  when:
+    - install_rpm_repositories|bool
+    - ansible_distribution_major_version|int == 9
+
+- name: "Import Remi GPG key (php version >= 8.1) (EL8)"
+  rpm_key:
+    key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi2018"
+    state: present
+  when:
+    - install_rpm_repositories|bool
+    - ansible_distribution_major_version|int == 8
+
+- name: "Import Remi GPG key (php version >= 8.1) (EL7)"
+  rpm_key:
+    key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi"
+    state: present
+  when:
+    - install_rpm_repositories|bool
+    - ansible_distribution_major_version|int == 7
+
+
+- name: "Install Remi Repo (php version >= 8.1)"
+  yum:
+    name: "https://rpms.remirepo.net/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm"
+    state: "installed"
+  when: install_rpm_repositories|bool
+
+- name: "Disable nodejs module on RedHat/Rocky 8"
+  command: "dnf module -y disable nodejs"
+  when:
+    - ansible_distribution_major_version|int == 8
+    - install_rpm_repositories|bool
+
+- name: "Import nodesource GPG key (php version >= 8.1)"
+  rpm_key:
+    key: "https://rpm.nodesource.com/gpgkey/ns-operations-public.key"
+    state: present
+  when: install_rpm_repositories|bool
+
+# Based on install script:  https://rpm.nodesource.com/setup_23.x
+- name: "Add NodeSource Node.js {{ nodejs_major_version }} repository"
+  yum_repository:
+    name: "nodesource-nodejs"
+    description: "Node.js Packages for Linux RPM based distros - x86_64"
+    baseurl: "https://rpm.nodesource.com/pub_22.x/nodistro/nodejs/x86_64"
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: "https://rpm.nodesource.com/gpgkey/ns-operations-public.key"
+    priority: 9
+    module_hotfixes: yes
+  when: install_rpm_repositories|bool
+
+- name: "Add rpmfusion free repo (for ffmpeg)"
+  command: 'yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm'
+  args:
+    creates: "/etc/yum.repos.d/rpmfusion-free-updates.repo"
+  when: install_rpm_repositories|bool
+
+# Required by ffmpeg
+- name: "Enable powertools repo on RedHat/Rocky 8)"
+  command: "dnf config-manager --set-enabled powertools"
+  when:
+    - ansible_distribution_major_version|int == 8
+    - install_rpm_repositories|bool
+
+- name: "Install AtoM dependencies"
+  yum:
+    name:
+      - "ImageMagick"                 # ↓ AtoM dependencies
+      - "ghostscript"                 #
+      - "poppler-utils"               #
+      - "ffmpeg"                      #
+      - "git"                         # ↓ Build dependencies
+      - "make"                        #
+      - "gcc"                         #
+      - "java-11-openjdk-headless"    # needed by FOP
+    state: "latest"
+
+- name: "Install nodejs build dependency (php version >= 8.1)"
+  yum:
+    name:
+      - "nodejs"
+    state: "latest"
+
+- name: "Check if exists an old lessc symlink"
+  stat:
+    path: "/usr/bin/lessc"
+  register: _lessc_symlink
+
+- name: "Remove old lessc symlink"
+  file:
+    path: "/usr/bin/lessc"
+    state: "absent"
+  when: _lessc_symlink.stat.islnk is defined and _lessc_symlink.stat.islnk
+
+- name: "Install npm global dependencies (also required during the build)"
+  npm:
+    name: "{{ item }}"
+    global: "yes"
+  with_items:
+    - "grunt-cli"
+    - "less@<4.0.0"
+
+- name: "Install selinux necessary packages required by this ansible role"
+  yum:
+    name: "{{ atom_selinux_ansible_deps }}"
+    state: "latest"
+  when:
+    - ansible_selinux is defined and ansible_selinux != False and ansible_selinux.status == 'enabled'

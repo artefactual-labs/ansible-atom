@@ -1,4 +1,9 @@
 ---
+
+- name: Remove old PHP 7 packages
+  yum:
+    name: "php7*"
+    state: absent
 - name: "Install PHP packages in RH/Centos"
   yum:
     name:
@@ -17,22 +22,15 @@
       - "zlib-devel" # needed for memcached
       - "unzip"
       - "java-1.8.0-openjdk-headless" # needed for fop
+    allowerasing: true
+    install_weak_deps: false
     state: "latest"
-
-- name: "Remove existing /usr/bin/php"
-  file:
-    path: "/usr/bin/php"
-    state: absent
 
 - name: "Create /usr/bin/php link"
   file:
-    src: "{{ php_rh_centos_path }}/php"
+    src: "{{ php_rh_centos_path }}/php"
     dest: "/usr/bin/php"
     state: "link"
-
-- name: "Restore SELinux context for /usr/bin/php"
-  command: "restorecon -v /usr/bin/php"
-  when: ansible_selinux.status == "enabled"
 
 - name: "Set php.ini memory to 512"
   lineinfile:

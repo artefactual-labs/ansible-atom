@@ -1,0 +1,23 @@
+php_version: "{{ atom_php_version|default('8.1') }}"
+php_service_name: "php{{ php_version }}-fpm"
+php_packages:
+  - "php8.1-cli"
+  - "php8.1-curl"
+  - "php-json"
+  - "php8.1-ldap"
+  - "php8.1-mysql"
+  - "php8.1-opcache"
+  - "php8.1-readline"
+  - "php8.1-xml"
+  - "php8.1-fpm"
+  - "php8.1-mbstring"
+  - "php8.1-xsl"
+  - "php8.1-zip"
+  - "php-memcache"
+  - "php-apcu"
+  - "php8.1-dev"
+
+devbox_packages:
+  - "python-is-python3"
+  - "python3-pip"
+  - "python-setuptools"
