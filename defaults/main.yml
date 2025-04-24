@@ -9,7 +9,7 @@ atom_user: "www-data"
 atom_group: "www-data"
 atom_path: "/usr/share/nginx/atom"
 atom_repository_url: "https://github.com/artefactual/atom.git"
-atom_repository_version: "stable/2.6.x"
+atom_repository_version: "stable/2.9.x"
 atom_install_site: "true"
 atom_install_dependencies: "true"
 # Use a different AtoM directory for each revision
@@ -24,12 +24,18 @@ atom_csrf_protection: "no"
 
 #
 # Choose php version to use.
+# Check tables in https://github.com/artefactual-labs/ansible-atom/tree/master?tab=readme-ov-file#notes-on-os-atom-version-and-php-version
 # NOTE: Ubuntu >= 16.04 uses a php version that includes a point
-#   - For RH/Centos 70,71,72,73 and 74 are available. Default is 72
+#   - For RH/Centos 7:  70,71,72,73 and 74 are available. Default is 72
+#   - For RH8:          74,81,82 and 83 are available. Default is 74
+#   - For RH9:          74,81,82 and 83 are available. Default is 74
+#   - For Rocky/Almalinux/Oraclelinux 8/9: 74,81,82 and 83 are available. Default is 74
 #   - For Ubuntu 14.04: 5
 #   - For Ubuntu 16.04: 7.0
 #   - For Ubuntu 18.04: 7.2
 #   - For Ubuntu 20.04: 7.4
+#   - For ubuntu 22.04: 8.1
+#   - For ubuntu 24.04: 8.3
 #
 #atom_php_version: 72
 #
@@ -295,7 +301,7 @@ atom_npm_version: >-
   {{
     (
       "10.9.2" if ansible_os_family == 'Debian' and ansible_distribution_version >= '22.04' else
-      "10.9.2" if ansible_os_family == 'RedHat'  and ansible_distribution_version > '7' else
+      "10.9.2" if ansible_os_family == 'RedHat' and atom_php_version | int >= 80 else
       "9.8.1"
     ) | trim
   }}
