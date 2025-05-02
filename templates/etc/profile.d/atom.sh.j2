@@ -1,8 +1,9 @@
 #!/bin/bash
 # this file managed by ansible
 # AtoM environment variables (required by CLI tools)
+# Not adding PATH or null env vars
 {% for key, value in atom_pool_php_envs.items() %}
-{% if value != "" -%}
+{% if key != "PATH" and value != "" -%}
 export {{ key }}="{{ value }}"
 {% endif %}
 {% endfor %}
@@ -11,3 +12,4 @@ export {{ key }}="{{ value }}"
 # enable SCLs for node and php
 source scl_source enable rh-nodejs6 rh-php{{ php_version }}
 {% endif %}
+
