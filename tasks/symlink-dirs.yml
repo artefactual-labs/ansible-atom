@@ -12,6 +12,65 @@
     - "atom_revision_directory_latest_symlink_dir is defined"
     - "atom_revision_directory|bool"
 
+# Needed when using as AtoM dir in a dir mounted in /mnt or similar dir /SELinux thinks it is insecure
+# and doesn't allow to follow symlink in http context
+- name: "Allow systemd (init_t) to read symlinks to httpd_sys_rw_content_t"
+  block:
+
+    - name: "Selinux: allow httpd to write on atom symlink (when using atom_revision_directory)"
+      sefcontext:
+        target: "{{ atom_path }}/{{ atom_revision_directory_latest_symlink_dir }}"
+        setype: httpd_sys_rw_content_t
+        state: present
+
+    - name: "Selinux: Apply restorecon on atom symlink (when using atom_revision_directory)"
+      shell: "restorecon -v {{ atom_path }}/{{ atom_revision_directory_latest_symlink_dir }}"
+
+    - name: "Write SELinux policy source"
+      copy:
+        dest: /tmp/atom_symlink_allow.te
+        content: |
+          module atom_symlink_allow 1.0;
+
+          require {
+              type init_t;
+              type httpd_sys_rw_content_t;
+              class lnk_file read;
+          }
+
+          allow init_t httpd_sys_rw_content_t:lnk_file read;
+
+    - name: "Compile policy module"
+      command: checkmodule -M -m -o /tmp/atom_symlink_allow.mod /tmp/atom_symlink_allow.te
+      args:
+        creates: /tmp/atom_symlink_allow.mod
+
+    - name: "Package policy module"
+      command: semodule_package -o /tmp/atom_symlink_allow.pp -m /tmp/atom_symlink_allow.mod
+      args:
+        creates: /tmp/atom_symlink_allow.pp
+
+    - name: "Install SELinux policy module"
+      command: semodule -i /tmp/atom_symlink_allow.pp
+      args:
+        creates: /var/lib/selinux/targeted/active/modules/400/atom_symlink_allow.pp
+
+    - name: "Delete SElinux policy tmp files"
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /tmp/atom_symlink_allow.te
+        - /tmp/atom_symlink_allow.mod
+        - /tmp/atom_symlink_allow.pp
+  when:
+    - "atom_revision_directory_latest_symlink_dir is defined"
+    - "atom_revision_directory|bool"
+    - "ansible_os_family in ['RedHat','Rocky']"
+    - "ansible_selinux is defined and ansible_selinux != False and ansible_selinux.status == 'enabled'"
+# End SELinux symlink policy block
+
+
 # AtoM private symlink for digital object access control
 - name: "Create private symlink"
   file:
