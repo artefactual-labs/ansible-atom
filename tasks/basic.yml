@@ -182,7 +182,7 @@
         setype: httpd_sys_rw_content_t
         state: present
       when: atom_revision_directory|bool
-    - name: "Selinux: Apply restorecon  on atom folder (when using atom_revision_directory)"
+    - name: "Selinux: Apply restorecon on atom folder (when using atom_revision_directory)"
       shell: "restorecon -R -v {{ atom_path }}/{{ atom_extra_path }}"
       when: atom_revision_directory|bool
     - name: "Selinux: allow httpd to write on atom folder (when not using atom_revision_directory)"
@@ -191,7 +191,7 @@
         setype: httpd_sys_rw_content_t
         state: present
       when: not atom_revision_directory|bool
-    - name: "Selinux: Apply restorecon  on atom folder (when not using atom_revision_directory)"
+    - name: "Selinux: Apply restorecon on atom folder (when not using atom_revision_directory)"
       shell: "restorecon -R -v {{ atom_path }}"
       when: not atom_revision_directory|bool
     - name: "Selinux: enable httpd_can_network_connect"
