@@ -167,6 +167,17 @@ atom_app_cache_engine_options:
 # atom_app_google_tag_manager_container_id:
 # atom_app_csv_transform_script_name:
 
+# Define password_hash_algorithm. More info: https://www.php.net/manual/en/function.password-hash.php
+# The recommended value is PASSWORD_ARGON2I (more secure), but old RHEL/CentOS database can have BCRYPT hash, so setting default RHEL value to BCRYPT
+# RHEL/Rocky support for PASSWORD_ARGON2I only added recently for php remi packages and AtoM > 2.7 (via php-sodium package)
+atom_app_password_hash_algorithm: "{{ 'PASSWORD_BCRYPT' if ansible_os_family in ['RedHat', 'Rocky'] else 'PASSWORD_ARGON2I' }}"
+
+# Install php-sodium package in EL9. Requires AtoM > 2.7
+# In case you want to use PASSWORD_ARGON2I in EL9, you need to set:
+# 1) atom_rh_install_php_sodium_package: True
+# 2) atom_app_password_hash_algorithm: 'PASSWORD_ARGON2I'
+atom_rh_install_php_sodium_package: False
+
 #
 # factories.yml
 #
@@ -216,7 +227,7 @@ atom_es_batch_size: "500"
 atom_es_fields_limit: "3000"
 
 #
-# php5-fpm pool
+# php-fpm pool
 #
 
 atom_pool_user: "{{ atom_user }}"

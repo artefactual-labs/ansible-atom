@@ -26,6 +26,16 @@
     install_weak_deps: false
     state: "latest"
 
+
+- name: "Install php-sodium package"
+  yum:
+    name:
+      - "php{{ php_version }}-php-sodium" # needed for PASSWORD_ARGON2I password algorithm
+    allowerasing: true
+    install_weak_deps: false
+    state: "latest"
+  when: "atom_rh_install_php_sodium_package|bool"
+
 - name: "Create /usr/bin/php link"
   file:
     src: "{{ php_rh_centos_path }}/php"
