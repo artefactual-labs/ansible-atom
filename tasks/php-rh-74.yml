@@ -14,6 +14,7 @@
       - "php{{ php_version }}-php-pecl-memcache"
       - "php{{ php_version }}-php-pecl-memprof"
       - "php{{ php_version }}-php-pecl-zip"
+      - "php{{ php_version }}-php-sodium" # needed for PASSWORD_ARGON2I password algorithm
       - "zlib-devel" # needed for memcached
       - "unzip"
       - "java-1.8.0-openjdk-headless" # needed for fop
