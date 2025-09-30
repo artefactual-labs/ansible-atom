@@ -7,9 +7,9 @@ prod:
 {% if atom_app_cache_engine == "sfMemcacheCache" or atom_app_cache_engine == "sfAPCCache" %}
     class: QubitCacheSessionStorage
     param:
-      session_name: symfony
-      session_cookie_httponly: true
-      session_cookie_secure: false
+      session_name: {{ atom_factory_session_cookie_name | default('symfony') }}
+      session_cookie_httponly: {{ atom_factory_session_cookie_httponly | default('true') }}
+      session_cookie_secure: {{ atom_factory_session_cookie_secure | default('false') }}
       cache:
         class: {{ atom_app_cache_engine }}
         param:
@@ -19,9 +19,9 @@ prod:
 {% else %}
     class: QubitSessionStorage
     param:
-      session_name: symfony
-      session_cookie_httponly: true
-      session_cookie_secure: false
+      session_name: {{ atom_factory_session_cookie_name | default('symfony') }}
+      session_cookie_httponly: {{ atom_factory_session_cookie_httponly | default('true') }}
+      session_cookie_secure: {{ atom_factory_session_cookie_secure | default('false') }}
 {% endif %}
 
 test:
