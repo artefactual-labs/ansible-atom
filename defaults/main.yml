@@ -185,6 +185,9 @@ atom_rh_install_php_sodium_package: False
 atom_template_factories_yml: "atom/apps/qubit/config/factories.yml"
 atom_factory_user: "myUser" # e.g. adLdapUser
 atom_factory_user_timeout: "1800"
+atom_factory_session_cookie_name: "symfony"
+atom_factory_session_cookie_httponly: true
+atom_factory_session_cookie_secure: false
 
 #
 # settings.yml
