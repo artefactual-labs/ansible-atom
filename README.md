@@ -20,6 +20,7 @@ This role allows to install AtoM on CentOS 7 and Ubuntu 14.04, 16:04, 18.04 and
 |  AtoM 2.7  |      7.4       |CentOS/RH 7, Rocky/RH 8-9|     20.04      |      >=5.0,<6.0       |     >=8.0     |
 |  AtoM 2.8  |      7.4       |CentOS/RH 7, Rocky/RH 8-9|     20.04      |      >=5.0,<6.0       |     >=8.0     |
 |  AtoM 2.9  | 8.1, 8.2, 8.3  |     RH 9, Rocky/RH 9    | 22.04 and 24.04|      >=6.0,<7.0       |     >=8.0     |
+|  AtoM 2.10 | 8.1, 8.2, 8.3  |     RH 9, Rocky/RH 9    | 22.04 and 24.04|      >=7.0,<=7.10.2   |     >=8.0     |
 
 The next table explains the valid `atom_php_version` values that you can use
 depending on the AtoM version and Linux Distro. It is very important to take
@@ -27,17 +28,17 @@ into account the default value (last column), because if you need a different
 php version you must set the `atom_php_version` variable on ansible `host_vars`
 or `group_vars` files to the desired version.
 
-|Linux Distro| AtoM 2.3 | AtoM 2.4 | AtoM 2.5 | AtoM 2.6 | AtoM 2.7 | AtoM 2.8 | AtoM 2.9 |  Default |
-|------------|----------|----------|----------|----------|----------|----------|----------|----------|
-|CentOS/RH 7 |    70    |     70   | 70,71,72 |  72,73   |    74    |    74    |          |    72    |
-|Rocky/RH 8  |          |          |          |          |    74    |    74    |          |    74    |
-|Rocky/RH 9  |          |          |          |          |    74    |    74    | 81,82,83 |    74    |
-|Ubuntu 14.04|     5    |      5   |          |          |          |          |          |     5    |
-|Ubuntu 16.04|    7.0   |     7.0  |    7.0   |          |          |          |          |    7.0   |
-|Ubuntu 18.04|          |          |    7.2   |   7.2    |          |          |          |    7.2   |
-|Ubuntu 20.04|          |          |          |          |   7.4    |   7.4    |          |    7.4   |
-|Ubuntu 22.04|          |          |          |          |          |          |   8.1    |    8.1   |
-|Ubuntu 24.04|          |          |          |          |          |          |   8.3    |    8.3   |
+|Linux Distro| AtoM 2.3 | AtoM 2.4 | AtoM 2.5 | AtoM 2.6 | AtoM 2.7 | AtoM 2.8 | AtoM 2.9 | AtoM 2.10 | Default |
+|------------|----------|----------|----------|----------|----------|----------|----------|-----------|---------|
+|CentOS/RH 7 |    70    |     70   | 70,71,72 |  72,73   |    74    |    74    |          |           |   72    |
+|Rocky/RH 8  |          |          |          |          |    74    |    74    |          |           |   74    |
+|Rocky/RH 9  |          |          |          |          |    74    |    74    | 81,82,83 |  81,82,83 |   74    |
+|Ubuntu 14.04|     5    |      5   |          |          |          |          |          |           |    5    |
+|Ubuntu 16.04|    7.0   |     7.0  |    7.0   |          |          |          |          |           |   7.0   |
+|Ubuntu 18.04|          |          |    7.2   |   7.2    |          |          |          |           |   7.2   |
+|Ubuntu 20.04|          |          |          |          |   7.4    |   7.4    |          |           |   7.4   |
+|Ubuntu 22.04|          |          |          |          |          |          |   8.1    |    8.1    |   8.1   |
+|Ubuntu 24.04|          |          |          |          |          |          |   8.3    |    8.3    |   8.3   |
 
 From the table above, you can see the Linux distro you need depending on the
 AtoM version. For instance, AtoM 2.6 can only be installed on CentOS 7 or
@@ -49,6 +50,7 @@ Ubuntu 18.04.
 - Atom 2.5, Binder 0.9: Elasticsearch>=5.3,<6.x; MySQL>5.1,<6.0
 - AtoM 2.6-2.8: Elasticsearch>=5.3,<6.x; MySQL>=8.0
 - AtoM 2.9:  Elasticsearch=>6.0,<7.0; MySQL>=8.0
+- AtoM 2.10: Elasticsearch=>7.0,<=7.10.2; MySQL>=8.0
 
 
 ## Overriding default templates
