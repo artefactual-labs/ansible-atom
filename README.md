@@ -52,6 +52,14 @@ Ubuntu 18.04.
 - AtoM 2.9:  Elasticsearch=>6.0,<7.0; MySQL>=8.0
 - AtoM 2.10: Elasticsearch=>7.0,<=7.10.2; MySQL>=8.0
 
+## Notes on AtoM 2.10 and obsolete bootstrap 2
+
+Bootstrap2 themes are not supported anymore since AtoM >= 2.10, please ensure you set in your config for AtoM >= 2.10:
+
+```
+atom_compile_all_themes: no
+atom_themes: []
+```
 
 ## Overriding default templates
 
