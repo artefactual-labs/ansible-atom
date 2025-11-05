@@ -66,6 +66,10 @@ atom_fix_data: "no"
 # Upgrade sql
 atom_upgrade_sql: "no"
 
+#Useful when upgrading to AtoM >= 2.10 from AtoM <= 2.9 and existing theme is BS2. To avoid the input of selecting new supported Themes. Only applies when atom_upgrade_sql=yes
+atom_upgrade_sql_enable_theme: False
+atom_upgrade_sql_theme: "arDominionB5Plugin"
+
 #
 # Misc
 #
