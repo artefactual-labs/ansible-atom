@@ -1,5 +1,14 @@
 ---
 
+- name: "Change theme before database upgrade"
+  command: "php symfony tools:atom-plugins add {{ atom_upgrade_sql_theme }}"
+  args:
+    chdir: "{{ atom_path }}/{{ atom_extra_path }}"
+  when:
+    - atom_upgrade_sql_enable_theme|bool
+    - atom_upgrade_sql_theme is defined
+    - atom_upgrade_sql|bool
+
 - name: "Update database"
   command: "php symfony tools:upgrade-sql -B"
   args:
