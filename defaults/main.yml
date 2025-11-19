@@ -95,9 +95,13 @@ atom_themes:
   - path: "{{ atom_path }}/{{ atom_extra_path }}/plugins/arArchivesCanadaPlugin"
     build_cmd: "make"
 
-# Plug-ins
+# Plugins: dict-of-dict
 atom_plugins:
-  - "qtSwordPlugin"
+  qtSwordPlugin:
+    enabled: true
+  arOidcPlugin:
+    enabled: false
+    activate_file: activate-oidc-plugin
 
 atom_gdpr_enabled: "False"
 

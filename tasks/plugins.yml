@@ -5,17 +5,27 @@
 #    become_user: "{{ atom_user }}"
 #    environment: "{{ atom_pool_php_envs }}"
 
-- name: "Enable AtoM plug-ins"
-  shell: "php symfony tools:atom-plugins add {{ item }}"
+# plugin.enabled = true → create plugin.activate_file
+# plugin.enabled = false → remove plugin.activate_file
+- name: Manage AtoM plugin activation files
+  file:
+    path: "{{ atom_path }}/{{ atom_extra_path }}/{{ item.value.activate_file }}"
+    state: "{{ 'touch' if item.value.enabled | bool else 'absent' }}"
+  loop: "{{ atom_plugins | dict2items }}"
+  when: item.value.activate_file is defined
+
+- name: "Enable AtoM plugins"
+  shell: "php symfony tools:atom-plugins add {{ item.key }}"
   args:
     chdir: "{{ atom_path }}/{{ atom_extra_path }}"
-  with_items: "{{ atom_plugins }}"
+  loop: "{{ atom_plugins | dict2items }}"
+  when: item.value.enabled | default(false) | bool
 
 - name: "Enable AtoM GDPR privacy page"
   command: "php symfony tools:run lib/task/tools/addGdprSettings.php"
   args:
     chdir: "{{ atom_path }}/{{ atom_extra_path }}"
-  when: "atom_gdpr_enabled is defined and atom_gdpr_enabled|bool"
+  when: "atom_gdpr_enabled is defined and atom_gdpr_enabled | bool"
 
 # copy ES plugins to /etc/elasticsearch (assumes ES running on same server)
 # (copy manually if ES is on a separate backend server)
@@ -23,5 +33,5 @@
   command: "cp -rf {{ atom_path }}/{{ atom_extra_path }}/plugins/arElasticSearchPlugin/scripts /etc/elasticsearch/"
   become: "yes"
   become_user: "root"
-  when: "atom_drmc_es_scripts is defined and atom_drmc_es_scripts|bool"
+  when: "atom_drmc_es_scripts is defined and atom_drmc_es_scripts | bool"
   notify: "Restart Elasticsearch"
