@@ -128,6 +128,8 @@
       dest: "{{ atom_path }}/{{ atom_extra_path }}/apps/qubit/config/gearman.yml"
     - src:  "{{ atom_template_search_yml }}"
       dest: "{{ atom_path }}/{{ atom_extra_path }}/apps/qubit/config/search.yml"
+    - src:  "{{ atom_template_appchallenge }}"
+      dest: "{{ atom_path }}/{{ atom_extra_path }}/config/appChallenge.yml"
   notify:
     - "Clear sf_cache"
     - "Reload PHP service"

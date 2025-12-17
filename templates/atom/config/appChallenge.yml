@@ -1,0 +1,117 @@
+{#
+  Helper to render YAML lists/dicts with consistent indentation.
+  - key always on its own line
+  - empty list  -> key: []
+  - empty dict  -> key: {}
+  Pass empty_literal='{}' for dict call sites.
+#}
+{% macro yaml_block(key, value, empty_literal='[]') %}
+{% if value is not defined or value | length == 0 %}
+{{ key }}: {{ empty_literal }}
+{% else %}
+{{ key }}:
+{{ value
+     | to_nice_yaml(indent=2)
+     | indent(2, true) }}             {# indent all lines, including first #}
+{% endif %}
+{% endmacro %}
+
+# Javascript browser verification configuration. Js challenge will be run
+# when 'activated' setting is 'true'.
+# IMPORTANT: The 'salt' value must be changed to a new secret string before
+# activating this feature.
+
+# Toggle the JS challenge feature on/off.
+activated: {{ atom_user_challenge_activated | default(false) | to_json }}
+
+# If true, run headless-browser tests.
+test_headless: {{ atom_user_challenge_test_headless | default(false) | to_json }}
+
+# Cookie names.
+cookiename_visited:  {{ atom_user_challenge_cookiename_visited  | default('atom_visited')  | to_json }}
+cookiename_headless: {{ atom_user_challenge_cookiename_headless | default('atom_headless') | to_json }}
+cookiename_js:       {{ atom_user_challenge_cookiename_js       | default('atom_js')       | to_json }}
+
+# New dialog‐text settings (optional - these are defaults)
+{# Using to_json to avoid problems with weird chars:
+   * It always produces a properly quoted string
+   * Escapes quotation marks, newlines, Unicode, etc.
+   * YAML accepts JSON scalars natively #}
+dialog_title:     {{ atom_user_challenge_dialog_title
+                      | default("Verifying Your Browser")
+                      | to_json }}
+dialog_message:   {{ atom_user_challenge_dialog_message
+                      | default("Hang tight— we're just making sure you're a real person so our community stays safe.")
+                      | to_json }}
+redirect_prefix:  {{ atom_user_challenge_redirect_prefix
+                      | default("Redirecting in")
+                      | to_json }}
+redirect_suffix:  {{ atom_user_challenge_redirect_suffix
+                      | default("second(s)...")
+                      | to_json }}
+noscript_message: {{ atom_user_challenge_noscript_message
+                      | default("JavaScript is required for this step. Please enable JavaScript in your browser and try again.")
+                      | to_json }}
+
+# Paths which always bypass the challenge.
+{{ yaml_block(
+  'endpoint_exceptions',
+  atom_user_challenge_endpoint_exceptions
+    | default(['/api', '/qtSwordPlugin'], true),
+  '[]'
+) }}
+
+# Secret salt used to sign cookie values.
+salt: {{ atom_user_challenge_salt | default('REPLACE_WITH_SECRET') | to_json }}
+
+# Challenge delay (in seconds) the user will have to wait to pass the challenge.
+delay_seconds: {{ atom_user_challenge_delay_seconds | default(5) }}
+
+# How many days the “visited” cookie should live.
+cookie_days: {{ atom_user_challenge_cookie_days | default(3) }}
+
+# CIDR blocks which always bypass the challenge.
+{{ yaml_block(
+  'cidr_exceptions',
+  atom_user_challenge_cidr_exceptions
+    | default(['192.168.1.0/24', '10.0.0.0/8'], true),
+  '[]'
+) }}
+
+# ASN+useragent blocks which always bypass the challenge
+{{ yaml_block(
+  'asn_user_agent_exceptions',
+  atom_user_challenge_asn_user_agent_exceptions | default({}, true),
+  '{}'
+) }}
+
+# CIDR+user_agent blocks which always bypass the challenge
+{{ yaml_block(
+  'network_user_agent_exceptions',
+  atom_user_challenge_network_user_agent_exceptions | default({}, true),
+  '{}'
+) }}
+
+# Country blocks which always bypass the challenge
+{{ yaml_block(
+  'country_exceptions',
+  atom_user_challenge_country_exceptions | default({}, true),
+  '{}'
+) }}
+
+# ASN blocks which always bypass the challenge
+{{ yaml_block(
+  'asn_exceptions',
+  atom_user_challenge_asn_exceptions | default([], true),
+  '[]'
+) }}
+
+# GeoIp is required for user_challenge features. The country and asn filters
+# both require GeoIp to be set up.
+# Paths to the GeoIP2 databases (substitute %SF_ROOT_DIR% or an absolute path):
+geoip_asn_db_path:  {{ atom_geoip_asn_db_path
+                       | default('/etc/nginx/geoip/GeoLite2-ASN.mmdb')
+                       | to_json }}
+geoip_city_db_path: {{ atom_geoip_city_db_path
+                       | default('/etc/nginx/geoip/GeoLite2-City.mmdb')
+                       | to_json }}
