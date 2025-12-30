@@ -233,6 +233,66 @@ atom_es_batch_size: "500"
 #   Binder: "6000"
 atom_es_fields_limit: "3000"
 
+
+#
+# appChallenge.yml
+#
+
+# NOTE: it requires AtoM >= 2.9.2
+
+atom_template_appchallenge: "atom/config/appChallenge.yml"
+
+atom_user_challenge_activated: False  # Set as true to use the builtin AtoM challenge
+atom_user_challenge_test_headless: True
+
+atom_user_challenge_cookiename_visited: "atom_visited"
+atom_user_challenge_cookiename_headless: "atom_headless"
+atom_user_challenge_cookiename_js: "atom_js"
+
+atom_user_challenge_dialog_title:       "Verifying Your Browser"
+atom_user_challenge_dialog_message:     "Hang tight— we're just making sure you're a real person so our community stays safe."
+atom_user_challenge_redirect_prefix:    "Redirecting in"
+atom_user_challenge_redirect_suffix:    "second(s)..."
+atom_user_challenge_noscript_message:   "JavaScript is required for this step. Please enable JavaScript in your browser and try again."
+
+atom_user_challenge_endpoint_exceptions:
+  - '/api'
+  - '/qtSwordPlugin'
+
+# You can create directly a vault random secure salt with command:
+#  - openssl rand -base64 48 | xargs ansible-vault encrypt_string
+atom_user_challenge_salt: "REPLACE_WITH_SECRET"
+
+atom_user_challenge_delay_seconds: 5
+atom_user_challenge_cookie_days: 3
+atom_user_challenge_cidr_exceptions:
+  - '192.168.1.0/24'
+  - '10.0.0.0/8'
+
+atom_user_challenge_asn_user_agent_exceptions: {}
+#  googlebot:
+#    asn: 15169
+#    user_agent: ".*Googlebot.*"
+#  googleother:
+#    asn: 15169
+#    user_agent: ".*GoogleOther.*"
+
+atom_user_challenge_network_user_agent_exceptions: {}
+#  monitoring_tool:
+#    user_agent: ".*monitoring_user_agent_header.*"
+#    src_net: "1.2.3.4/32"
+
+atom_user_challenge_country_exceptions: {}
+#  canada:
+#    country: CA  # Use ISO3166 country code: https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+
+atom_user_challenge_asn_exceptions: []
+#  - 15169 # google ASN: https://ipinfo.io/AS15169?lookup_source=search-bar
+
+# You need to download and update geoip databases. We usually use artefactual nginx role.
+atom_geoip_asn_db_path: "/etc/nginx/geoip/GeoLite2-ASN.mmdb"
+atom_geoip_city_db_path: "/etc/nginx/geoip/GeoLite2-City.mmdb"
+
 #
 # php-fpm pool
 #
