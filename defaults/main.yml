@@ -250,7 +250,7 @@ atom_user_challenge_cookiename_headless: "atom_headless"
 atom_user_challenge_cookiename_js: "atom_js"
 
 atom_user_challenge_dialog_title:       "Verifying Your Browser"
-atom_user_challenge_dialog_message:     "Hang tight— we're just making sure you're a real person so our community stays safe."
+atom_user_challenge_dialog_message:     "Hang tight- we're just making sure you're a real person so our community stays safe."
 atom_user_challenge_redirect_prefix:    "Redirecting in"
 atom_user_challenge_redirect_suffix:    "second(s)..."
 atom_user_challenge_noscript_message:   "JavaScript is required for this step. Please enable JavaScript in your browser and try again."
