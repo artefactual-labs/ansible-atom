@@ -1,0 +1,59 @@
+---
+- name: "geoip: Add script to update geoip databases"
+  template:
+    src: "nginx_geoip_update_databases.sh.j2"
+    dest: "/usr/local/bin/nginx_geoip_update_databases.sh"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_group }}"
+    mode: '0700'
+
+- name: "geoip: Create update geoip log file"
+  file:
+    path: "/var/log/geoip-update.log"
+    state: touch
+    owner: "{{ nginx_user }}"
+
+- name: "geoip: Create geoip dir for databases"
+  file:
+    path: "/usr/share/nginx/geoip"
+    state: directory
+    owner: "{{ nginx_user }}"
+    mode: '0755'
+
+- name: "geoip: Run update geoip databases"
+  become: "yes"
+  become_user: "{{ nginx_user }}"
+  command:
+    cmd: "/usr/local/bin/nginx_geoip_update_databases.sh"
+
+- name: "geoip: Add cronjob to daily update maxminddb database"
+  cron:
+    name: "nginx_geoip_update_databases"
+    minute: "0"
+    hour: "3"
+    day: "*"
+    month: "*"
+    weekday: "*"
+    user: "{{ nginx_user }}"
+    job: "/usr/local/bin/nginx_geoip_update_databases.sh"
+    cron_file: "nginx_geoip_update_databases"
+
+- name: "geoip: Install nginx packages for geoip support (Ubuntu)"
+  package:
+    name: "{{ geoip_extra_pkg }}"
+    state: "present"
+  when:
+    - ansible_os_family == 'Debian'
+
+- name: "geoip: Add nginx geoip rpm package key (RedHat)"
+  rpm_key:
+    state: present
+    key: "{{ nginx_geoip_rpm_key }}"
+  when: ansible_os_family == 'RedHat'
+
+- name: "geoip: Install nginx packages for geoip support (RedHat)"
+  yum:
+    name: "{{ nginx_geoip_rpm_url }}"
+    state: "present"
+  when:
+    - ansible_os_family == 'RedHat'
