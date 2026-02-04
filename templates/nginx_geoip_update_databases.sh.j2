@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Variables
-DB_DIR="/usr/share/nginx/geoip"  # Directory to store the GeoLite2 databases
+DB_DIR="{{ atom_geoip_parent_db_path }}"  # Directory to store the GeoLite2 databases
 LOG_FILE="/var/log/geoip-update.log"
 
 # URLs for GeoIP database downloads

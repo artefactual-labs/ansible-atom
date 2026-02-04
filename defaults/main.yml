@@ -8,6 +8,7 @@ atom_environment_type: "production"
 atom_user: "www-data"
 atom_group: "www-data"
 atom_path: "/usr/share/nginx/atom"
+atom_geoip_parent_db_path: "/usr/share/nginx/geoip"
 atom_repository_url: "https://github.com/artefactual/atom.git"
 atom_repository_version: "stable/2.9.x"
 atom_install_site: "true"
@@ -289,9 +290,13 @@ atom_user_challenge_country_exceptions: {}
 atom_user_challenge_asn_exceptions: []
 #  - 15169 # google ASN: https://ipinfo.io/AS15169?lookup_source=search-bar
 
+# If innstall geoip databases, may set this value to True
+# For adding a cronjob to daily upgrade geoip database
+atom_geoip_install_update_db_cronjob: False
+
 # You need to download and update geoip databases. We usually use artefactual nginx role.
-atom_geoip_asn_db_path: "/etc/nginx/geoip/GeoLite2-ASN.mmdb"
-atom_geoip_city_db_path: "/etc/nginx/geoip/GeoLite2-City.mmdb"
+atom_geoip_asn_db_path: "{{ atom_geoip_parent_db_path }}/GeoLite2-ASN.mmdb"
+atom_geoip_city_db_path: "{{ atom_geoip_parent_db_path }}/GeoLite2-City.mmdb"
 
 #
 # php-fpm pool
