@@ -43,8 +43,8 @@ download_file "$CITY_URL" "$CITY_DB"
 
 # Update log file
 if [[ -f "$ASN_DB" && -f "$CITY_DB" ]]; then
-    echo "$(date): NGINX reloaded successfully" >> "$LOG_FILE"
+    echo "$(date): GeoIP databases reloaded successfully" >> "$LOG_FILE"
 else
-    echo "$(date): NGINX reload skipped due to missing database files" >> "$LOG_FILE"
+    echo "$(date): GeoIP databases reload skipped due to missing database files" >> "$LOG_FILE"
 fi
 
