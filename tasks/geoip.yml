@@ -15,7 +15,7 @@
 
 - name: "geoip: Create geoip dir for databases"
   file:
-    path: "/usr/share/nginx/geoip"
+    path: "{{ atom_geoip_parent_db_path }}"
     state: directory
     owner: "{{ nginx_user }}"
     mode: '0755'

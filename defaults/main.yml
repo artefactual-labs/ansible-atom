@@ -8,7 +8,6 @@ atom_environment_type: "production"
 atom_user: "www-data"
 atom_group: "www-data"
 atom_path: "/usr/share/nginx/atom"
-atom_geoip_parent_db_path: "/usr/share/nginx/geoip"
 atom_repository_url: "https://github.com/artefactual/atom.git"
 atom_repository_version: "stable/2.9.x"
 atom_install_site: "true"
@@ -234,6 +233,25 @@ atom_es_batch_size: "500"
 #   Binder: "6000"
 atom_es_fields_limit: "3000"
 
+#
+# geoip.yml
+#
+
+# Often the geoip databases are downloaded with our ansible-nginx role.
+# For adding a cronjob to daily upgrade geoip database with this role,
+# just set the following variable as True
+
+atom_geoip_install_update_db_cronjob: False
+
+# For backwards compatibilty, depending on using nginx role or atom_geoip_install_update_db_cronjob=True,
+# the db path is different. 
+
+atom_geoip_parent_db_path: "{{ '/usr/share/nginx/geoip' if atom_geoip_install_update_db_cronjob|bool else '/etc/nginx/geoip' }}"
+
+# Geoip database files
+atom_geoip_asn_db_path: "{{ atom_geoip_parent_db_path }}/GeoLite2-ASN.mmdb"
+atom_geoip_city_db_path: "{{ atom_geoip_parent_db_path }}/GeoLite2-City.mmdb"
+
 
 #
 # appChallenge.yml
@@ -289,14 +307,6 @@ atom_user_challenge_country_exceptions: {}
 
 atom_user_challenge_asn_exceptions: []
 #  - 15169 # google ASN: https://ipinfo.io/AS15169?lookup_source=search-bar
-
-# If innstall geoip databases, may set this value to True
-# For adding a cronjob to daily upgrade geoip database
-atom_geoip_install_update_db_cronjob: False
-
-# You need to download and update geoip databases. We usually use artefactual nginx role.
-atom_geoip_asn_db_path: "{{ atom_geoip_parent_db_path }}/GeoLite2-ASN.mmdb"
-atom_geoip_city_db_path: "{{ atom_geoip_parent_db_path }}/GeoLite2-City.mmdb"
 
 #
 # php-fpm pool
