@@ -17,11 +17,9 @@ all:
 {% if atom_app_google_maps_api_key is defined %}
   google_maps_api_key: {{ atom_app_google_maps_api_key }}
 {% endif %}
-
 {% if atom_app_google_analytics_api_key is defined %}
   google_analytics_api_key: {{ atom_app_google_analytics_api_key }}
 {% endif %}
-
 {% if atom_app_google_analytics_institutions_dimension_index is defined %}
   google_analytics_institutions_dimension_index: {{ atom_app_google_analytics_institutions_dimension_index }}
 {% endif %}
@@ -46,7 +44,7 @@ all:
   ldap_user_group: {{ atom_app_ldap_user_group }}
 {% endif %}
 
-{% if atom_worker_old_config|bool %}
+{% if atom_worker_old_config | bool %}
   # Gearman job server
   gearman_job_server: {{ atom_app_gearman_job_server }}
 {% endif %}
@@ -62,4 +60,191 @@ all:
 {% if atom_csp_directives is defined %}
     directives: {{ atom_csp_directives }}
 {% endif %}
+{% endif %}
+
+{% if ATOM_ACTIVATE_OIDC_PLUGIN | default(false) | bool %}
+  oidc:
+{% if atom_oidc_providers is defined %}
+    providers:
+{% for provider_name, provider_info in atom_oidc_providers.items() %}
+      {{ provider_name }}:
+        url: {{ provider_info.url }}
+        client_id: {{ provider_info.client_id }}
+        client_secret: {{ provider_info.client_secret }}
+        send_oidc_logout: {{ provider_info.send_oidc_logout | default("true") }}
+        enable_refresh_token_use: {{ provider_info.enable_refresh_token_use | default("true") }}
+        server_cert: {{ provider_info.server_cert | default("false") }}
+        set_groups_from_attributes: {{ provider_info.set_groups_from_attributes | default("true") }}
+{% if provider_info.user_groups is not defined %}        
+        user_groups:
+          administrator:
+            attribute_value: 'atom-admin'
+            group_id: 100
+          editor:
+            attribute_value: 'atom-editor'
+            group_id: 101
+          contributor:
+            attribute_value: 'atom-contributor'
+            group_id: 102
+          translator:
+            attribute_value: 'atom-translator'
+            group_id: 103
+{% else %}
+        user_groups: 
+          {{ provider_info.user_groups | to_nice_yaml | indent(10) }}
+{% endif %}
+{% if provider_info.scopes is not defined %}
+        scopes:
+          - 'openid'
+          - 'profile'
+          - 'email'
+{% else %}
+        scopes:
+          {{ provider_info.scopes | to_nice_yaml | indent(10) }}
+{% endif %}
+        roles_source: {{ provider_info.roles_source | default("access-token") }}
+{% if provider_info.roles_path is not defined %}
+        roles_path:
+          - 'realm_access'
+          - 'roles'
+{% else %}
+        roles_path:
+          {{ provider_info.roles_path | to_nice_yaml| indent(10) }}
+{% endif %}
+        user_matching_source: {{ provider_info.user_matching_source | default("oidc-email") }}
+        auto_create_atom_user: {{ provider_info.auto_create_atom_user | default(true) }}
+{% endfor %}
+{% else %}
+    providers:
+      primary:
+        url: 'https://keycloak:8443/realms/artefactual'
+        client_id: 'artefactual-atom'
+        client_secret: 'example-secret'
+
+        # Set to true if OIDC endpoint supports logout.
+        # Setting examples for tested OpenID providers:
+        # --------
+        # Keycloak via Dex:
+        #   send_oidc_logout: false
+        # Keycloak direct:
+        #   send_oidc_logout: true
+        send_oidc_logout: true
+
+        # Set to true if OIDC endpoint is configured to send refresh tokens.
+        enable_refresh_token_use: true
+
+        # OIDC server SSL certificate location for server validation.
+        # Accepts a filepath or false (to disable, e.g. for development).
+        # Examples
+        # --------
+        # Relative path to sf_root_dir:    'data/oidc/cert/mycert.pem'
+        # Absolute path:                   '/usr/var/certif/xxx.pem'
+        # Disable server validation:       false
+        server_cert: false
+
+        # Settings for parsing OIDC groups into AtoM group membership.
+        # Set set_groups_from_attributes to true to enable.
+        set_groups_from_attributes: true
+        user_groups:
+          administrator:
+            attribute_value: 'atom-admin'
+            group_id: 100
+          editor:
+            attribute_value: 'atom-editor'
+            group_id: 101
+          contributor:
+            attribute_value: 'atom-contributor'
+            group_id: 102
+          translator:
+            attribute_value: 'atom-translator'
+            group_id: 103
+
+        scopes:
+          - 'openid'
+          # Use with Dex
+          # - 'offline_access'
+          - 'profile'
+          - 'email'
+          # Use with Dex
+          # - 'groups'
+
+        # Identify token which contains role claims. Options are 'access-token',
+        # 'id-token', 'verified-claims', or 'user-info'.
+        # 'set_groups_from_attributes' must be 'true' to enable.
+        roles_source: 'access-token'
+
+        # Identify the location of role claims within the token identified in
+        # `roles_source` above. This is an array containing the node path to
+        # locate the roles array in the OIDC token. By default this is found
+        # in Keycloak's access token under 'realm_access'/'roles'.
+        roles_path:
+          - 'realm_access'
+          - 'roles'
+
+        # Identify how IAM users are matched to users in AtoM. Two values are allowed:
+        #   user_matching_source: oidc-email
+        #   user_matching_source: oidc-username
+        # Using oidc-username will work without additional scopes being requested.
+        #
+        # Using oidc-email requires the 'email' scope to be set above in the
+        # 'scopes' setting. 'email' is an optional user setup field in Keycloak but
+        # MUST be set if matching to pre-existing AtoM user accounts is going to work.
+        user_matching_source: 'oidc-email'
+
+        # Activate or disable the automatic creation of AtoM user records from OIDC
+        # endpoint details. Allowed settings are:
+        #
+        # true (default): AtoM will automatically create a user record on first login.
+        #
+        # false: AtoM will not automatically create a user record on first login - AtoM
+        #        user must be created in advance to successfully authenticate in AtoM.
+        auto_create_atom_user: true
+
+      # The following is an example secondary provider called 'sample_provider'. If
+      # uncommented, a second OIDC provider in the 'sample' Keycloak realm will be available.
+      #sample_provider:
+        #url: 'https://keycloak:8443/realms/sample'
+        #client_id: 'sample-atom'
+        #client_secret: 'example-secret'
+        #send_oidc_logout: true
+        #enable_refresh_token_use: true
+        #server_cert: false
+        #set_groups_from_attributes: true
+        #user_groups:
+        #  administrator:
+        #    attribute_value: 'atom-admin'
+        #    group_id: 100
+        #  editor:
+        #    attribute_value: 'atom-editor'
+        #    group_id: 101
+        #  contributor:
+        #    attribute_value: 'atom-contributor'
+        #    group_id: 102
+        #  translator:
+        #    attribute_value: 'atom-translator'
+        #    group_id: 103
+        #scopes:
+        #  - 'openid'
+        #  - 'profile'
+        #  - 'email'
+        #roles_source: 'access-token'
+        #roles_path:
+        #  - 'realm_access'
+        #  - 'roles'
+        #user_matching_source: 'oidc-email'
+        #auto_create_atom_user: true
+
+{% endif %}
+{% if atom_oidc_primary_provider_name is defined %}
+    primary_provider_name: {{ atom_oidc_primary_provider_name }}
+{% else %}
+    primary_provider_name: primary
+{% endif %}
+{% if atom_oidc_provider_query_param_name is defined %}
+    provider_query_param_name: {{ atom_oidc_provider_query_param_name }}
+{% else %}
+    provider_query_param_name: secondary
+{% endif %}
+    redirect_url: {{ atom_oidc_redirect_url | default('http://127.0.0.1:63001/index.php/oidc/login') }}
+    logout_redirect_url: {{ atom_oidc_logout_redirect_url | default('http://127.0.0.1:63001') }}
 {% endif %}
