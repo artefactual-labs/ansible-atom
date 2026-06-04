@@ -120,6 +120,12 @@
     - "atom-worker"
     - "drmc-mock"
 
+- import_tasks: "worker-stop.yml"
+  when: "atom_worker_setup is defined and atom_worker_setup|bool"
+  tags:
+    - "atom-worker"
+    - "atom-site"
+
 - name: "Install AtoM site"
   block:
     - import_tasks: "php-pool-cfg.yml"

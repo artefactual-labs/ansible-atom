@@ -45,6 +45,8 @@ atom_csrf_protection: "no"
 #
 
 atom_worker_setup: "yes"
+# Stop the worker before deploy when the worker service already exists.
+atom_worker_stop_before_deploy: "yes"
 # atom worker service name: atom site dir name with "-worker" suffix
 atom_worker_service_name: "{{ atom_path | basename }}-worker"
 # use old config (atom 2.0.x) for atom worker (atom-worker.conf, app.yml)
@@ -383,4 +385,3 @@ atom_npm_version: >-
       "9.8.1"
     ) | trim
   }}
-
