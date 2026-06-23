@@ -1,0 +1,19 @@
+---
+
+- name: "Check whether atom-worker service exists"
+  stat:
+    path: "{{ item }}"
+  loop:
+    - "/lib/systemd/system/{{ atom_worker_service_name }}.service"
+    - "/etc/init/{{ atom_worker_service_name }}.conf"
+  register: atom_worker_service_files
+  changed_when: false
+
+- name: "Stop worker before deploy"
+  service:
+    name: "{{ atom_worker_service_name }}"
+    state: "stopped"
+  ignore_errors: true
+  when:
+    - atom_worker_stop_before_deploy|bool
+    - atom_worker_service_files.results | selectattr('stat.exists') | list | length > 0
