@@ -21,18 +21,23 @@ download_file() {
     local output_file="$2"
 
     # Use curl to download and check success
-    if curl -sfL "$url" -o "${output_file}.tmp"; then
-        if [[ -s "${output_file}.tmp" ]]; then
-            mv "${output_file}.tmp" "$output_file"
-            echo "$(date): Successfully updated $output_file" >> "$LOG_FILE"
+    # May need to proxy if behind a VPN firewall DH2026Jun23
+    {% if vpn_proxy_location is defined and vpn_proxy_location | length > 0 %}
+        if curl --proxy "vpn_proxy_location" -sfL "$url" -o "${output_file}.tmp"; then
+    {% else %}
+        if curl -sfL "$url" -o "${output_file}.tmp"; then
+    {% endif %}
+            if [[ -s "${output_file}.tmp" ]]; then
+                mv "${output_file}.tmp" "$output_file"
+                echo "$(date): Successfully updated $output_file" >> "$LOG_FILE"
+            else
+                echo "$(date): Failed - $output_file.tmp is empty. Skipping update for $output_file." >> "$LOG_FILE"
+                rm -f "${output_file}.tmp"
+            fi
         else
-            echo "$(date): Failed - $output_file.tmp is empty. Skipping update for $output_file." >> "$LOG_FILE"
-            rm -f "${output_file}.tmp"
+            echo "$(date): Failed to download $url" >> "$LOG_FILE"
+            rm -f "${output_file}.tmp"  # Cleanup temporary file
         fi
-    else
-        echo "$(date): Failed to download $url" >> "$LOG_FILE"
-        rm -f "${output_file}.tmp"  # Cleanup temporary file
-    fi
 }
 
 # Download GeoLite2-ASN database
