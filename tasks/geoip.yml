@@ -1,0 +1,39 @@
+---
+- name: "geoip: Add script to update geoip databases"
+  template:
+    src: "geoip_update_databases.sh.j2"
+    dest: "/usr/local/bin/geoip_update_databases.sh"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_group }}"
+    mode: '0700'
+
+- name: "geoip: Create update geoip log file"
+  file:
+    path: "/var/log/geoip-update.log"
+    state: touch
+    owner: "{{ nginx_user }}"
+
+- name: "geoip: Create geoip dir for databases"
+  file:
+    path: "{{ atom_geoip_parent_db_path }}"
+    state: directory
+    owner: "{{ nginx_user }}"
+    mode: '0755'
+
+- name: "geoip: Run update geoip databases"
+  become: "yes"
+  become_user: "{{ nginx_user }}"
+  command:
+    cmd: "/usr/local/bin/geoip_update_databases.sh"
+
+- name: "geoip: Add cronjob to daily update maxminddb database"
+  cron:
+    name: "geoip_update_databases"
+    minute: "0"
+    hour: "3"
+    day: "*"
+    month: "*"
+    weekday: "*"
+    user: "{{ nginx_user }}"
+    job: "/usr/local/bin/geoip_update_databases.sh"
+    cron_file: "geoip_update_databases"

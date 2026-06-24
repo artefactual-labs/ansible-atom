@@ -189,6 +189,13 @@
   tags:
     - "atom-site"
 
+- import_tasks: "geoip.yml"
+  tags:
+    - "atom-geoip"
+    - "atom-site"
+  when:
+    - atom_geoip_install_update_db_crontab|bool
+
 - import_tasks: "drmc-mock.yml"
   when: "atom_drmc_mock is defined and atom_drmc_mock|bool"
   tags:
