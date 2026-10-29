@@ -189,7 +189,7 @@ atom_rh_install_php_sodium_package: False
 #
 
 atom_template_factories_yml: "atom/apps/qubit/config/factories.yml"
-atom_factory_user: "myUser" # e.g. adLdapUser
+atom_factory_user: "myUser" # e.g. adLdapUser or oidcUser
 atom_factory_user_timeout: "1800"
 atom_factory_session_cookie_name: "symfony"
 atom_factory_session_cookie_httponly: true
@@ -204,6 +204,22 @@ atom_default_culture: "en"
 atom_default_timezone: "America/Vancouver"
 
 atom_app_read_only: false
+
+#
+# OpenID Connect (OIDC)
+#
+
+atom_oidc_enable: False
+atom_oidc_primary_provider_name: "primary"
+atom_oidc_provider_query_param_name: "secondary"
+atom_oidc_redirect_url: "http://127.0.0.1:63001/index.php/oidc/login"
+atom_oidc_logout_redirect_url: "http://127.0.0.1:63001"
+# Replace these example provider settings before enabling OIDC.
+atom_oidc_providers:
+  primary:
+    url: "https://keycloak:8443/realms/artefactual"
+    client_id: "artefactual-atom"
+    client_secret: "example-secret"
 
 #
 # gearman.yml

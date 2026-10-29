@@ -134,6 +134,19 @@
     - "Clear sf_cache"
     - "Reload PHP service"
 
+- name: "Manage OIDC plugin activation file"
+  file:
+    path: "{{ atom_path }}/{{ atom_extra_path }}/activate-oidc-plugin"
+    state: "{{ 'touch' if atom_oidc_enable | bool else 'absent' }}"
+    owner: "{{ atom_user }}"
+    group: "{{ atom_group }}"
+    mode: "0644"
+    access_time: "preserve"
+    modification_time: "preserve"
+  notify:
+    - "Clear sf_cache"
+    - "Reload PHP service"
+
 - name: "Install sf symlink"
   file:
     state: "link"

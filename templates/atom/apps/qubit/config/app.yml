@@ -63,3 +63,45 @@ all:
     directives: {{ atom_csp_directives }}
 {% endif %}
 {% endif %}
+
+{% if atom_oidc_enable | bool %}
+  oidc:
+    providers:
+{% for provider_name, provider_info in atom_oidc_providers.items() %}
+      {{ provider_name | to_json }}:
+        url: {{ provider_info.url | to_json }}
+        client_id: {{ provider_info.client_id | to_json }}
+        client_secret: {{ provider_info.client_secret | to_json }}
+        send_oidc_logout: {{ provider_info.send_oidc_logout | default(true) | bool | to_json }}
+        enable_refresh_token_use: {{ provider_info.enable_refresh_token_use | default(true) | bool | to_json }}
+        server_cert: {{ provider_info.server_cert | default(false) | to_json }}
+        set_groups_from_attributes: {{ provider_info.set_groups_from_attributes | default(true) | bool | to_json }}
+{% if provider_info.user_groups is defined %}
+        user_groups:
+{{ provider_info.user_groups | to_nice_yaml | indent(10, true) }}
+{% else %}
+        user_groups:
+          administrator:
+            attribute_value: 'atom-admin'
+            group_id: 100
+          editor:
+            attribute_value: 'atom-editor'
+            group_id: 101
+          contributor:
+            attribute_value: 'atom-contributor'
+            group_id: 102
+          translator:
+            attribute_value: 'atom-translator'
+            group_id: 103
+{% endif %}
+        scopes: {{ provider_info.scopes | default(['openid', 'profile', 'email']) | to_json }}
+        roles_source: {{ provider_info.roles_source | default('access-token') | to_json }}
+        roles_path: {{ provider_info.roles_path | default(['realm_access', 'roles']) | to_json }}
+        user_matching_source: {{ provider_info.user_matching_source | default('oidc-email') | to_json }}
+        auto_create_atom_user: {{ provider_info.auto_create_atom_user | default(true) | bool | to_json }}
+{% endfor %}
+    primary_provider_name: {{ atom_oidc_primary_provider_name | to_json }}
+    provider_query_param_name: {{ atom_oidc_provider_query_param_name | to_json }}
+    redirect_url: {{ atom_oidc_redirect_url | to_json }}
+    logout_redirect_url: {{ atom_oidc_logout_redirect_url | to_json }}
+{% endif %}
