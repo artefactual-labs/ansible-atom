@@ -80,6 +80,90 @@ playbook structure won't work.  E.g. Changing the "atom/config/config.php"
 to "myatom/config/config.php" will load a template file at that relative
 path in your playbook directory structure.
 
+## OpenID Connect (OIDC)
+
+OIDC is disabled by default (`atom_oidc_enable: False`). To enable it, use an
+AtoM version with OIDC support and configure your provider and public URLs:
+
+>[!NOTE]
+>`atom_factory_user: "oidcUser"` is mandatory when enabling oidc
+
+```yaml
+atom_factory_user: "oidcUser"
+atom_oidc_enable: True
+atom_oidc_redirect_url: "https://archives.example.org/index.php/oidc/login"
+atom_oidc_logout_redirect_url: "https://archives.example.org"
+atom_oidc_primary_provider_name: "primary"
+atom_oidc_provider_query_param_name: "secondary"
+atom_oidc_providers:
+  primary:
+    url: "https://keycloak.example.org/realms/archives"
+    client_id: "archives-atom"
+    client_secret: "{{ vault_atom_oidc_client_secret }}"
+    send_oidc_logout: true
+    enable_refresh_token_use: true
+    server_cert: "/etc/ssl/certs/ca-certificates.crt"
+    set_groups_from_attributes: true
+    user_groups:
+      administrator:
+        attribute_value: "atom-admin"
+        group_id: 100
+      editor:
+        attribute_value: "atom-editor"
+        group_id: 101
+    scopes: [openid, profile, email]
+    roles_source: "access-token"
+    roles_path: [realm_access, roles]
+    user_matching_source: "oidc-email"
+    auto_create_atom_user: true
+```
+
+Register `atom_oidc_redirect_url` as an allowed redirect URI with your identity
+provider. Replace the example provider credentials and localhost redirect URLs
+in the role defaults before enabling OIDC. Store the client secret in Ansible
+Vault. `server_cert` accepts a certificate path on the AtoM host (relative paths
+are relative to AtoM's root directory), or `false` to disable certificate
+validation, for example during development. Its default is `false`, matching
+the custom OIDC templates.
+
+Each entry in `atom_oidc_providers` requires `url`, `client_id`, and
+`client_secret`. Optional provider settings have these defaults:
+
+| Setting | Default |
+|---------|---------|
+| `send_oidc_logout` | `true` |
+| `enable_refresh_token_use` | `true` |
+| `server_cert` | `false` |
+| `set_groups_from_attributes` | `true` |
+| `user_groups` | `atom-admin` → 100, `atom-editor` → 101, `atom-contributor` → 102, `atom-translator` → 103 (under `administrator`, `editor`, `contributor`, `translator`) |
+| `scopes` | `[openid, profile, email]` |
+| `roles_source` | `access-token` |
+| `roles_path` | `[realm_access, roles]` |
+| `user_matching_source` | `oidc-email` |
+| `auto_create_atom_user` | `true` |
+
+Group mapping uses the token selected by `roles_source` (`access-token`,
+`id-token`, `verified-claims`, or `user-info`) and the claim path in `roles_path`.
+Use `set_groups_from_attributes: false` to disable group mapping.
+`user_matching_source` also accepts `oidc-username`; matching by email requires
+the `email` scope and an email address in the identity provider. Set
+`auto_create_atom_user: false` to require an existing AtoM account.
+
+Add more named entries to `atom_oidc_providers` for additional providers.
+`atom_oidc_primary_provider_name` selects the default provider (`primary`), and
+`atom_oidc_provider_query_param_name` names the query parameter used to select
+another provider (`secondary`).
+
+The built-in `app.yml` template renders the OIDC configuration, and the built-in
+`settings.yml` template switches `login_module` to `oidc` when enabled. The role
+also creates `activate-oidc-plugin` in the AtoM root directory
+(`{{ atom_path }}/{{ atom_extra_path }}`), including when using revision
+directories, and removes it when OIDC is disabled. To
+migrate from the custom OIDC templates, remove the `atom_template_app_yml` and
+`atom_template_settings_yml` overrides; the existing `atom_oidc_*` variables can
+be reused. Disabling OIDC omits its configuration and restores the `user`
+login module.
+
 ## Database initialization
 
 By default, this role does not initialize the database. When first deploying

@@ -62,6 +62,10 @@ all:
 
   .actions:
     error_404_module:       admin
+{% if atom_oidc_enable | bool %}
+    login_module:           oidc
+{% else %}
     login_module:           user
+{% endif %}
     module_disabled_module: admin
     secure_module:          admin
