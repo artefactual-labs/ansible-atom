@@ -17,8 +17,8 @@ This role allows to install AtoM on CentOS 7 and Ubuntu 14.04, 16:04, 18.04 and
 |  AtoM 2.4  |5.5, 5.6 and 7.0|     CentOS/RedHat 7     | 14.04 and 16.04|      >=1.3,<2.0       |  >=5.1,<6.0   |
 |  AtoM 2.5  |  7.0 and 7.2   |     CentOS/RedHat 7     | 16.04 and 18.04|      >=5.0,<6.0       |  >=5.1,<6.0   |
 |  AtoM 2.6  |  7.2 and 7.3   |     CentOS/RedHat 7     |     18.04      |      >=5.0,<6.0       |     >=8.0     |
-|  AtoM 2.7  |      7.4       |CentOS/RH 7, Rocky/RH 8-9|     20.04      |      >=5.0,<6.0       |     >=8.0     |
-|  AtoM 2.8  |      7.4       |CentOS/RH 7, Rocky/RH 8-9|     20.04      |      >=5.0,<6.0       |     >=8.0     |
+|  AtoM 2.7  |      7.4       |CentOS/RH 7, Rocky/RH 8-9| 20.04 and 22.04|      >=5.0,<6.0       |     >=8.0     |
+|  AtoM 2.8  |      7.4       |CentOS/RH 7, Rocky/RH 8-9| 20.04 and 22.04|      >=5.0,<6.0       |     >=8.0     |
 |  AtoM 2.9  | 8.1, 8.2, 8.3  |     RH 9, Rocky/RH 9    | 22.04 and 24.04|      >=6.0,<7.0       |     >=8.0     |
 |  AtoM 2.10 | 8.1, 8.2, 8.3  |     RH 9, Rocky/RH 9    | 22.04 and 24.04|      >=7.0,<=7.10.2   |     >=8.0     |
 
@@ -37,12 +37,34 @@ or `group_vars` files to the desired version.
 |Ubuntu 16.04|    7.0   |     7.0  |    7.0   |          |          |          |          |           |   7.0   |
 |Ubuntu 18.04|          |          |    7.2   |   7.2    |          |          |          |           |   7.2   |
 |Ubuntu 20.04|          |          |          |          |   7.4    |   7.4    |          |           |   7.4   |
-|Ubuntu 22.04|          |          |          |          |          |          |   8.1    |    8.1    |   8.1   |
+|Ubuntu 22.04|          |          |          |          |   7.4    |   7.4    |   8.1    |    8.1    |   8.1   |
 |Ubuntu 24.04|          |          |          |          |          |          |   8.3    |    8.3    |   8.3   |
 
 From the table above, you can see the Linux distro you need depending on the
 AtoM version. For instance, AtoM 2.6 can only be installed on CentOS 7 or
 Ubuntu 18.04.
+
+## PHP 7.4 on Ubuntu 22.04
+
+On Ubuntu 22.04, the role automatically adds `ppa:ondrej/php`
+([Ondřej Surý’s PHP PPA](https://launchpad.net/~ondrej/+archive/ubuntu/php))
+before installing PHP **only when `atom_php_version: "7.4"` is selected**.
+No separate PPA setting is required. To deploy AtoM 2.8 with PHP 7.4, set these
+variables in your playbook, `host_vars` or `group_vars`:
+
+```yaml
+atom_repository_version: "stable/2.8.x"
+atom_php_version: "7.4"
+```
+
+For AtoM 2.7, use `atom_repository_version: "stable/2.7.x"` with the same PHP
+setting.
+
+The default remains PHP 8.1 and AtoM 2.9; the role does not add the PPA for
+PHP 8.1. PHP packages and extensions on Ubuntu
+22.04 follow `atom_php_version`. The role selects the same version for the
+host’s `/usr/bin/php` using `update-alternatives`, including Composer and AtoM
+CLI commands. All sites on the host should use the same PHP version.
 
 ## Notes on dependencies
 

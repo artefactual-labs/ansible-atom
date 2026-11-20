@@ -1,13 +1,58 @@
 ---
 
+# PHP 7.4 is not available in the Ubuntu 22.04 archive.
+- name: "Install PHP PPA prerequisites (Ubuntu 22.04)"
+  become: true
+  apt:
+    name:
+      - ca-certificates
+      - software-properties-common
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+  when:
+    - ansible_distribution_version is version('22.04', '==')
+    - php_version | string == '7.4'
+
+- name: "Add Ondrej PHP PPA (Ubuntu 22.04)"
+  become: true
+  apt_repository:
+    repo: "ppa:ondrej/php"
+    state: present
+    update_cache: true
+  when:
+    - ansible_distribution_version is version('22.04', '==')
+    - php_version | string == '7.4'
+
+# Existing Ubuntu extension packages can be upgraded to PPA metapackages
+# depending on the latest PHP, even when versioned extensions are requested.
+- name: "Remove unversioned PHP extension packages (Ubuntu 22.04, PHP 7.4)"
+  become: true
+  apt:
+    name:
+      - php-apcu
+      - php-memcache
+    state: absent
+  when:
+    - ansible_distribution_version is version('22.04', '==')
+    - php_version | string == '7.4'
+
 - name: "Install PHP packages"
   become: "true"
   apt:
-    pkg: "{{ php_packages }}"
+    pkg: "{{ php_packages + (php_json_packages | default([])) }}"
     state: "latest"
     update_cache: "yes"
     cache_valid_time: "3600"
     force: "yes"
+
+# Composer and AtoM CLI tasks invoke php without a version suffix.
+- name: "Select PHP CLI version (Ubuntu 22.04)"
+  become: true
+  command: "update-alternatives --set php /usr/bin/php{{ php_version }}"
+  register: atom_php_alternative
+  changed_when: atom_php_alternative.stdout | length > 0
+  when: ansible_distribution_version is version('22.04', '==')
 
 # See https://bugs.launchpad.net/ubuntu/+source/php5/+bug/1272788
 - name: "Fix php5-fpm upstart"
@@ -56,16 +101,16 @@
     - atom_php_install_memprof_module|bool
     - ansible_distribution_version is version('20.04', '==')
 
-- name: "Build memprof extension (Focal)"
+- name: "Build memprof extension (Jammy)"
   shell: >
-    phpize &&
-    ./configure &&
+    phpize{{ php_version }} &&
+    ./configure --with-php-config=/usr/bin/php-config{{ php_version }} &&
     make clean &&
     make &&
-    cp modules/memprof.so /usr/lib/php/20210902/memprof.so
+    cp modules/memprof.so {{ php_extension_dir }}/memprof.so
   args:
     chdir: "/tmp/php-memory-profiler-3.0.2"
-    creates: "/usr/lib/php/20210902/memprof.so"
+    creates: "{{ php_extension_dir }}/memprof.so"
   when:
     - atom_php_install_memprof_module|bool
     - ansible_distribution_version is version('22.04', '==')

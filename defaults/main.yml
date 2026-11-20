@@ -34,7 +34,7 @@ atom_csrf_protection: "no"
 #   - For Ubuntu 16.04: 7.0
 #   - For Ubuntu 18.04: 7.2
 #   - For Ubuntu 20.04: 7.4
-#   - For ubuntu 22.04: 8.1
+#   - For Ubuntu 22.04: 8.1 (default), or 7.4 via ppa:ondrej/php
 #   - For ubuntu 24.04: 8.3
 #
 #atom_php_version: 72
