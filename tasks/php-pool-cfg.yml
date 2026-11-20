@@ -39,6 +39,39 @@
     - "ansible_distribution_version is version('16.04', '>=')"
     - ansible_distribution == "Ubuntu"
 
+# AtoM writes under /usr, which the PPA service otherwise makes read-only.
+- name: "Configure PHP-FPM systemd override (Ubuntu 22.04, PHP 7.4)"
+  block:
+    - name: "Create PHP-FPM systemd override directory"
+      file:
+        path: "/etc/systemd/system/{{ php_service_name }}.service.d"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: "Disable PHP-FPM read-only filesystem protection"
+      copy:
+        dest: "/etc/systemd/system/{{ php_service_name }}.service.d/atom-{{ atom_pool_name }}.conf"
+        content: |
+          [Service]
+          ProtectSystem=false
+        owner: root
+        group: root
+        mode: "0644"
+      register: atom_php_systemd_override
+      notify: "Restart PHP service"
+
+    - name: "Reload systemd after changing the PHP-FPM override"
+      systemd:
+        daemon_reload: true
+      when: atom_php_systemd_override.changed
+  when:
+    - ansible_distribution == "Ubuntu"
+    - ansible_distribution_version is version('22.04', '==')
+    - php_version | string == '7.4'
+    - ansible_service_mgr == "systemd"
+
 - name: "Configure php-fpm pool (RH)"
   block:
     - name: "Remove default www pool"
